@@ -97,14 +97,6 @@ svg{width:100%;height:auto;display:block}svg text{fill:var(--mute);font-size:11p
       <h2 id="rTitle" style="margin:8px 0 12px"></h2>
       <div class="verdict" id="verdict"></div>
       <div class="metrics" id="metrics"></div>
-      <div class="card" id="dayCard" style="margin-top:16px">
-        <h3>Profit on a single day</h3>
-        <div class="grid" style="align-items:end">
-          <div><label for="dayPick">Choose a day (up to a month ahead)</label><input id="dayPick" type="date"></div>
-          <div class="hint" id="dayHint"></div>
-        </div>
-        <div id="dayOut" style="margin-top:12px"></div>
-      </div>
       <div id="why"></div>
       <div class="two" style="margin-top:16px">
         <div class="card">
@@ -125,12 +117,19 @@ svg{width:100%;height:auto;display:block}svg text{fill:var(--mute);font-size:11p
             <div class="m"><div class="k">Price</div><div class="v" id="tpP"></div></div>
             <div class="m"><div class="k">Units you'd sell</div><div class="v" id="tpU"></div></div>
           </div>
-          <div class="m" style="margin-top:12px"><div class="k">Profit for the week</div><div class="v" id="tpPr"></div></div>
+          <div class="m" style="margin-top:12px"><div class="k">Profit next week</div><div class="v" id="tpPr"></div></div>
           <div class="metrics" style="grid-template-columns:1fr 1fr;margin-top:12px">
             <div class="m"><div class="k">Chance it beats today's price</div><div class="v" id="tpBeat"></div></div>
             <div class="m"><div class="k">Risk of earning less</div><div class="v" id="tpRisk"></div><div class="d" id="tpRiskL"></div></div>
           </div>
           <div class="hint" id="tpWarn" style="margin-top:8px;color:var(--warn)"></div>
+          <div id="dayCard" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">
+            <b>Profit on a single day</b>
+            <div class="hint">See what the price on the slider would earn on one day, up to a month ahead.</div>
+            <label for="dayPick" style="margin-top:10px">Choose a day</label><input id="dayPick" type="date">
+            <div class="hint" id="dayHint"></div>
+            <div id="dayOut" style="margin-top:10px"></div>
+          </div>
         </div>
       </div>
       <div class="card" id="testCard"></div>
@@ -376,7 +375,7 @@ function run() {
           : `<p style="margin:6px 0">Before changing the price for good, try it out: sell at <b>${gbp(r.current_price)}</b> one week and <b>${gbp(pl.test_price)}</b> the next, and keep switching. Comparing the weeks shows whether the new price really earns more.</p>`) +
     `<p style="margin:6px 0">${advice}</p>`;
   const s = $("tryP"); s.min = (r.current_price * 0.7).toFixed(2); s.max = (r.current_price * 1.3).toFixed(2); s.step = 0.01; s.value = b.price;
-  tryPrice(); drawChart(); renderDay();
+  tryPrice(); drawChart();
   $("result").classList.remove("hidden"); $("result").scrollIntoView({behavior: "smooth", block: "start"});
 }
 $("tryP").addEventListener("input", tryPrice);
@@ -395,19 +394,19 @@ $("dayHint").textContent = `The sales records end on ${lastDay.toLocaleDateStrin
 $("dayPick").addEventListener("input", renderDay);
 function renderDay() {
   if (!cur) return;
-  const {r, o, item, best} = cur, j = D.days.indexOf($("dayPick").value);
+  const {r, o, item} = cur, j = D.days.indexOf($("dayPick").value), price = +$("tryP").value;
   if (j < 0) { $("dayOut").innerHTML = `<div class="box warn">Please pick a day between ${D.days[0]} and ${D.days[D.days.length - 1]}.</div>`; return; }
   const c = D.calendar[j], when = new Date(D.days[j] + "T00:00").toLocaleDateString("en-GB", {weekday: "long", day: "numeric", month: "long", year: "numeric"});
   if (!c.open) { $("dayOut").innerHTML = `<div class="box warn"><b>${when}: the shop is closed</b> (${esc(c.reason)}). Expected sales and profit: <b>£0.00</b>.</div>`; return; }
   const base = item ? item.daily[j] : (r.baseline_units / openW) * PROFILE[j];
   const cm = r.comp_mult == null ? 1 : r.comp_mult;
   const at = p => { const u = PC.mean(PC.unitsAt(p, r.current_price, base, o.e_draws, cm, Infinity)); return [u, u * (p - r.unit_cost)]; };
-  const [uNew, pNew] = at(best), [uNow, pNow] = at(r.current_price), same = Math.abs(best - r.current_price) < 1e-9;
+  const [uNew, pNew] = at(price), [uNow, pNow] = at(r.current_price), same = Math.abs(price - r.current_price) < 0.005;
   const M = (k, v, d) => `<div class="m"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
   $("dayOut").innerHTML = `<p style="margin:0 0 10px"><b>${when}</b>${c.note ? ` · ${esc(c.note)}` : ""}</p>` +
-    `<div class="metrics">` +
-    M(same ? "Expected profit that day" : `Profit at the suggested ${gbp(best)}`, gbp(pNew), `about ${num(uNew)} units`) +
-    (same ? "" : M(`Profit at today's ${gbp(r.current_price)}`, gbp(pNow), `about ${num(uNow)} units`)) +
+    `<div class="metrics" style="grid-template-columns:1fr 1fr">` +
+    M(`At ${gbp(price)}${same ? " (today's price)" : ""}`, gbp(pNew), `about ${num(uNew)} units`) +
+    (same ? "" : M(`At today's ${gbp(r.current_price)}`, gbp(pNow), `about ${num(uNow)} units`)) +
     `</div><div class="hint" style="margin-top:8px">A single day's sales jump around a lot, so treat this as a rough guide; the weekly figure is more reliable. ` +
     (j >= WEEK ? "Days after next week are estimated from next week's forecast and last year's pattern for the same days." : "") + `</div>`;
 }
@@ -416,6 +415,7 @@ function tryPrice() {
   const u = PC.unitsAt(p, r.current_price, r.baseline_units, o.e_draws, cm, stock), pr = u.map(x => (p - r.unit_cost) * x);
   const pr0 = o.comp_same.profit_current_draws, mp = PC.mean(pr);
   $("tpP").textContent = gbp(p); $("tpU").textContent = num(PC.mean(u)); $("tpPr").textContent = gbp(mp);
+  renderDay();
   const risk = mp > 0 ? PC.mean(pr0.map((v, i) => Math.max(v - pr[i], 0))) / Math.max(PC.mean(pr0), 1e-9) : Infinity;
   const lvl = risk <= 0.02 ? ["Low", "var(--good)"] : risk <= 0.05 ? ["Medium", "var(--warn)"] : ["High", "var(--bad)"];
   $("tpRisk").textContent = isFinite(risk) ? lvl[0] : "Loss";
