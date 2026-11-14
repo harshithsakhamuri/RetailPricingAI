@@ -65,7 +65,7 @@ streamlit run app/streamlit_app.py        # optional Streamlit app at http://loc
 4. **Confidence:** decision-based. It combines downside profit risk vs the current price with the probability that the
    change beats the current price.
 
-See `outputs/summary.md` for full details and metrics.
+See `outputs/summary.md` for full details and metrics, and [`reports/Project_Report.md`](reports/Project_Report.md) for the formal project report.
 
 ## Notes and limitations
 - Forecasts cover only 10–16 Dec 2011, the week after the data ends. Add newer sales data and retrain for current weeks.
