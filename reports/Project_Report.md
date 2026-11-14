@@ -1,8 +1,8 @@
 # Retail Pricing AI: Profit-Maximising Price Recommendations from Transactional Sales Data
 
-**Project Report**
-**Date:** 14 November 2026
-**Repository:** https://github.com/harshithsakhamuri/RetailPricingAI
+**Project Report**  
+**Date:** 14 November 2026  
+**Repository:** https://github.com/harshithsakhamuri/RetailPricingAI  
 **Live application:** https://harshithsakhamuri.github.io/RetailPricingAI/
 
 ---
