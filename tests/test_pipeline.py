@@ -174,3 +174,27 @@ def test_level_calibration_rescales_panel():
     assert k_none == 1.0
     _, _, k_clip = pp.calibrate_level(el, cat_fit, {"elasticity": -20.0, "se": 1})
     assert k_clip == pp.LEVEL_SCALE_CLIP[1]
+
+
+# Holidays: closure calendar and gifting events (checked against the real trading days in summary.md)
+@pytest.mark.parametrize("day,closed", [("2010-12-23", False), ("2010-12-24", True), ("2011-01-02", True),
+                                        ("2011-01-03", True), ("2011-04-22", True), ("2011-04-24", True),
+                                        ("2011-04-29", True), ("2011-08-29", True), ("2011-12-10", True),
+                                        ("2011-12-11", False), ("2011-12-23", False), ("2011-12-27", True)])
+def test_closure_calendar(day, closed):
+    assert (pp.closure_reason(pd.Timestamp(day)) is not None) == closed
+
+
+def test_gift_event_dates():
+    ev = {v: k for k, v in pp.GIFT_EVENTS.items() if k.year == 2011}
+    assert ev["Mothering Sunday (UK Mother's Day)"] == pd.Timestamp("2011-04-03")
+    assert ev["Easter"] == pd.Timestamp("2011-04-24") and ev["Father's Day"] == pd.Timestamp("2011-06-19")
+    assert pp.easter_sunday(2012) == pd.Timestamp("2012-04-08")
+
+
+def test_holiday_features():
+    cal = pp.calendar_features(pd.date_range("2010-12-20", "2011-01-10")).set_index("Date")
+    assert cal.loc["2011-01-04", "reopening_day"] == 1 and cal.loc["2011-01-05", "reopening_day"] == 0
+    assert cal.loc["2010-12-23", "closed_next_7"] == 7 and cal.loc["2010-12-23", "store_open"] == 1
+    for f in ["days_to_event", "next_event", "days_since_event", "closed_prev_7"]:
+        assert f in pp.CAL_FEATS and cal[f].notna().all()

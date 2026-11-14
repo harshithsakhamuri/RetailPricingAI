@@ -54,6 +54,7 @@ svg{width:100%;height:auto;display:block}svg text{fill:var(--mute);font-size:11p
       <div class="step"><b>1. We learn from past sales</b>We studied a year of real sales from an online gift shop: how much of each product sold, and what happened when prices changed.</div>
       <div class="step"><b>2. We predict next week</b>We estimate how many units each product will sell next week, and how that number would change if you raised or lowered the price.</div>
       <div class="step"><b>3. We find the best price</b>A higher price earns more per sale but usually means fewer sales. We look for the price where the two balance out and you keep the most profit.</div>
+      <div class="step"><b>Holidays matter</b>The shop never trades on Saturdays, bank holidays, Easter Sunday or over Christmas (24 Dec – 2 Jan), and sales slow down just before the Christmas break. Our forecasts follow this calendar, which we checked against every day in the sales records.</div>
       <div class="step"><b>4. We play it safe</b>We never suggest changing a price by more than 20%, never go far above a price you've charged before, and always keep at least a 20% profit margin.</div>
     </div>
     <p class="hint" style="margin-top:12px"><b>Profit</b> = what you keep after paying for the product = (selling price − your cost) × number sold.
@@ -96,6 +97,14 @@ svg{width:100%;height:auto;display:block}svg text{fill:var(--mute);font-size:11p
       <h2 id="rTitle" style="margin:8px 0 12px"></h2>
       <div class="verdict" id="verdict"></div>
       <div class="metrics" id="metrics"></div>
+      <div class="card" id="dayCard" style="margin-top:16px">
+        <h3>Profit on a single day</h3>
+        <div class="grid" style="align-items:end">
+          <div><label for="dayPick">Choose a day (up to a month ahead)</label><input id="dayPick" type="date"></div>
+          <div class="hint" id="dayHint"></div>
+        </div>
+        <div id="dayOut" style="margin-top:12px"></div>
+      </div>
       <div id="why"></div>
       <div class="two" style="margin-top:16px">
         <div class="card">
@@ -176,8 +185,11 @@ svg{width:100%;height:auto;display:block}svg text{fill:var(--mute);font-size:11p
 <script>
 const D = window.PRICING_DATA, PC = window.PricingCore, C = PC.CFG, Z = D.z, $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
-const gbp = (x, d = 2) => "£" + Number(x).toLocaleString("en-GB", {minimumFractionDigits: d, maximumFractionDigits: d});
+const gbp = (x, d = 2) => (x < 0 ? "−£" : "£") + Math.abs(Number(x)).toLocaleString("en-GB", {minimumFractionDigits: d, maximumFractionDigits: d});
 const num = x => Math.round(x).toLocaleString("en-GB");
+// Percentages: whole numbers when exact, one decimal when needed (+10%, +9.8%)
+const pctTxt = (x, sign = true) => { const v = Math.round(x * 10) / 10; const t = Number.isInteger(v) ? v.toFixed(0) : v.toFixed(1);
+  return (sign && v > 0 ? "+" : "") + t.replace("-", "−") + "%"; };
 const title = s => s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 const KINDS = {bags: "bags", christmas: "Christmas items", home_decor: "home décor", kitchen_baking: "kitchen & baking",
   lighting_candles: "lighting & candles", stationery_paper: "stationery & paper", storage: "storage", toys_gifts: "toys & gifts", other: "other"};
@@ -208,7 +220,7 @@ function reasonsPlain(raw, r) {
     if (s.startsWith("new price beats current")) return `The new price comes out ahead in ${s.match(/(\d+)%/)[1]}% of the situations we tested, not all of them.`;
     if (s.startsWith("very low forecast volume")) return "This product sells very few units, so there's too little information to go on.";
     if (s.includes("demand not falling")) return "In the past this product sold MORE when its price went up, which usually means something else was going on (a season or promotion). We don't trust that history.";
-    if (s.startsWith("no feasible price")) return "Your cost is so high that no price within our safety rules keeps a 20% margin.";
+    if (s.startsWith("no feasible price")) return "Today's price is so far below a safe margin that one step (at most +20%) can't fix it, so we suggest the biggest step allowed.";
     if (s.startsWith("current price is below the minimum")) return "Today's price leaves less than a 20% profit margin.";
     if (s.startsWith("no allowed price on the price grid")) return "No sensible shop price (like £x.95) fits inside the allowed range, so we kept today's price.";
     return s;
@@ -306,28 +318,33 @@ let cur = null;
 function run() {
   const x = buildRow(); if (!x) return;
   const r = x.row, ev = evaluate(r, x.stock, x.item), {o, b, conf, why} = ev;
-  cur = {r, o, stock: x.stock};
+  cur = {r, o, stock: x.stock, item: x.item, best: b.price};
   const chg = 100 * (b.price / r.current_price - 1), gain = b.profit - b.profit_current, same = Math.abs(chg) < 0.05;
   $("rTitle").innerHTML = `${esc(x.name)} <span class="hint" style="font-size:14px;font-weight:400">${esc(x.note)}</span>`;
 
   // The one-paragraph answer
   const unitsDiff = b.units - b.units_current;
-  $("verdict").innerHTML = same
-    ? `<div class="big">Keep the price at ${gbp(r.current_price)}</div>Changing it is unlikely to earn you more. Expect to sell about <b>${num(b.units)}</b> units next week for about <b>${gbp(b.profit, 0)}</b> profit.`
-    : `<div class="big">${chg > 0 ? "Raise" : "Lower"} the price from ${gbp(r.current_price)} to ${gbp(b.price)} (${chg > 0 ? "+" : ""}${chg.toFixed(0)}%)</div>` +
+  $("verdict").innerHTML = b.profit < 0 || b.profit_current < 0
+    ? `<div class="big">⚠️ This product loses money at today's price</div>Today's price (${gbp(r.current_price)}) is below what we estimate one unit costs you (${gbp(r.unit_cost)}). ` +
+      (same ? "" : `Raising it to <b>${gbp(b.price)}</b> (${pctTxt(chg)}), the biggest step our safety rules allow at once, `) +
+      `${same ? "Expected profit next week" : "changes next week's result"} ${same ? "is" : "from"} <b>${gbp(b.profit_current)}</b>${same ? "" : ` to <b>${gbp(b.profit)}</b>`}. ` +
+      `Check the real cost first. If it is right, raise the price further in steps over the coming weeks, or consider no longer stocking it.`
+    : same
+    ? `<div class="big">Keep the price at ${gbp(r.current_price)}</div>Changing it is unlikely to earn you more. Expect to sell about <b>${num(b.units)}</b> units next week for about <b>${gbp(b.profit)}</b> profit.`
+    : `<div class="big">${chg > 0 ? "Raise" : "Lower"} the price from ${gbp(r.current_price)} to ${gbp(b.price)} (${pctTxt(chg)})</div>` +
       `You'd sell about <b>${num(b.units)}</b> units next week instead of ${num(b.units_current)} (${num(Math.abs(unitsDiff))} ${unitsDiff >= 0 ? "more" : "fewer"}), ` +
       (chg > 0 ? "but each sale earns more, " : "but the extra sales make up for the lower price, ") +
-      `so profit should ${gain >= 0 ? "rise" : "fall"} by about <b>${gbp(Math.abs(gain), 0)}</b> to ${gbp(b.profit, 0)} for the week. ` +
+      `so profit should ${gain >= 0 ? "rise" : "fall"} by about <b>${gbp(Math.abs(gain))}</b> to ${gbp(b.profit)} for the week. ` +
       `We are <b style="color:${CONF[conf][1]}">${CONF_WORD[conf]}</b> about this.`;
 
   const M = (k, v, d, hero) => `<div class="m${hero ? " hero" : ""}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d || "&nbsp;"}</div></div>`;
   $("metrics").innerHTML =
     M("Sales next week at today's price", `${num(b.units_current)} units`, `at ${gbp(r.current_price)} each`) +
-    M("Suggested price", gbp(b.price), same ? "same as today" : `${chg > 0 ? "+" : ""}${chg.toFixed(1)}% vs today's ${gbp(r.current_price)}`, true) +
+    M("Suggested price", gbp(b.price), same ? "same as today" : `${pctTxt(chg)} vs today's ${gbp(r.current_price)}`, true) +
     M("Sales at the suggested price", `${num(b.units)} units`, Math.round(unitsDiff) === 0 ? "same as today" : `${num(Math.abs(unitsDiff))} ${unitsDiff > 0 ? "more" : "fewer"} than today`, true) +
-    M("Profit for the week", gbp(b.profit, 0), `${gain >= 0 ? "+" : "−"}${gbp(Math.abs(gain), 0)} vs keeping today's price`) +
-    M("Money coming in (sales)", gbp(b.price * b.units, 0), `you keep ${(100 * (b.price - r.unit_cost) / b.price).toFixed(0)}p of every £1 as profit`) +
-    M("Realistic profit range", `${gbp(ev.p10, 0)} – ${gbp(ev.p90, 0)}`, "most weeks should land in this range; sales go up and down") +
+    M(`Profit next week (${D.week})`, gbp(b.profit), `${gain >= 0 ? "+" : "−"}${gbp(Math.abs(gain))} vs keeping today's price`) +
+    M("Money coming in (sales)", gbp(b.price * b.units), (b.price > r.unit_cost ? `you keep ${(100 * (b.price - r.unit_cost) / b.price).toFixed(0)}p of every £1 as profit` : `you lose ${(100 * (r.unit_cost - b.price) / b.price).toFixed(0)}p on every £1 of sales`)) +
+    M("Realistic profit range", `${gbp(ev.p10)} – ${gbp(ev.p90)}`, "most weeks should land in this range; sales go up and down") +
     `<div class="m"><div class="k">How sure are we?</div><div class="v" style="color:${CONF[conf][1]}">${CONF[conf][0]}</div><div class="d">based on ${EVIDENCE[r.elasticity_source] || "similar products"}</div></div>`;
 
   // Why: plain bullet points
@@ -342,7 +359,7 @@ function run() {
 
   const pl = ev.plan, items = x.item ? D.categories[x.item.category].n_items : 0;
   const dur = w => w <= 12 ? `about <b>${w} week${w === 1 ? "" : "s"}</b>` : w <= 52 ? `about ${w} weeks (${Math.round(w / 4.3)} months)` : w <= 104 ? `about ${w} weeks (over a year)` : "several years";
-  const step = Math.abs(Math.round(100 * (pl.test_price / r.current_price - 1)));
+  const step = pctTxt(Math.abs(100 * (pl.test_price / r.current_price - 1)), false);
   let advice;
   if (pl.test_feasible) advice = `For this product a clear answer would take ${dur(pl.test_weeks_total)}.`;
   else {
@@ -350,7 +367,7 @@ function run() {
     if (x.item) {
       const pw = x.item.test_weeks_pooled_category;
       advice += pw <= 12
-        ? `Instead, make the same ${step}% change on all ${items} ${kind(x.item.category)} products at once: that would give a clear answer in ${dur(pw)}.`
+        ? `Instead, make the same ${step} change on all ${items} ${kind(x.item.category)} products at once: that would give a clear answer in ${dur(pw)}.`
         : `Even testing all ${items} ${kind(x.item.category)} products together would take ${dur(pw)}. In practice, test a bigger group of products together, or simply watch your profit closely for a few weeks after the change and switch back if it drops.`;
     } else advice += "Instead, make the same change on several similar products at once, or watch your profit closely for a few weeks and switch back if it drops.";
   }
@@ -359,15 +376,46 @@ function run() {
           : `<p style="margin:6px 0">Before changing the price for good, try it out: sell at <b>${gbp(r.current_price)}</b> one week and <b>${gbp(pl.test_price)}</b> the next, and keep switching. Comparing the weeks shows whether the new price really earns more.</p>`) +
     `<p style="margin:6px 0">${advice}</p>`;
   const s = $("tryP"); s.min = (r.current_price * 0.7).toFixed(2); s.max = (r.current_price * 1.3).toFixed(2); s.step = 0.01; s.value = b.price;
-  tryPrice(); drawChart();
+  tryPrice(); drawChart(); renderDay();
   $("result").classList.remove("hidden"); $("result").scrollIntoView({behavior: "smooth", block: "start"});
 }
 $("tryP").addEventListener("input", tryPrice);
+
+// ---------- single-day profit ----------
+// Store-wide daily pattern relative to next week's level (for products without their own daily forecast)
+const WEEK = 7, openW = D.calendar.slice(0, WEEK).filter(c => c.open).length || 1;
+const storeDay = D.days.map((_, j) => D.items.reduce((t, it) => t + it.daily[j], 0));
+const storeLevel = storeDay.slice(0, WEEK).reduce((a, v) => a + v, 0) / openW;
+const PROFILE = storeDay.map(v => v / storeLevel);
+const firstOpen = D.calendar.findIndex(c => c.open);
+$("dayPick").min = D.days[0]; $("dayPick").max = D.days[D.days.length - 1]; $("dayPick").value = D.days[firstOpen];
+const lastDay = new Date(D.days[0] + "T00:00"); lastDay.setDate(lastDay.getDate() - 1);
+$("dayHint").textContent = `The sales records end on ${lastDay.toLocaleDateString("en-GB", {day: "numeric", month: "long", year: "numeric"})}, ` +
+  `so "today" in this tool is that day. We start with the next day the shop is open.`;
+$("dayPick").addEventListener("input", renderDay);
+function renderDay() {
+  if (!cur) return;
+  const {r, o, item, best} = cur, j = D.days.indexOf($("dayPick").value);
+  if (j < 0) { $("dayOut").innerHTML = `<div class="box warn">Please pick a day between ${D.days[0]} and ${D.days[D.days.length - 1]}.</div>`; return; }
+  const c = D.calendar[j], when = new Date(D.days[j] + "T00:00").toLocaleDateString("en-GB", {weekday: "long", day: "numeric", month: "long", year: "numeric"});
+  if (!c.open) { $("dayOut").innerHTML = `<div class="box warn"><b>${when}: the shop is closed</b> (${esc(c.reason)}). Expected sales and profit: <b>£0.00</b>.</div>`; return; }
+  const base = item ? item.daily[j] : (r.baseline_units / openW) * PROFILE[j];
+  const cm = r.comp_mult == null ? 1 : r.comp_mult;
+  const at = p => { const u = PC.mean(PC.unitsAt(p, r.current_price, base, o.e_draws, cm, Infinity)); return [u, u * (p - r.unit_cost)]; };
+  const [uNew, pNew] = at(best), [uNow, pNow] = at(r.current_price), same = Math.abs(best - r.current_price) < 1e-9;
+  const M = (k, v, d) => `<div class="m"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
+  $("dayOut").innerHTML = `<p style="margin:0 0 10px"><b>${when}</b>${c.note ? ` · ${esc(c.note)}` : ""}</p>` +
+    `<div class="metrics">` +
+    M(same ? "Expected profit that day" : `Profit at the suggested ${gbp(best)}`, gbp(pNew), `about ${num(uNew)} units`) +
+    (same ? "" : M(`Profit at today's ${gbp(r.current_price)}`, gbp(pNow), `about ${num(uNow)} units`)) +
+    `</div><div class="hint" style="margin-top:8px">A single day's sales jump around a lot, so treat this as a rough guide; the weekly figure is more reliable. ` +
+    (j >= WEEK ? "Days after next week are estimated from next week's forecast and last year's pattern for the same days." : "") + `</div>`;
+}
 function tryPrice() {
   const {r, o, stock} = cur, p = +$("tryP").value, cm = r.comp_mult == null ? 1 : r.comp_mult;
   const u = PC.unitsAt(p, r.current_price, r.baseline_units, o.e_draws, cm, stock), pr = u.map(x => (p - r.unit_cost) * x);
   const pr0 = o.comp_same.profit_current_draws, mp = PC.mean(pr);
-  $("tpP").textContent = gbp(p); $("tpU").textContent = num(PC.mean(u)); $("tpPr").textContent = gbp(mp, 0);
+  $("tpP").textContent = gbp(p); $("tpU").textContent = num(PC.mean(u)); $("tpPr").textContent = gbp(mp);
   const risk = mp > 0 ? PC.mean(pr0.map((v, i) => Math.max(v - pr[i], 0))) / Math.max(PC.mean(pr0), 1e-9) : Infinity;
   const lvl = risk <= 0.02 ? ["Low", "var(--good)"] : risk <= 0.05 ? ["Medium", "var(--warn)"] : ["High", "var(--bad)"];
   $("tpRisk").textContent = isFinite(risk) ? lvl[0] : "Loss";
@@ -441,8 +489,8 @@ $("csvFile").onchange = async e => {
     if (!(o.price > 0 && o.units >= 0 && o.cost > 0)) { errors.push(i + 2); return; }
     if (!D.categories[o.category]) o.category = "other";
     const row = newItemRow(o), stock = +g("stock") > 0 ? +g("stock") : Infinity, ev = evaluate(row, stock, null), b = ev.b;
-    batchRows.push([o.name, kind(o.category), o.price.toFixed(2), b.price.toFixed(2), `${(100 * (b.price / o.price - 1)).toFixed(0)}%`, Math.round(b.units),
-      b.profit.toFixed(0), (b.profit - b.profit_current).toFixed(0), CONF_WORD[ev.conf], driverText(ev.o.decision_driver), ev.plan.test_weeks_total,
+    batchRows.push([o.name, kind(o.category), o.price.toFixed(2), b.price.toFixed(2), pctTxt(100 * (b.price / o.price - 1)), Math.round(b.units),
+      b.profit.toFixed(2), (b.profit - b.profit_current).toFixed(2), CONF_WORD[ev.conf], driverText(ev.o.decision_driver), ev.plan.test_weeks_total,
       reasonsPlain(ev.why, row).join(" ")]);
   });
   $("batchMsg").textContent = `Done: ${batchRows.length} product(s) priced.` + (errors.length ? ` Skipped row(s) ${errors.join(", ")} because the price, sales or cost was missing or zero.` : "");
@@ -473,7 +521,7 @@ function renderPortfolio() {
   const g = D.gains_all, bt = D.backtest, n = D.items.length, M = (k, v, d) => `<div class="m"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
   const ups = D.items.filter(i => i.recommended_price > i.current_price + 1e-9).length, limited = D.items.filter(i => i.decision_driver.includes("limit")).length;
   $("pfStats").innerHTML =
-    M("Extra profit per week (all products)", gbp((g.high || 0) + (g.medium || 0), 0), "counting only suggestions we're fairly or very sure about") +
+    M("Extra profit per week (all products)", gbp((g.high || 0) + (g.medium || 0)), "counting only suggestions we're fairly or very sure about") +
     M("Products to raise in price", `${ups} of ${n}`, "most by a small step") +
     M("Stopped by a safety limit", `${limited} of ${n}`, "past sales would have pushed these further") +
     M("Very sure / fairly sure / not sure", `${D.items.filter(i => i.confidence === "high").length} / ${D.items.filter(i => i.confidence === "medium").length} / ${D.items.filter(i => i.confidence === "low").length}`, "most products never changed price, so certainty is limited");
@@ -488,7 +536,7 @@ function renderPortfolio() {
   const rows = pfRows();
   $("pfCount").textContent = `Showing ${rows.length} of ${n} products. Click a column heading to sort.`;
   const fmt = (k, v) => v == null ? "" : k === "confidence" ? `<span class="pill c-${v}">${CONF_WORD[v]}</span>` : PF_PLAIN[k] ? esc(PF_PLAIN[k](v)) :
-    k === "price_change_%" ? `${v > 0 ? "+" : ""}${v.toFixed(0)}%` : k.includes("price") ? gbp(v) : k === "profit_change_crossfit" ? gbp(v, 0) : esc(v);
+    k === "price_change_%" ? pctTxt(v) : k.includes("price") ? gbp(v) : k === "profit_change_crossfit" ? gbp(v) : esc(v);
   $("pfTable").innerHTML = tableHTML(PF.map(([k, l]) => l + (pfSort.k === k ? (pfSort.dir > 0 ? " ▲" : " ▼") : "")),
     rows.map(i => PF.map(([k]) => k === "Description" ? `<a href="#" data-code="${esc(i.StockCode)}">${esc(title(i.Description))}</a>` : fmt(k, i[k]))));
   $("pfTable").querySelectorAll("th").forEach((th, j) => th.onclick = () => {

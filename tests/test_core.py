@@ -141,3 +141,19 @@ def test_expected_profit_never_below_current_price():
 def test_draws_are_clipped_to_plausible_range():
     d = core.elasticity_draws(-5.5, 3.0, Z)
     assert d.min() >= core.ELASTICITY_FLOOR and d.max() <= core.ELASTICITY_CEILING
+
+
+def test_change_only_when_gain_survives_crosscheck():
+    rng = np.random.default_rng(9)
+    for _ in range(200):
+        r = item(elasticity=float(rng.uniform(-3.5, -1.2)), elasticity_se=float(rng.uniform(0.3, 2.0)))
+        b = core.optimise_product(r, Z)["comp_same"]
+        assert b["profit_change_crossfit"] >= 0
+        if b["price"] == r["current_price"]:
+            assert b["profit_change_crossfit"] == 0
+
+
+def test_below_cost_item_takes_largest_allowed_step():
+    o, b, conf = decide(item(current_price=1.00, hist_min_price=1.0, hist_max_price=2.0, unit_cost=1.5))
+    assert b["price"] == pytest.approx(o["bounds"][1]) and b["price"] > 1.0 and conf == "low"
+    assert b["profit"] > b["profit_current"]

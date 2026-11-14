@@ -15,20 +15,41 @@ Objective: **profit = (price − unit cost) × expected units**.
   Recommendations therefore describe registered (mainly wholesale) customers.
 - One price definition everywhere: the **list price** = median unit price of regular-size lines (bulk tier discounts excluded).
 
+## 0b. Holidays and shop closures (checked against the data)
+- Closure calendar: no trading on Saturdays, England & Wales bank holidays (incl. substitute days and the 2011 Royal
+  Wedding), Easter Sunday, and 24 Dec – 2 Jan. Checked against all 374 days in the data: the calendar marks
+  69 days closed; mismatches with the actual trading days: **0**
+  .
+- The first trading day after a closure of 2+ days sells **-51%** vs the previous 10 trading days
+  (median of 3 reopenings): it is a slow day, not a catch-up day.
+- Gifting events (wholesale customers stock up ahead of them) are model features: days to the next event, which
+  event, days since the last one, closures in the next/previous 7 days and reopening days.
+
+| event | date | sales 4 wks before vs 8 wks earlier |
+|---|---|---|
+| Mothering Sunday (UK Mother's Day) | 2011-04-03 | +32% |
+| Easter | 2011-04-24 | +25% |
+| Father's Day | 2011-06-19 | -4% |
+| Halloween | 2011-10-31 | +3% |
+| Bonfire Night | 2011-11-05 | -6% |
+
+- Beyond next week, daily forecasts use next week's level × last year's pattern for the same days (store-wide,
+  weekday-matched), because the model has seen only one Christmas. This part is not validated: only one prior year exists.
+
 ## 1. Baseline demand model
 - Splits: train ≤ 2011-08-31, calibration weeks ≤ 2011-09-30, selection weeks ≤ 2011-10-31, test ≤ 2011-12-09.
 - **All 6 candidates, including the naive baselines, get the same level calibration** (fitted on the calibration
   weeks) and are selected on the later selection weeks. Test weeks are never used for selection.
-- **Selected: LightGBM.** Test WAPE on 7-day product totals: 53.5% (best ML 52.5%, best naive 52.9%).
-- Production level factor 1.202, measured by refitting on data up to 2011-10-31 and scoring the test weeks,
+- **Selected: LightGBM.** Test WAPE on 7-day product totals: 53.3% (best ML 52.5%, best naive 52.9%).
+- Production level factor 1.229, measured by refitting on data up to 2011-10-31 and scoring the test weeks,
   so the factor matches the refit model rather than the train-only model.
 
 | model | kind | calibration | select_WAPE%_7day | test_WAPE%_7day | test_Bias%_7day | selected |
 |---|---|---|---|---|---|---|
-| LightGBM | ML | 1.31 | 63.03 | 53.49 | -0.48 | True |
-| XGBoost | ML | 1.24 | 63.57 | 52.52 | -2.14 | False |
-| RandomForest | ML | 1.16 | 67.19 | 59.31 | 0.79 | False |
-| Ensemble | ML | 1.24 | 64.13 | 54.59 | -0.58 | False |
+| LightGBM | ML | 1.31 | 63.06 | 53.29 | -1.24 | True |
+| XGBoost | ML | 1.27 | 63.24 | 52.53 | -4.34 | False |
+| RandomForest | ML | 1.16 | 67.02 | 59.60 | 1.24 | False |
+| Ensemble | ML | 1.24 | 64.10 | 54.76 | -1.37 | False |
 | Naive: same day last week | naive | 1.12 | 75.40 | 66.45 | 7.93 | False |
 | Naive: 28-day mean rate | naive | 1.11 | 65.82 | 52.93 | -1.40 | False |
 
@@ -48,70 +69,70 @@ Objective: **profit = (price − unit cost) × expected units**.
 
 | category | category_slope | items_with_price_changes | prior_mean | prior_se | tau | prior_basis |
 |---|---|---|---|---|---|---|
-| bags | -3.26 | 18 | -2.21 | 0.52 | 2.25 | category slope (18 items) |
-| kitchen_baking | -2.35 | 19 | -2.21 | 0.52 | 5.22 | category slope (19 items) |
-| home_decor | -2.21 | 27 | -2.21 | 0.52 | 0.44 | category slope (27 items) |
+| bags | -3.26 | 18 | -2.21 | 0.52 | 2.16 | category slope (18 items) |
+| kitchen_baking | -2.34 | 19 | -2.21 | 0.52 | 5.21 | category slope (19 items) |
+| home_decor | -2.21 | 27 | -2.21 | 0.52 | 0.10 | category slope (27 items) |
 | lighting_candles | -3.41 | 4 | -2.21 | 0.66 | 2.73 | global prior (only 4 items with price changes) |
 | stationery_paper | -0.19 | 2 | -2.21 | 0.66 | 2.73 | global prior (only 2 items with price changes) |
 | storage | 0.47 | 2 | -2.21 | 0.66 | 2.73 | global prior (only 2 items with price changes) |
-| christmas | -4.22 | 0 | -2.21 | 0.66 | 2.73 | global prior (only 0 items with price changes) |
-| toys_gifts | -0.54 | 1 | -2.21 | 0.66 | 2.73 | global prior (only 1 items with price changes) |
-| other | -1.39 | 22 | -2.19 | 0.52 | 1.21 | category slope (22 items) |
+| christmas | -4.21 | 0 | -2.21 | 0.66 | 2.73 | global prior (only 0 items with price changes) |
+| toys_gifts | -0.53 | 1 | -2.21 | 0.66 | 2.73 | global prior (only 1 items with price changes) |
+| other | -1.39 | 22 | -2.19 | 0.52 | 1.31 | category slope (22 items) |
 
 **Placebo test** (20 time-shuffled price paths per category). A real slope well below its placebo distribution
 (z < −2) is evidence the estimate is not an artefact of the panel design:
 
 | category | real | placebo_mean | placebo_sd | z_vs_placebo |
 |---|---|---|---|---|
-| bags | -1.21 | 0.03 | 0.35 | -3.52 |
-| home_decor | -0.82 | 0.02 | 0.36 | -2.30 |
-| kitchen_baking | -0.87 | 0.20 | 0.22 | -4.92 |
-| other | -0.52 | -0.06 | 0.28 | -1.61 |
+| bags | -1.21 | 0.01 | 0.37 | -3.33 |
+| home_decor | -0.82 | 0.03 | 0.38 | -2.25 |
+| kitchen_baking | -0.87 | 0.17 | 0.28 | -3.65 |
+| other | -0.52 | -0.03 | 0.28 | -1.72 |
 
 **Out-of-sample backtest.** Elasticities re-estimated on data up to 2011-08-31 predict the effect of later real
 price changes: 10 list-price changes on 9 items. Mean absolute error of the predicted log change in units: **0.911** with the model vs **1.412** assuming price has no effect; direction correct in 60%; correlation 0.73. Median elasticity implied by these events: -2.13 vs pooled model median -2.21. Real price changes do not suggest the model underestimates price sensitivity. Only 10 events: treat this as indicative.
 
 ## 3. Recommendations
-- Decision drivers across all 500 items: upper limit: 247, data: 100, priced jointly with its variants: 82, lower limit: 44, fixed (no price choice): 27.
+- Decision drivers across all 500 items: data: 185, upper limit: 162, priced jointly with its variants: 82, lower limit: 47, fixed (no price choice): 24.
   Items at a limit would move further without it: **the limit, not the data, sets their price.**
 - **Lerner check:** for 1% of items the elasticity implies an unconstrained optimal price more than 1.5× the
   current price (optimal margin −1/e far above the assumed 40%). Either elasticities are biased toward zero
   by non-experimental price variation or costs are wrong; treat price *increases* at the upper limit with caution.
-- Confidence (top 50): high 0, medium 16, low 34.
+- Confidence (top 50): high 0, medium 28, low 22.
   **High requires the item's own price evidence**; category-only items are capped at medium.
 - **Expected profit gain, cross-fitted** (price chosen on half the elasticity draws, scored on the other half):
 
 | scope | high | medium | low | high + medium |
 |---|---|---|---|---|
-| top 50 | £0 | £39 | £211 | **£39** |
-| all 500 | £135 | £209 | £625 | **£344** |
+| top 50 | £0 | £60 | £185 | **£60** |
+| all 500 | £136 | £256 | £741 | **£391** |
 
-  Baseline profit at current prices (top 50): £19,684. These gains are model
+  Baseline profit at current prices (top 50): £19,276. These gains are model
   predictions; the backtest above is the only out-of-sample evidence on the elasticities behind them.
 - P10–P90 profit ranges include **both** elasticity uncertainty and baseline-forecast error (empirical test-week
   actual/forecast ratios by volume band).
 - Colour/design variants sharing a price are priced **jointly** (82 items).
 - A **price-test plan** (switchback design, 5% significance, 80% power to tell elasticity −1 from −2) is in
-  `price_test_plan.csv` for every item below high confidence; 10 of 494 are feasible within 12 weeks
-  as single-item tests, 221 when the same % change is tested across the item's category.
+  `price_test_plan.csv` for every item below high confidence; 11 of 493 are feasible within 12 weeks
+  as single-item tests, 220 when the same % change is tested across the item's category.
 
 | StockCode | Description | current_price | recommended_price | profit_change_crossfit | elasticity | elasticity_source | decision_driver | confidence |
 |---|---|---|---|---|---|---|---|---|
-| 79321 | CHILLI LIGHTS | 5.75 | 4.95 | 111.33 | -3.56 | own price changes + category | lower limit: lowest price charged | low |
-| 85099B | JUMBO BAG RED RETROSPOT | 2.08 | 2.25 | 26.01 | -1.81 | own price changes + category | priced jointly with its variants | medium |
-| 23084 | RABBIT NIGHT LIGHT | 2.08 | 2.49 | 20.10 | -2.21 | category only (item never changed price) | upper limit: +20% cap | low |
-| 85099C | JUMBO  BAG BAROQUE BLACK WHITE | 2.08 | 1.95 | 9.45 | -3.12 | own price changes + category | lower limit: lowest price charged | low |
-| 84879 | ASSORTED COLOUR BIRD ORNAMENT | 1.69 | 1.85 | 9.20 | -2.21 | category only (item never changed price) | upper limit: highest price charged | low |
-| 85099F | JUMBO BAG STRAWBERRY | 2.08 | 1.95 | 7.67 | -3.19 | own price changes + category | lower limit: lowest price charged | medium |
-| 21137 | BLACK RECORD COVER FRAME | 3.75 | 4.10 | 7.03 | -2.21 | category only (item never changed price) | upper limit: highest price charged | low |
-| 22178 | VICTORIAN GLASS HANGING T-LIGH | 1.95 | 2.10 | 6.73 | -1.38 | own price changes + category | upper limit: highest price charged | low |
-| 22197 | POPCORN HOLDER | 0.85 | 0.90 | 6.58 | -2.19 | category only (item never changed price) | upper limit: highest price charged | low |
-| 22727 | ALARM CLOCK BAKELIKE RED | 3.75 | 4.10 | 5.20 | -2.21 | category only (item never changed price) | priced jointly with its variants | low |
-| 22726 | ALARM CLOCK BAKELIKE GREEN | 3.75 | 4.10 | 4.30 | -2.21 | category only (item never changed price) | priced jointly with its variants | low |
-| 21175 | GIN + TONIC DIET METAL SIGN | 2.55 | 2.79 | 3.82 | -2.21 | category only (item's own data contradictory) | upper limit: highest price charged | low |
-| 22469 | HEART OF WICKER SMALL | 1.65 | 1.79 | 3.14 | -2.21 | category only (item never changed price) | priced jointly with its variants | low |
-| 21181 | PLEASE ONE PERSON METAL SIGN | 2.10 | 2.25 | 3.08 | -2.21 | category only (item never changed price) | upper limit: highest price charged | low |
-| 23203 | JUMBO BAG VINTAGE DOILY | 2.08 | 2.25 | 2.97 | -2.21 | category only (item never changed price) | upper limit: highest price charged | low |
+| 79321 | CHILLI LIGHTS | 5.75 | 4.95 | 110.92 | -3.57 | own price changes + category | lower limit: lowest price charged | low |
+| 85099B | JUMBO BAG RED RETROSPOT | 2.08 | 2.25 | 25.09 | -1.84 | own price changes + category | priced jointly with its variants | medium |
+| 23084 | RABBIT NIGHT LIGHT | 2.08 | 2.49 | 19.71 | -2.21 | category only (item never changed price) | upper limit: +20% cap | low |
+| 85099C | JUMBO  BAG BAROQUE BLACK WHITE | 2.08 | 1.95 | 8.58 | -3.06 | own price changes + category | lower limit: lowest price charged | low |
+| 84879 | ASSORTED COLOUR BIRD ORNAMENT | 1.69 | 1.85 | 8.29 | -2.21 | category only (item never changed price) | upper limit: highest price charged | medium |
+| 22197 | POPCORN HOLDER | 0.85 | 0.90 | 6.94 | -2.19 | category only (item never changed price) | upper limit: highest price charged | low |
+| 21137 | BLACK RECORD COVER FRAME | 3.75 | 4.10 | 6.76 | -2.21 | category only (item never changed price) | upper limit: highest price charged | medium |
+| 85099F | JUMBO BAG STRAWBERRY | 2.08 | 1.95 | 6.46 | -3.11 | own price changes + category | lower limit: lowest price charged | low |
+| 22178 | VICTORIAN GLASS HANGING T-LIGH | 1.95 | 2.10 | 6.42 | -1.38 | own price changes + category | upper limit: highest price charged | low |
+| 22727 | ALARM CLOCK BAKELIKE RED | 3.75 | 4.10 | 4.77 | -2.21 | category only (item never changed price) | priced jointly with its variants | medium |
+| 22726 | ALARM CLOCK BAKELIKE GREEN | 3.75 | 4.10 | 4.05 | -2.21 | category only (item never changed price) | priced jointly with its variants | medium |
+| 21175 | GIN + TONIC DIET METAL SIGN | 2.55 | 2.79 | 3.61 | -2.21 | category only (item's own data contradictory) | upper limit: highest price charged | low |
+| 23203 | JUMBO BAG VINTAGE DOILY | 2.08 | 2.25 | 3.14 | -2.21 | category only (item never changed price) | upper limit: highest price charged | low |
+| 21181 | PLEASE ONE PERSON METAL SIGN | 2.10 | 2.25 | 2.95 | -2.21 | category only (item never changed price) | upper limit: highest price charged | medium |
+| 22469 | HEART OF WICKER SMALL | 1.65 | 1.79 | 2.84 | -2.21 | category only (item never changed price) | priced jointly with its variants | medium |
 
 ## 4. Competitor scenarios (SIMULATED competitor)
 The competitor enters as demand × (competitor level / reference)^0.5. It does **not** add to the own-price
@@ -119,9 +140,9 @@ elasticity (the real-data elasticity already includes competitor responses), so 
 
 | scenario | profit @ current £ | profit @ recommended £ |
 |---|---|---|
-| comp_minus10 | 18673.45 | 18916.55 |
-| comp_same | 19683.55 | 19939.79 |
-| comp_plus10 | 20644.28 | 20913.03 |
+| comp_minus10 | 18286.84 | 18518.72 |
+| comp_same | 19276.02 | 19520.44 |
+| comp_plus10 | 20216.86 | 20473.21 |
 
 ## 5. Limitations
 - Price changes in this data are not experiments; the placebo test and backtest bound, but do not remove, the bias.

@@ -19,9 +19,11 @@ changes and whose differences between categories and items come from a Poisson (
 This revision follows an independent review. The shop's real price changes show that a 10% rise cut sales by about
 22% (elasticity −2.2), far stronger than the uncalibrated daily panel suggested (−0.82). Calibrating to that level
 reduced the out-of-sample backtest error from 1.09 to 0.91 (1.41 assuming price has no effect). At this sensitivity
-and the assumed 40% margin, current prices are close to optimal: 315 products get a small rise, 124 keep their price
-and 61 get a small cut. The expected gain from high- and medium-confidence suggestions is modest, £344 a week across
-all 500 products, and only 6 products reach high confidence. The system's main value is a transparent decision
+and the assumed 40% margin, current prices are close to optimal: 223 products get a small rise, 215 keep their price
+and 62 get a small cut; a change is suggested only when its gain survives a cross-check. The expected gain from high-
+and medium-confidence suggestions is modest, £391.18 a week across all 500 products, and only 7 products reach high
+confidence. A closure calendar verified against every trading day and UK gifting events are part of the forecast,
+which now also gives profit for any single day up to a month ahead. The system's main value is a transparent decision
 framework and a price-testing plan, not the headline profit figure.
 
 ---
@@ -67,7 +69,22 @@ Products are grouped into nine categories by **whole-word** keyword rules on the
 matches "BUNTING". Colour and design variants (for example the Regency teacups in rose, green and pink) are
 identified by removing colour and design words from the name.
 
-### 2.4 Data splits (strictly by date)
+### 2.4 Holidays and shop closures
+The trading days in the data were compared with the UK calendar:
+
+- The shop **never trades on Saturdays**, and is closed on every England & Wales bank holiday (including substitute
+  days and the 2011 Royal Wedding holiday on 29 April), on **Easter Sunday**, and from **24 December to 2 January**.
+  It does trade on 23 December and on ordinary Sundays.
+- This closure calendar matches all 374 days in the data with **zero mismatches** (an earlier version wrongly
+  treated 23 December as closed).
+- The first trading day after a closure of two or more days sells about **half** (−51%, median of 3) of the previous
+  ten trading days: it is a slow day, not a catch-up day.
+- Gifting occasions that a gift wholesaler's customers stock up for were added: Valentine's Day, Mothering Sunday
+  (UK Mother's Day, three weeks before Easter), Easter, Father's Day (third Sunday of June), Halloween, Bonfire Night
+  and Christmas. Sales in the four weeks before them, against the eight weeks earlier: Mothering Sunday +32%,
+  Easter +25%, Halloween +3%, Father's Day −4%, Bonfire Night −6% (Valentine's Day falls too early in the data to measure).
+
+### 2.5 Data splits (strictly by date)
 
 | Split | Period | Use |
 |---|---|---|
@@ -86,13 +103,18 @@ The splits are defined relative to the last data day. `--as-of` re-runs the whol
 ### 3.1 Baseline demand forecast
 - **Candidates:** LightGBM, XGBoost and Random Forest (Tweedie loss), their ensemble, and two naive baselines
   (same day last week; 28-day mean rate).
-- **Features:** calendar features and demand lags or rolling windows at least 7 days old; an automated test
+- **Features:** calendar and holiday features (closure calendar, days to/since gifting events, closures in the
+  next and previous 7 days, reopening days) and demand lags or rolling windows at least 7 days old; an automated test
   confirms that no feature uses later data. No price features are used, so price effects come only from stage 2.
 - **Fair selection:** every candidate, including the naive ones, gets a level-calibration factor fitted on the
   calibration month, and the winner is chosen on the selection month.
 - **Production calibration:** the chosen model is refitted on data up to 2011-10-31, and its level error on the
-  test weeks (factor 1.20) is applied to the final full-history refit. The factor therefore belongs to the refit
+  test weeks (factor 1.23) is applied to the final full-history refit. The factor therefore belongs to the refit
   model rather than the train-only model.
+- **Daily forecasts up to a month ahead:** days 1–7 come from the model. Days 8–30 use next week's level multiplied
+  by last year's store-wide pattern for the same days (matched by weekday; neighbouring open days smoothed), because
+  the model has seen only one Christmas and on its own missed the pre-Christmas slowdown and the weak first days of
+  January. Closed days are zero. This part cannot be validated, as only one earlier year exists.
 
 ### 3.2 Own-price elasticity
 - **Level (event study):** for every real list-price change (the weekly list price moves by at least 2% and holds
@@ -125,12 +147,17 @@ reaction, the competitor enters **only** as a demand shift when its price level 
 ### 3.5 Robust price decision
 For each product, candidate prices with realistic endings are evaluated over 500 elasticity draws. The chosen price
 has the **highest expected profit**, the same figure users see, so a suggestion is never expected to earn less than
-today's price (an automated test enforces this). Risk is reported separately through the confidence rating. Limits:
+today's price (an automated test enforces this). A change is suggested only if its gain also survives a cross-check
+(choose the price on half of the draws, score it on the other half); otherwise today's price is kept, so no suggestion
+shows a negative extra profit. Risk is reported separately through the confidence rating. Limits:
 
 - at most ±20% from the current price;
 - at most 10% above the highest weekly list price ever charged (flagged as untested);
 - a minimum margin of 20%;
 - an optional stock cap.
+
+If today's price is so far below cost that one step cannot restore the minimum margin, the largest allowed step up is
+suggested (it cuts the loss) and the product is flagged: two products still lose money after it.
 
 Each recommendation also reports:
 - **What set the price:** the data (an interior optimum or keeping the price), a named limit, or joint pricing with variants.
@@ -160,16 +187,18 @@ It also estimates the duration when the same percentage change is tested across 
 
 | Model | Calibration | Selection month | Test | Test bias % |
 |---|---|---|---|---|
-| **LightGBM (selected)** | 1.31 | **63.0** | 53.5 | −0.5 |
-| XGBoost | 1.24 | 63.6 | 52.5 | −2.1 |
-| Random Forest | 1.16 | 67.2 | 59.3 | 0.8 |
-| Ensemble | 1.24 | 64.1 | 54.6 | −0.6 |
+| **LightGBM (selected)** | 1.31 | **63.1** | 53.3 | −1.2 |
+| XGBoost | 1.27 | 63.2 | 52.5 | −4.3 |
+| Random Forest | 1.16 | 67.0 | 59.6 | 1.2 |
+| Ensemble | 1.24 | 64.1 | 54.8 | −1.4 |
 | Naive: same day last week | 1.12 | 75.4 | 66.5 | 7.9 |
 | Naive: 28-day mean rate | 1.11 | 65.8 | 52.9 | −1.4 |
 
 LightGBM wins the selection month fairly, but on the test weeks it is slightly worse than XGBoost and the calibrated
 28-day average. **Machine learning adds no reliable accuracy over a calibrated simple average for this data.** The
-baseline scales profit equally at every price, so this affects the £ figures but not which price is chosen.
+baseline scales profit equally at every price, so this affects the £ figures but not which price is chosen. The holiday
+features left weekly accuracy almost unchanged (53.3% vs 53.5%); their value is getting closed days and the
+pre-closure slowdown right in the daily forecasts.
 
 ![Forecast accuracy](../outputs/forecast_accuracy.png)
 
@@ -199,14 +228,15 @@ baseline scales profit equally at every price, so this affects the £ figures bu
 
 | Metric | Value |
 |---|---|
-| Direction (all 500) | 315 raise, 124 keep, 61 cut; 79 distinct % changes |
-| Price set by the data | 100 (63 keep current price, 37 interior optimum) |
-| Price set by a business limit | 291 (247 upper, 44 lower) |
-| Jointly priced variants / no price choice | 82 / 27 |
-| Confidence (all 500): high / medium / low | 6 / 137 / 357 |
-| Confidence (top 50): high / medium / low | 0 / 16 / 34 |
-| Cross-fitted weekly gain, all 500, high + medium | **£344** (low confidence: £625) |
-| Expected weekly profit, top 50 | £19,684 at current prices → £19,940 at suggested prices |
+| Direction (all 500) | 223 raise, 215 keep, 62 cut; 75 distinct % changes |
+| Price set by the data | 185 (63 keep, 88 keep because the gain did not survive the cross-check, 34 interior optimum) |
+| Price set by a business limit | 209 (162 upper, 47 lower) |
+| Jointly priced variants / no price choice | 82 / 24 |
+| Products still losing money (priced below estimated cost) | 2 |
+| Confidence (all 500): high / medium / low | 7 / 255 / 238 |
+| Confidence (top 50): high / medium / low | 0 / 28 / 22 |
+| Cross-fitted weekly gain, all 500, high + medium | **£391.18** (low confidence: £741.00) |
+| Expected weekly profit, top 50 | £19,276.02 at current prices → £19,520.44 at suggested prices |
 
 **Why many products share the same % change.** Products that never changed price share their category's
 elasticity, and every product uses the same assumed cost ratio (60%). Products that also sell at the same price
@@ -219,26 +249,26 @@ Largest expected gains among the top 50 products by revenue:
 
 | Code | Product | Current £ | Suggested £ | Gain £ | Evidence | Price set by |
 |---|---|---|---|---|---|---|
-| 79321 | Chilli Lights | 5.75 | 4.95 | 111 | own + category | lowest price charged |
-| 85099B | Jumbo Bag Red Retrospot | 2.08 | 2.25 | 26 | own + category | joint with variants |
-| 23084 | Rabbit Night Light | 2.08 | 2.49 | 20 | category only | +20% cap |
-| 85099C | Jumbo Bag Baroque Black White | 2.08 | 1.95 | 9 | own + category | lowest price charged |
-| 84879 | Assorted Colour Bird Ornament | 1.69 | 1.85 | 9 | category only | highest price charged |
+| 79321 | Chilli Lights | 5.75 | 4.95 | 110.92 | own + category | lowest price charged |
+| 85099B | Jumbo Bag Red Retrospot | 2.08 | 2.25 | 25.09 | own + category | joint with variants |
+| 23084 | Rabbit Night Light | 2.08 | 2.49 | 19.71 | category only | +20% cap |
+| 85099C | Jumbo Bag Baroque Black White | 2.08 | 1.95 | 8.58 | own + category | lowest price charged |
+| 84879 | Assorted Colour Bird Ornament | 1.69 | 1.85 | 8.29 | category only | highest price charged |
 
 ![Profit vs price](../outputs/profit_vs_price_curves.png)
 
 ### 4.4 Price-test plan
-Only 10 of 494 items below high confidence could be tested individually within 12 weeks, because single-item
+Only 11 of 493 items below high confidence could be tested individually within 12 weeks, because single-item
 daily sales are very noisy. Testing the same percentage change across an item's category makes it
-practical for 221 of them. The plan is in `outputs/price_test_plan.csv` and on each item's page.
+practical for 220 of them. The plan is in `outputs/price_test_plan.csv` and on each item's page.
 
 ### 4.5 Competitor scenarios (simulated)
 
 | Scenario | Profit at current prices £ | Profit at recommended prices £ |
 |---|---|---|
-| Competitor −10% | 18,673 | 18,917 |
-| Competitor unchanged | 19,684 | 19,940 |
-| Competitor +10% | 20,644 | 20,913 |
+| Competitor −10% | 18,286.84 | 18,518.72 |
+| Competitor unchanged | 19,276.02 | 19,520.44 |
+| Competitor +10% | 20,216.86 | 20,473.21 |
 
 ![Competitor scenarios](../outputs/competitor_scenarios.png)
 
@@ -248,10 +278,10 @@ practical for 221 of them. The plan is in `outputs/price_test_plan.csv` and on e
 
 | Component | Description |
 |---|---|
-| Web app (`docs/`) | Runs in the browser with no server. Existing-item, new-item, batch CSV and all-recommendations views; CSV downloads. |
+| Web app (`docs/`) | Runs in the browser with no server; plain-language wording. Existing-item, new-item, batch CSV and all-suggestions views; profit for next week and for any single day up to a month ahead (closed days explained); CSV downloads. |
 | `src/pricing_core.py` + `docs/pricing.js` | One decision engine with an exact JS port; a test checks they agree on 41 cases. |
 | Streamlit app (`app/`) | Optional local app; reads portable Parquet/JSON artifacts and keeps no shared state between users. |
-| Tests and CI | 54 tests on every push: decision rules, each review finding, feature leakage, recovery of a known elasticity, JS parity, the Streamlit app, and invariants on the committed outputs. A manual CI run re-trains from the public dataset. |
+| Tests and CI | 80 tests on every push: decision rules, each review finding, feature leakage, recovery of a known elasticity, JS parity, the Streamlit app, and invariants on the committed outputs. A manual CI run re-trains from the public dataset. |
 | Reproducibility | Pinned dependency versions; `.sh` and `.bat` scripts; `--as-of` for other decision weeks. |
 
 ---
@@ -271,6 +301,8 @@ practical for 221 of them. The plan is in `outputs/price_test_plan.csv` and on e
    than assuming no price effect. The level needs more price changes, ideally from planned tests, to be reliable.
    The default week is also the unusual pre-Christmas peak.
 7. **Small backtest:** 10 events for the default run.
+8. **Daily and month-ahead forecasts:** single days are very noisy, and days 8–30 rely on one earlier year's pattern
+   for the same days, which cannot be validated with this data. Treat them as rough guides.
 
 ---
 

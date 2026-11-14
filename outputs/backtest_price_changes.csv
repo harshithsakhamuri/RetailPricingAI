@@ -1,11 +1,11 @@
 StockCode,week,price_before,price_after,dlogp,actual_dlogq,elasticity_at_cutoff,source_at_cutoff,pred_dlogq
-21108,2011-10-03/2011-10-09,2.55,0.79,-1.1718,1.787,-1.8905,category only (item never changed price),2.2153
-21670,2011-09-05/2011-09-11,1.25,1.45,0.1484,0.98,-1.8905,category only (item never changed price),-0.2806
-21672,2011-09-05/2011-09-11,1.25,1.45,0.1484,0.0427,-1.8905,category only (item never changed price),-0.2806
-21868,2011-11-14/2011-11-20,3.29,1.65,-0.6901,3.2029,-1.8905,category only (item never changed price),1.3047
-22207,2011-11-14/2011-11-20,4.25,6.27,0.3889,-1.3406,-1.8905,category only (item never changed price),-0.7351
-22207,2011-11-28/2011-12-04,6.27,4.25,-0.3889,1.0616,-1.8905,category only (item never changed price),0.7351
-22616,2011-09-05/2011-09-11,0.29,0.39,0.2963,-1.2969,-1.8905,category only (item never changed price),-0.5601
-22835,2011-09-05/2011-09-11,4.65,4.95,0.0625,0.4993,-1.8905,category only (item never changed price),-0.1182
-48138,2011-09-05/2011-09-11,7.95,8.25,0.037,2.08,-1.8905,category only (item never changed price),-0.07
-84050,2011-10-03/2011-10-09,2.89,1.65,-0.5605,1.8265,-1.8905,category only (item never changed price),1.0596
+21108,2011-10-03/2011-10-09,2.55,0.79,-1.1718,1.787,-1.889,category only (item never changed price),2.2135
+21670,2011-09-05/2011-09-11,1.25,1.45,0.1484,0.98,-1.889,category only (item never changed price),-0.2804
+21672,2011-09-05/2011-09-11,1.25,1.45,0.1484,0.0427,-1.889,category only (item never changed price),-0.2804
+21868,2011-11-14/2011-11-20,3.29,1.65,-0.6901,3.2029,-1.889,category only (item never changed price),1.3036
+22207,2011-11-14/2011-11-20,4.25,6.27,0.3889,-1.3406,-1.889,category only (item never changed price),-0.7345
+22207,2011-11-28/2011-12-04,6.27,4.25,-0.3889,1.0616,-1.889,category only (item never changed price),0.7345
+22616,2011-09-05/2011-09-11,0.29,0.39,0.2963,-1.2969,-1.889,category only (item never changed price),-0.5596
+22835,2011-09-05/2011-09-11,4.65,4.95,0.0625,0.4993,-1.889,category only (item never changed price),-0.1181
+48138,2011-09-05/2011-09-11,7.95,8.25,0.037,2.08,-1.889,category only (item never changed price),-0.07
+84050,2011-10-03/2011-10-09,2.89,1.65,-0.5605,1.8265,-1.889,category only (item never changed price),1.0587

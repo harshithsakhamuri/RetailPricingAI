@@ -27,6 +27,22 @@ OUT = ROOT / "outputs"
 st.set_page_config(page_title="Retail Pricing AI", page_icon="🏷️", layout="wide")
 
 
+def pct(x):
+    """+10% when whole, +9.8% when a decimal is needed."""
+    v = round(x, 1)
+    return f"{v:+.0f}%" if v == int(v) else f"{v:+.1f}%"
+
+
+def money(x):
+    return f"−£{abs(x):,.2f}" if x < 0 else f"£{x:,.2f}"
+
+
+@st.cache_data
+def load_daily():
+    d = pd.read_csv(OUT / "daily_forecast.csv", dtype={"StockCode": str}, parse_dates=["Date"])
+    return d
+
+
 @st.cache_data
 def load():
     if not (OUT / "app_products.parquet").exists():
@@ -106,12 +122,12 @@ chg = 100 * (p_star / p0 - 1)
 st.subheader(r["Description"].title())
 m1, m2, m3 = st.columns(3)
 m1.metric("Forecast demand (at current price)", f"{b['units_current']:,.0f} units")
-m2.metric("Recommended price", f"£{p_star:.2f}", f"{chg:+.1f}% vs £{p0:.2f}" if abs(chg) > 0.05 else "keep current price",
+m2.metric("Recommended price", f"£{p_star:.2f}", f"{pct(chg)} vs £{p0:.2f}" if abs(chg) > 0.05 else "keep current price",
           delta_color="off")
 m3.metric("Units at recommended price", f"{b['units']:,.0f}", f"{b['units'] - b['units_current']:+,.0f}", delta_color="off")
 m4, m5, m6 = st.columns(3)
-m4.metric("Expected profit", f"£{b['profit']:,.0f}", f"{b['profit'] - b['profit_current']:+,.0f} £ vs current")
-m5.metric("Likely profit range (P10–P90)", f"£{p10:,.0f} – £{p90:,.0f}", help="Includes forecast error and price-sensitivity uncertainty.")
+m4.metric("Expected profit next week", money(b["profit"]), f"{money(b['profit'] - b['profit_current'])} vs current")
+m5.metric("Likely profit range (P10–P90)", f"{money(p10)} – {money(p90)}", help="Includes forecast error and price-sensitivity uncertainty.")
 m6.metric("Confidence", {"high": "🟢 High", "medium": "🟡 Medium", "low": "🔴 Low"}[conf])
 if reason:
     st.warning(f"**Why the confidence is {conf}:** {reason}")
@@ -126,6 +142,27 @@ info.append(f"**Price test:** alternate weeks at £{p0:.2f} and £{plan['test_pr
             f"trading days per price (≈ {plan['test_weeks_total']} weeks"
             + ("" if plan["test_feasible"] else f"; ≈ {int(r['test_weeks_pooled_category'])} weeks if run across the category") + ").")
 st.info("\n\n".join(info))
+
+st.markdown("**Profit on a single day** (up to a month ahead)")
+daily = load_daily()
+dd = daily[daily["StockCode"] == r["StockCode"]].set_index("Date")["baseline_units"]
+cal = {c["date"]: c for c in meta["calendar"]}
+first_open = next(pd.Timestamp(c["date"]) for c in meta["calendar"] if c["open"])
+day = st.date_input("Day", value=first_open.date(), min_value=dd.index.min().date(), max_value=dd.index.max().date(),
+                    help="Defaults to the next day the shop is open after the sales records end.")
+c = cal[str(day)]
+if not c["open"]:
+    st.warning(f"{day:%A %d %B %Y}: the shop is closed ({c['reason']}). Expected profit: £0.00.")
+else:
+    base_d = float(dd.loc[pd.Timestamp(day)])
+    def day_at(price):
+        u = core.demand_matrix([price], p0, base_d, o["e_draws"], row["comp_mult"])[:, 0].mean()
+        return u, u * (price - row["unit_cost"])
+    (un, pn), (uc, pc_) = day_at(p_star), day_at(p0)
+    d1, d2 = st.columns(2)
+    d1.metric(f"Profit at £{p_star:.2f}", money(pn), f"about {un:,.0f} units", delta_color="off")
+    d2.metric(f"Profit at today's £{p0:.2f}", money(pc_), f"about {uc:,.0f} units", delta_color="off")
+    st.caption((c["note"] + " " if c["note"] else "") + "Single days vary a lot; the weekly figure is more reliable.")
 
 grid = np.linspace(p0 * 0.7, p0 * 1.3, 120)
 units = np.minimum(core.demand_matrix(grid, p0, row["baseline_units"], o["e_draws"], row["comp_mult"]), stock_cap)
@@ -148,9 +185,9 @@ with right:
     try_p = st.slider("Price £", float(round(p0 * 0.7, 2)), float(round(p0 * 1.3, 2)), float(p_star), 0.01)
     u_try = np.minimum(core.demand_matrix([try_p], p0, row["baseline_units"], o["e_draws"], row["comp_mult"])[:, 0], stock_cap)
     st.metric("Expected units", f"{u_try.mean():,.0f}")
-    st.metric("Expected profit", f"£{((try_p - row['unit_cost']) * u_try).mean():,.0f}")
+    st.metric("Expected profit", money(((try_p - row["unit_cost"]) * u_try).mean()))
     st.markdown("**Competitor scenarios** (SIMULATED competitor)")
-    st.dataframe(pd.DataFrame([{"Competitor": k, "Price £": v["price"], "Units": round(v["units"]), "Profit £": round(v["profit"])}
+    st.dataframe(pd.DataFrame([{"Competitor": k, "Price £": v["price"], "Units": round(v["units"]), "Profit £": round(v["profit"], 2)}
                                for k, v in o.items() if k.startswith("comp_")]), hide_index=True, width="stretch")
 
 with st.expander("Details"):

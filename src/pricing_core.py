@@ -113,8 +113,10 @@ def optimise_product(r: dict, z, stock: float = math.inf, forced_price: float | 
     if forced_price is not None:
         cands = np.array([float(forced_price)])
     elif lo > hi:
+        # Priced below a safe margin and one step cannot fix it: take the largest
+        # allowed step up, which cuts the loss, and flag it.
         flags.append("no feasible price (minimum-margin price is above the allowed range)")
-        cands = np.array([p0])
+        cands = np.array([hi])
     else:
         grid = price_grid(lo, hi)
         cands = np.unique(np.r_[grid, [p0] if lo - 1e-9 <= p0 <= hi + 1e-9 else []])
@@ -149,12 +151,18 @@ def optimise_product(r: dict, z, stock: float = math.inf, forced_price: float | 
             for pick, score in ((a, b), (b, a)):
                 kk = _choose(profit[pick], feasible)
                 gains.append(profit[score, kk].mean() - profit[score, k0].mean())
-            out[scen]["profit_change_crossfit"] = float(np.mean(gains))
+            # Keeping today's price changes nothing, so its gain is exactly zero.
+            out[scen]["profit_change_crossfit"] = 0.0 if k == k0 else float(np.mean(gains))
 
     best = out["comp_same"]["price"]
     multi = len(cands) > 1
     if not multi:
-        driver = "fixed (no price choice)" if forced_price is None else "priced jointly with its variants"
+        if forced_price is not None:
+            driver = "priced jointly with its variants"
+        elif lo > hi and best > p0 + 1e-9:
+            driver = f"upper limit: {hi_rule} (still below the minimum margin)"
+        else:
+            driver = "fixed (no price choice)"
         at_bound = False
     elif np.isclose(best, cands.max()) and best > p0 + 1e-9:
         driver, at_bound = f"upper limit: {hi_rule}", True
@@ -164,6 +172,14 @@ def optimise_product(r: dict, z, stock: float = math.inf, forced_price: float | 
         driver, at_bound = ("data: keep current price" if np.isclose(best, p0) else "data: interior optimum"), False
     out.update(flags=flags, bounds=(float(lo), float(hi)), decision_driver=driver, at_bound=bool(at_bound),
                e_draws=e_draws)
+    # Only recommend a change whose gain survives the cross-check; otherwise keep today's price.
+    p0_ok = bool(np.any(np.isclose(cands, p0)))
+    if (forced_price is None and multi and p0_ok and not np.isclose(best, p0)
+            and out["comp_same"]["profit_change_crossfit"] <= 0):
+        keep = optimise_product(r, z, stock=stock, forced_price=p0)
+        keep.update(flags=flags, bounds=(float(lo), float(hi)), at_bound=False,
+                    decision_driver="data: keep current price (gain too small to be sure)")
+        return keep
     return out
 
 

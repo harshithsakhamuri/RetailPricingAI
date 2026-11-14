@@ -1,501 +1,501 @@
 StockCode,n_weeks,n_price_levels,logp_std,e_raw,se_raw,category,elasticity,elasticity_se,elasticity_source,prior_mean
-22423,53,1,0.0316,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-85123A,53,1,0.024,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-47566,53,2,0.0503,3.0753,3.3164,stationery_paper,-2.2057,2.8067,category only (item's own data contradictory),-2.2057
-85099B,53,2,0.0299,-0.672,3.9101,bags,-1.8147,1.9909,own price changes + category,-2.2147
-84879,53,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-79321,50,2,0.0821,-8.2366,5.2062,lighting_candles,-3.5638,2.4706,own price changes + category,-2.2057
-23298,32,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-82484,53,3,0.0821,-10.0325,7.062,other,-2.4584,1.2982,own price changes + category,-2.1935
-22386,52,2,0.039,0.7263,4.7123,bags,-2.2147,2.3132,category only (item's own data contradictory),-2.2147
-85099F,49,2,0.0383,-10.5546,6.3728,bags,-3.1856,2.1744,own price changes + category,-2.2147
-21137,47,1,0.0324,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22960,53,1,0.0501,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22720,46,1,0.0453,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-20725,53,1,0.0614,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-23203,32,1,0.0098,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-21623,50,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22197,52,1,0.0372,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-20685,53,2,0.0364,-38.5961,22.65,home_decor,-2.2385,0.6794,own price changes + category,-2.2057
-22469,43,1,0.0231,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22470,44,1,0.0385,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22629,53,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21621,45,1,0.0036,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-22699,53,1,0.0767,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22178,53,2,0.2033,-1.2319,1.1945,lighting_candles,-1.3812,1.0991,own price changes + category,-2.2057
-23199,35,1,0.0559,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-23173,31,1,0.0665,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22189,52,1,0.0547,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-48138,53,2,0.0364,-10.0765,11.0011,home_decor,-2.2357,0.6784,own price changes + category,-2.2057
-22090,53,1,0.0386,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-15056N,52,1,0.0249,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-85099C,53,2,0.0305,-10.9703,6.8207,bags,-3.1178,2.1906,own price changes + category,-2.2147
-48187,53,2,0.0166,-14.3697,35.6227,home_decor,-2.2102,0.6795,own price changes + category,-2.2057
-22457,53,1,0.032,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21931,53,2,0.0506,1.4865,3.8515,bags,-2.2147,2.3132,category only (item's own data contradictory),-2.2147
-22326,52,1,0.0446,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22630,53,1,0.0271,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22383,52,1,0.0,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-23245,27,1,0.0518,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22659,52,1,0.0741,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23284,27,2,0.0634,-2.1145,3.5952,home_decor,-2.2026,0.6678,own price changes + category,-2.2057
-15036,48,2,0.0467,1.5362,11.312,other,-2.1935,1.3207,category only (item's own data contradictory),-2.1935
-21733,50,1,0.0628,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22693,50,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-48194,53,2,0.1032,4.3286,4.4084,home_decor,-2.2057,0.6797,category only (item's own data contradictory),-2.2057
-21929,52,2,0.0951,-11.9898,4.7741,bags,-4.0732,2.0817,own price changes + category,-2.2147
-22961,50,1,0.077,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23201,35,1,0.0099,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-21175,51,2,0.0689,10.4339,3.8731,home_decor,-2.2057,0.6797,category only (item's own data contradictory),-2.2057
-22727,53,1,0.0455,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22084,37,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-21523,53,2,0.0692,-6.2918,5.2947,home_decor,-2.272,0.6741,own price changes + category,-2.2057
-21928,53,2,0.0828,-12.2914,6.3841,bags,-3.3841,2.1748,own price changes + category,-2.2147
-21731,53,1,0.0557,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-23206,35,1,0.0,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-20728,53,1,0.032,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-23209,32,1,0.0,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22384,52,1,0.0806,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22411,53,2,0.0515,2.4813,3.518,bags,-2.2147,2.3132,category only (item's own data contradictory),-2.2147
-82482,53,2,0.0692,-2.1572,2.7168,home_decor,-2.2029,0.6593,own price changes + category,-2.2057
-23202,32,1,0.03,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-21212,53,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-20727,53,1,0.0,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-85066,53,1,0.0385,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-21915,52,1,0.1137,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-20914,53,1,0.0545,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22328,53,1,0.0385,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-20713,41,2,0.0709,1.6805,3.1854,bags,-2.2147,2.3132,category only (item's own data contradictory),-2.2147
-22969,53,1,0.0,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-84997D,52,2,0.0548,-5.443,9.5181,kitchen_baking,-2.9633,4.5973,own price changes + category,-2.2088
-48185,49,2,0.131,4.9585,4.6876,kitchen_baking,-2.2088,5.2503,category only (item's own data contradictory),-2.2088
-22697,53,1,0.0914,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21754,53,2,0.0488,-19.5225,7.5476,other,-2.7083,1.3009,own price changes + category,-2.1935
-21843,53,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22666,53,1,0.0634,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22722,38,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-21181,38,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-84946,53,1,0.0388,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22139,52,1,0.0374,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-82486,53,2,0.0584,-2.7354,2.8079,other,-2.2917,1.1951,own price changes + category,-2.1935
-22726,45,1,0.0397,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-20726,53,1,0.0452,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-84997B,52,2,0.0792,-14.5439,10.0873,kitchen_baking,-4.8381,4.6573,own price changes + category,-2.2088
-22467,51,1,0.0623,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22385,52,2,0.0301,-14.8785,9.1422,bags,-2.9766,2.2425,own price changes + category,-2.2147
-22382,53,1,0.0,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22728,53,1,0.0601,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22607,48,1,0.0415,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-82494L,49,1,0.0118,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22492,53,1,0.1024,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-20712,52,2,0.0558,-2.7197,4.7452,bags,-2.3116,2.0793,own price changes + category,-2.2147
-22171,50,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-84978,52,1,0.0713,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-84078A,34,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-21166,44,2,0.0231,19.8771,9.3885,home_decor,-2.2057,0.6797,category only (item's own data contradictory),-2.2057
-22501,37,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22188,46,1,0.0754,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-47566B,45,2,0.0222,8.9203,13.9099,kitchen_baking,-2.2088,5.2503,category only (item's own data contradictory),-2.2088
-21936,50,2,0.1102,-10.3545,2.1897,bags,-6.0,1.5902,own price changes + category,-2.2147
-22138,50,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-48188,51,3,0.1401,-7.7728,4.5684,home_decor,-2.3263,0.6723,own price changes + category,-2.2057
-22900,49,2,0.0445,-5.3599,9.6782,kitchen_baking,-2.9253,4.615,own price changes + category,-2.2088
-22427,44,1,0.0315,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22499,45,1,0.0353,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-84997C,49,2,0.0363,-10.1901,12.7862,kitchen_baking,-3.3603,4.8568,own price changes + category,-2.2088
-22624,46,1,0.0443,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22698,46,1,0.0946,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22993,43,1,0.0438,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21977,53,1,0.0692,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23084,20,1,0.2145,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-47590B,51,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-15056BL,51,1,0.0423,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22558,53,2,0.0691,-3.1138,3.6116,other,-2.302,1.2404,own price changes + category,-2.1935
-23174,30,1,0.0299,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-84077,51,1,0.0895,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-85152,49,1,0.1261,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21755,53,2,0.0468,-10.4332,9.3971,other,-2.3531,1.3079,own price changes + category,-2.1935
-82483,47,2,0.0772,-6.0672,1.8994,other,-3.456,1.0844,own price changes + category,-2.1935
-20750,51,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22087,27,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-22507,50,1,0.0991,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-23207,35,1,0.0392,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-23240,27,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-23200,32,1,0.0023,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-48184,51,2,0.0164,25.2209,32.4383,home_decor,-2.2057,0.6797,category only (item's own data contradictory),-2.2057
-23243,27,1,0.0314,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-71477,36,2,0.139,0.5489,2.33,lighting_candles,-2.2057,2.8067,category only (item's own data contradictory),-2.2057
-22112,48,1,0.0087,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22077,53,2,0.0858,4.7784,1.8735,other,-2.1935,1.3207,category only (item's own data contradictory),-2.1935
-71459,50,1,0.0662,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22551,53,1,0.0231,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22379,52,1,0.0857,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-21108,41,2,0.444,-3.3958,1.9489,kitchen_baking,-3.2521,1.8271,own price changes + category,-2.2088
-22622,52,2,0.1106,-2.9861,4.6846,storage,-2.4118,2.4077,own price changes + category,-2.2057
-22662,52,1,0.0614,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-21232,53,1,0.086,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22605,48,1,0.0374,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22776,53,1,0.0043,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-84755,52,1,0.0762,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22086,34,1,0.0,,,christmas,-2.2057,2.8067,category only (item never changed price),-2.2057
-22847,43,1,0.0667,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22083,52,1,0.0544,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-48173C,45,2,0.0164,-60.719,39.8774,home_decor,-2.2227,0.6796,own price changes + category,-2.2057
-22625,46,1,0.006,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22502,33,1,0.4489,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-47590A,51,1,0.0506,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-21524,53,2,0.039,9.4815,4.1257,home_decor,-2.2057,0.6797,category only (item's own data contradictory),-2.2057
-21340,45,1,0.0384,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21080,53,1,0.0018,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21430,52,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22554,53,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22570,45,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-82600,47,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-20749,48,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22752,51,1,0.1036,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-21217,52,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22970,50,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22149,47,1,0.1713,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22988,42,1,0.1054,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22569,45,1,0.0393,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22690,52,2,0.0366,-11.505,26.7341,home_decor,-2.2117,0.6794,own price changes + category,-2.2057
-84997A,48,2,0.1074,-5.2887,6.8172,kitchen_baking,-3.3555,4.1597,own price changes + category,-2.2088
-23175,29,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21930,52,2,0.0297,-1.558,9.2593,bags,-2.1761,2.2442,own price changes + category,-2.2147
-22111,45,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22989,45,1,0.0122,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-20724,53,1,0.0481,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-23171,31,1,0.1234,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21559,53,1,0.1145,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22729,47,1,0.103,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21216,50,1,0.063,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23208,35,1,0.0,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-23134,14,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22568,51,1,0.1162,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22846,42,1,0.2555,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22692,52,2,0.0627,-6.2722,5.8881,home_decor,-2.2592,0.6752,own price changes + category,-2.2057
-22556,53,1,0.0231,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22555,50,1,0.0395,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-23170,31,1,0.0722,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22968,32,1,0.02,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22191,52,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-84406B,46,2,0.0867,-7.9741,3.2743,home_decor,-2.444,0.6655,own price changes + category,-2.2057
-84991,53,1,0.0321,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21485,46,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-20711,51,2,0.03,-43.6855,13.4908,bags,-3.3991,2.2799,own price changes + category,-2.2147
-82583,39,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22652,50,1,0.0231,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-22424,51,1,0.0316,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-85014B,51,1,0.0942,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-20679,50,1,0.0691,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-84375,53,1,0.0778,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-23076,37,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22193,53,1,0.0223,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21218,50,1,0.0682,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-21955,46,2,0.0167,-81.2578,47.8136,home_decor,-2.2217,0.6796,own price changes + category,-2.2057
-21121,48,1,0.0,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-85150,39,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-48116,40,2,0.1098,-21.146,12.9978,home_decor,-2.2574,0.6787,own price changes + category,-2.2057
-22766,53,1,0.0225,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22041,43,1,0.1082,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-20719,53,1,0.0373,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22740,30,1,0.0091,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-23297,15,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22910,29,1,0.0,,,christmas,-2.2057,2.8067,category only (item never changed price),-2.2057
-21891,51,2,0.0686,8.0503,7.1436,toys_gifts,-2.2057,2.8067,category only (item's own data contradictory),-2.2057
-21922,41,1,0.1131,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22730,52,1,0.023,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-84970S,53,1,0.148,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-20972,51,1,0.0447,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-23077,38,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21790,53,1,0.0216,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-21791,51,1,0.0319,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-22844,52,1,0.0664,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22771,52,1,0.0202,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22355,53,1,0.0676,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22804,51,1,0.1139,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-82582,51,1,0.086,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22966,46,1,0.0447,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22616,51,2,0.1878,0.3385,1.6457,stationery_paper,-2.2057,2.8067,category only (item's own data contradictory),-2.2057
-23300,31,1,0.0425,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21210,43,1,0.0405,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-23078,38,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-21533,51,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22561,53,1,0.0242,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22113,43,2,0.0607,15.0821,4.7644,kitchen_baking,-2.2088,5.2503,category only (item's own data contradictory),-2.2088
-22617,53,1,0.0731,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21122,47,1,0.0546,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-23108,31,1,0.0,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22667,46,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22192,52,1,0.0315,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22333,50,1,0.0683,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-62018,28,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21314,52,1,0.0633,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22560,53,1,0.0592,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-23008,35,1,0.0215,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-72741,50,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22957,17,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-84947,50,1,0.0888,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23301,31,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22487,51,1,0.0402,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22619,50,1,0.0641,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-22838,35,1,0.1289,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22413,49,1,0.1201,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21914,52,1,0.0669,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22840,50,1,0.0454,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22352,53,1,0.0923,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22834,31,1,0.0769,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22557,51,1,0.1009,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-21380,51,1,0.0856,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21213,53,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22169,50,1,0.0699,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22978,42,1,0.0506,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-71053,52,1,0.1108,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-75049L,31,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22741,49,1,0.0218,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-21136,53,1,0.0202,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21770,38,1,0.0472,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-23007,34,1,0.0,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-22791,43,1,0.0447,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22505,47,1,0.063,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21259,49,1,0.0249,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-84992,51,1,0.1236,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-84945,43,1,0.0606,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22088,27,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-22849,32,1,0.0035,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-84347,27,1,0.0898,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22243,34,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22621,52,2,0.0648,8.8187,2.0578,other,-2.1935,1.3207,category only (item's own data contradictory),-2.1935
-22151,50,1,0.1515,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21908,50,1,0.11,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22294,51,1,0.0247,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22456,50,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-84378,50,2,0.1275,-1.2049,2.4211,home_decor,-2.1326,0.6544,own price changes + category,-2.2057
-21231,53,1,0.1206,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-84380,51,2,0.1214,-2.9049,1.7556,other,-2.4506,1.0554,own price changes + category,-2.1935
-22749,50,1,0.0,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-21937,28,1,0.0,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-21094,52,1,0.0036,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-84836,53,1,0.0673,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-23256,36,1,0.0492,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22147,48,1,0.2439,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22173,46,2,0.119,0.7827,4.2333,home_decor,-2.2057,0.6797,category only (item's own data contradictory),-2.2057
-22779,40,1,0.0,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-21975,52,1,0.1043,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22349,41,1,0.0393,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22971,47,1,0.0577,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21668,53,2,0.0996,-6.1356,3.3902,other,-2.7129,1.2306,own price changes + category,-2.1935
-22992,39,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22837,16,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21165,51,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22585,51,1,0.0319,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22663,53,2,0.0686,-8.4488,8.1493,bags,-2.6795,2.2253,own price changes + category,-2.2147
-22634,49,1,0.0,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-22895,51,2,0.052,-13.1385,7.7664,kitchen_baking,-5.637,4.3497,own price changes + category,-2.2088
-21035,46,2,0.1614,-2.7036,1.3049,kitchen_baking,-2.6748,1.2663,own price changes + category,-2.2088
-22795,39,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-23052,38,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21669,52,2,0.1428,-3.4723,2.1039,other,-2.555,1.1186,own price changes + category,-2.1935
-21535,52,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-84988,53,1,0.08,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-20971,51,1,0.0669,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-21155,52,2,0.1148,-3.6817,2.0925,bags,-3.0215,1.5518,own price changes + category,-2.2147
-22784,50,1,0.1247,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22303,50,1,0.0389,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21174,50,2,0.0227,38.5673,12.5367,home_decor,-2.2057,0.6797,category only (item's own data contradictory),-2.2057
-22170,50,1,0.0942,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22654,45,1,0.0788,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-21672,53,2,0.0649,-9.241,4.8249,other,-2.6847,1.2739,own price changes + category,-2.1935
-17003,44,3,0.2029,-1.2576,2.0508,other,-1.9191,1.1104,own price changes + category,-2.1935
-21481,36,2,0.106,10.4094,3.6935,kitchen_baking,-2.2088,5.2503,category only (item's own data contradictory),-2.2088
-22668,49,1,0.0786,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-22273,51,1,0.0545,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-22631,53,1,0.0854,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-84970L,51,2,0.1807,-6.1783,1.5647,lighting_candles,-5.2364,1.3667,own price changes + category,-2.2057
-22381,52,1,0.1366,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-21164,44,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-20723,53,1,0.0708,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22296,51,1,0.0563,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21479,41,2,0.0557,24.948,11.6397,kitchen_baking,-2.2088,5.2503,category only (item's own data contradictory),-2.2088
-23254,36,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-20676,51,1,0.0591,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-85014A,50,1,0.0807,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22759,51,1,0.0753,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-84029G,38,2,0.088,6.4705,2.7636,kitchen_baking,-2.2088,5.2503,category only (item's own data contradictory),-2.2088
-21169,48,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22356,53,1,0.0853,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22485,45,1,0.0228,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22780,43,1,0.0,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-47599A,44,1,0.0,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22848,34,1,0.1703,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22620,53,2,0.0772,-2.4898,5.0457,other,-2.2125,1.2777,own price changes + category,-2.1935
-22768,48,1,0.0402,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22750,51,1,0.0397,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-22606,36,1,0.0,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-84050,36,1,0.312,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22367,51,1,0.1045,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21907,51,1,0.0939,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22767,48,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21124,45,1,0.0,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-21933,47,3,0.2732,-8.0346,1.6506,bags,-6.0,1.3436,own price changes + category,-2.2147
-21756,51,2,0.0498,-26.7665,10.9805,other,-2.5439,1.3113,own price changes + category,-2.1935
-23204,35,1,0.0,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22907,51,1,0.048,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21326,49,1,0.0,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22627,40,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21932,47,2,0.2727,-6.5123,1.2539,bags,-5.5363,1.1024,own price changes + category,-2.2147
-84949,49,1,0.0,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-84212,36,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21242,51,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-37449,41,1,0.009,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-20718,52,1,0.086,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-23236,27,1,0.0998,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22635,45,1,0.0,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-82001S,28,2,0.1566,-0.6068,2.5059,home_decor,-2.0962,0.656,own price changes + category,-2.2057
-21749,38,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22429,47,1,0.0382,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22904,47,1,0.0884,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-22120,48,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21844,42,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22297,44,1,0.077,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22854,33,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-23238,27,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22553,49,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-23172,31,1,0.0783,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21673,52,2,0.0674,-5.6483,3.8158,other,-2.5631,1.2481,own price changes + category,-2.1935
-21671,52,2,0.0675,-6.8988,4.1772,other,-2.6211,1.2593,own price changes + category,-2.1935
-22796,49,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22964,48,1,0.1034,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-21527,17,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22725,51,1,0.0555,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-47591D,46,1,0.0897,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22835,50,2,0.0274,80.4725,15.676,kitchen_baking,-2.2088,5.2503,category only (item's own data contradictory),-2.2088
-22584,44,1,0.0845,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-23082,30,1,0.0,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-21746,44,2,0.0943,-12.4771,4.4875,other,-3.0132,1.267,own price changes + category,-2.1935
-23010,27,1,0.0083,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-23283,25,2,0.0814,0.84,3.7074,home_decor,-2.2057,0.6797,category only (item's own data contradictory),-2.2057
-48111,48,2,0.0165,71.0083,57.0012,home_decor,-2.2057,0.6797,category only (item's own data contradictory),-2.2057
-22466,43,1,0.0095,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-21871,46,2,0.1604,1.7328,2.3799,kitchen_baking,-2.2088,5.2503,category only (item's own data contradictory),-2.2088
-21539,45,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22979,41,1,0.1888,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22431,52,1,0.1461,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21244,40,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22991,36,1,0.1796,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22839,46,1,0.0925,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21558,46,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22488,51,1,0.0958,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22150,51,1,0.0617,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22723,43,1,0.1646,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22148,18,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22926,22,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21670,53,2,0.0656,-1.7469,4.4339,other,-2.1571,1.2658,own price changes + category,-2.1935
-22302,46,1,0.0772,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23307,28,1,0.0838,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21172,41,1,0.1268,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-23050,39,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21889,53,1,0.0458,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-23159,37,1,0.0801,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21156,51,1,0.1336,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22636,46,1,0.0085,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22845,52,1,0.059,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22418,50,1,0.0872,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-22772,49,1,0.0315,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-23299,28,1,0.058,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22967,19,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-21912,49,1,0.0928,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22350,40,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22938,47,1,0.0606,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-23049,36,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22295,49,1,0.1033,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-15056P,49,1,0.1493,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-72351B,40,1,0.0,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-82552,48,1,0.0845,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21390,45,1,0.0967,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21086,52,1,0.1178,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22626,49,1,0.0662,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-48129,48,2,0.1215,-1.882,2.0298,home_decor,-2.1731,0.6445,own price changes + category,-2.2057
-22417,51,1,0.1012,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22301,47,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23154,35,1,0.0801,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23158,36,1,0.16,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22464,52,1,0.1202,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22661,52,1,0.0567,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22179,45,1,0.0319,,,lighting_candles,-2.2057,2.8067,category only (item never changed price),-2.2057
-22855,35,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22721,46,1,0.2469,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-84508A,18,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-84987,53,1,0.0571,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-20969,49,1,0.0642,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22896,45,1,0.1469,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22782,27,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22998,42,1,0.1393,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-20974,41,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-22980,39,1,0.1998,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21498,52,1,0.0057,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-22271,49,1,0.0225,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-22956,42,1,0.2097,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23306,27,1,0.0322,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22781,48,1,0.166,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-20677,51,1,0.1144,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22109,41,1,0.1282,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22637,50,1,0.0657,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21428,38,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-37370,30,2,0.1261,-26.0279,4.1466,kitchen_baking,-6.0,3.2541,own price changes + category,-2.2088
-22628,43,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-23296,22,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22665,44,1,0.1119,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22649,44,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-72760B,46,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21877,47,2,0.2349,0.053,1.4182,kitchen_baking,-2.2088,5.2503,category only (item's own data contradictory),-2.2088
-16014,27,1,0.046,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21658,31,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22432,46,1,0.0439,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22841,52,1,0.1438,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22940,30,1,0.0949,,,christmas,-2.2057,2.8067,category only (item never changed price),-2.2057
-22646,49,1,0.2238,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22089,48,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-82551,48,2,0.114,-1.0315,3.2502,home_decor,-2.1565,0.6653,own price changes + category,-2.2057
-79000,30,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22898,52,1,0.0359,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23165,31,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-21888,50,1,0.0642,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-23322,27,1,0.0,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22174,42,1,0.1701,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-85132C,22,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22207,36,2,0.1869,2.0922,2.0731,other,-2.1935,1.3207,category only (item's own data contradictory),-2.1935
-22908,47,1,0.0747,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23091,27,1,0.0511,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22748,48,1,0.1079,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22798,52,1,0.1011,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22244,39,1,0.0212,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21716,43,1,0.1126,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22702,24,1,0.0108,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22842,46,1,0.014,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22158,34,1,0.0318,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22550,47,1,0.0718,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-21243,45,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22745,52,1,0.0318,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-21868,39,3,0.3657,-7.0157,1.8999,kitchen_baking,-6.0,1.7865,own price changes + category,-2.2088
-22435,42,1,0.1262,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22777,11,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-23293,22,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-21260,39,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-23118,30,1,0.0,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-22700,17,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22751,40,1,0.1003,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
-22236,34,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-20675,49,1,0.0388,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-20979,51,1,0.0,,,stationery_paper,-2.2057,2.8067,category only (item never changed price),-2.2057
-21715,46,1,0.0,,,storage,-2.2057,2.8067,category only (item never changed price),-2.2057
-22623,50,2,0.124,3.4246,2.1453,storage,-2.2057,2.8067,category only (item's own data contradictory),-2.2057
-21385,47,1,0.1216,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-21704,44,1,0.0709,,,bags,-2.2147,2.3132,category only (item never changed price),-2.2147
-22366,49,2,0.0162,55.6252,34.6552,home_decor,-2.2057,0.6797,category only (item's own data contradictory),-2.2057
-22894,39,2,0.0545,-2.3927,6.8215,other,-2.2007,1.2966,own price changes + category,-2.1935
-22489,53,1,0.097,,,other,-2.1935,1.3207,category only (item never changed price),-2.1935
-23321,27,1,0.0042,,,home_decor,-2.2057,0.6797,category only (item never changed price),-2.2057
-22760,20,1,0.0,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-22061,44,1,0.1546,,,kitchen_baking,-2.2088,5.2503,category only (item never changed price),-2.2088
-23126,41,1,0.0919,,,toys_gifts,-2.2057,2.8067,category only (item never changed price),-2.2057
+22423,53,1,0.0316,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+85123A,53,1,0.024,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+47566,53,2,0.0504,3.0878,3.3094,stationery_paper,-2.2056,2.8074,category only (item's own data contradictory),-2.2056
+85099B,53,2,0.03,-0.6826,3.9021,bags,-1.8407,1.9279,own price changes + category,-2.2147
+84879,53,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+79321,50,2,0.0824,-8.3232,5.2454,lighting_candles,-3.5679,2.4752,own price changes + category,-2.2056
+23298,32,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+82484,53,3,0.0827,-9.9732,7.0531,other,-2.4905,1.3782,own price changes + category,-2.1934
+22386,52,2,0.0391,0.7385,4.7132,bags,-2.2147,2.2174,category only (item's own data contradictory),-2.2147
+85099F,49,2,0.0384,-10.5189,6.3616,bags,-3.1143,2.0939,own price changes + category,-2.2147
+21137,47,1,0.0324,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22960,53,1,0.0501,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22720,46,1,0.0453,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+20725,53,1,0.0614,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+23203,32,1,0.0098,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+21623,50,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22197,53,1,0.0372,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+20685,53,2,0.0364,-38.4142,22.6197,home_decor,-2.2255,0.5286,own price changes + category,-2.2057
+22469,43,1,0.0231,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22470,44,1,0.0385,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22629,53,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21621,45,1,0.0036,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+22699,53,1,0.0767,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22178,53,2,0.2033,-1.2302,1.1925,lighting_candles,-1.3793,1.0976,own price changes + category,-2.2056
+23199,35,1,0.0561,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+23173,31,1,0.0665,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22189,52,1,0.0547,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+48138,53,2,0.0364,-10.0302,10.9639,home_decor,-2.2239,0.5281,own price changes + category,-2.2057
+22090,53,1,0.0386,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+15056N,52,1,0.0249,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+85099C,53,2,0.0306,-11.0334,6.7967,bags,-3.063,2.1081,own price changes + category,-2.2147
+48187,53,2,0.0166,-14.226,35.5684,home_decor,-2.2084,0.5287,own price changes + category,-2.2057
+22457,53,1,0.032,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21931,53,2,0.0507,1.4922,3.8362,bags,-2.2147,2.2174,category only (item's own data contradictory),-2.2147
+22326,53,1,0.0446,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22630,53,1,0.0271,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22383,52,1,0.0,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+23245,27,1,0.0518,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22659,52,1,0.0741,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23284,27,2,0.0634,-2.1124,3.5897,home_decor,-2.2037,0.5231,own price changes + category,-2.2057
+15036,48,2,0.0468,1.591,11.2797,other,-2.1934,1.4053,category only (item's own data contradictory),-2.1934
+21733,50,1,0.0628,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22693,50,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+48194,53,2,0.1032,4.3285,4.4007,home_decor,-2.2057,0.5287,category only (item's own data contradictory),-2.2057
+21929,52,2,0.0952,-11.9569,4.762,bags,-3.9507,2.0102,own price changes + category,-2.2147
+22961,50,1,0.077,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23201,35,1,0.0099,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+21175,51,2,0.0695,10.302,3.8799,home_decor,-2.2057,0.5287,category only (item's own data contradictory),-2.2057
+22727,53,1,0.0455,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22084,37,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+21523,53,2,0.0692,-6.2644,5.2747,home_decor,-2.2461,0.5261,own price changes + category,-2.2057
+21928,53,2,0.0828,-12.2562,6.3683,bags,-3.3005,2.0941,own price changes + category,-2.2147
+21731,53,1,0.0557,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+23206,35,1,0.0,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+20728,53,1,0.032,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+23209,32,1,0.0,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22384,52,1,0.0806,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22411,53,2,0.0516,2.4152,3.5194,bags,-2.2147,2.2174,category only (item's own data contradictory),-2.2147
+82482,53,2,0.0692,-2.1308,2.7126,home_decor,-2.203,0.519,own price changes + category,-2.2057
+23202,32,1,0.03,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+21212,53,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+20727,53,1,0.0,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+85066,53,1,0.0385,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+21915,52,1,0.1137,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+20914,53,1,0.0545,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22328,53,1,0.0385,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+20713,41,2,0.0709,1.6794,3.185,bags,-2.2147,2.2174,category only (item's own data contradictory),-2.2147
+22969,53,1,0.0,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+84997D,53,2,0.055,-5.4254,9.4721,kitchen_baking,-2.9615,4.5822,own price changes + category,-2.2087
+48185,49,2,0.131,4.9549,4.6798,kitchen_baking,-2.2087,5.2356,category only (item's own data contradictory),-2.2087
+22697,53,1,0.0914,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21754,53,2,0.0488,-19.4952,7.5345,other,-2.775,1.3815,own price changes + category,-2.1934
+21843,53,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22666,53,1,0.0634,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22722,38,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+21181,38,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+84946,53,1,0.0388,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22139,52,1,0.0374,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+82486,53,2,0.0587,-2.6848,2.7917,other,-2.2927,1.2552,own price changes + category,-2.1934
+22726,45,1,0.0397,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+20726,53,1,0.0452,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+84997B,53,2,0.0794,-14.5051,10.2726,kitchen_baking,-4.7442,4.6647,own price changes + category,-2.2087
+22467,51,1,0.0623,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22385,52,2,0.0302,-14.8343,9.1292,bags,-2.9177,2.1548,own price changes + category,-2.2147
+22382,53,1,0.0,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22728,53,1,0.0601,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22607,48,1,0.0415,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+82494L,49,1,0.0118,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22492,53,1,0.1024,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+20712,53,2,0.0559,-2.7927,4.7646,bags,-2.3176,2.0104,own price changes + category,-2.2147
+22171,50,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+84978,52,1,0.0713,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+84078A,34,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+21166,44,2,0.0233,20.0827,9.3667,home_decor,-2.2057,0.5287,category only (item's own data contradictory),-2.2057
+22501,37,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22188,46,1,0.0754,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+47566B,45,2,0.0224,9.1045,14.2506,kitchen_baking,-2.2087,5.2356,category only (item's own data contradictory),-2.2087
+21936,50,2,0.1102,-10.3381,2.1862,bags,-6.0,1.5568,own price changes + category,-2.2147
+22138,50,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+48188,51,3,0.1401,-7.7485,4.555,home_decor,-2.2794,0.5252,own price changes + category,-2.2057
+22900,49,2,0.0446,-5.2857,9.6633,kitchen_baking,-2.9069,4.6033,own price changes + category,-2.2087
+22427,44,1,0.0315,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22499,45,1,0.0353,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+84997C,50,2,0.0366,-10.1804,12.7161,kitchen_baking,-3.3641,4.8413,own price changes + category,-2.2087
+22624,46,1,0.0443,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22698,46,1,0.0946,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22993,43,1,0.0439,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21977,53,1,0.0692,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23084,20,1,0.2145,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+47590B,51,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+15056BL,51,1,0.0423,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22558,53,2,0.0692,-3.1968,3.6182,other,-2.3249,1.3099,own price changes + category,-2.1934
+23174,30,1,0.0299,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+84077,51,1,0.0895,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+85152,49,1,0.1261,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21755,53,2,0.0468,-10.3788,9.3518,other,-2.3742,1.3897,own price changes + category,-2.1934
+82483,47,2,0.0776,-6.4585,2.0035,other,-3.5998,1.1505,own price changes + category,-2.1934
+20750,51,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22087,27,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+22507,50,1,0.0991,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+23207,35,1,0.0393,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+23240,27,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+23200,32,1,0.0023,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+48184,51,2,0.0164,25.2986,32.3882,home_decor,-2.2057,0.5287,category only (item's own data contradictory),-2.2057
+23243,27,1,0.0314,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+71477,36,2,0.139,0.5528,2.327,lighting_candles,-2.2056,2.8074,category only (item's own data contradictory),-2.2056
+22112,48,1,0.0087,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22077,53,2,0.0858,4.7566,1.8697,other,-2.1934,1.4053,category only (item's own data contradictory),-2.1934
+71459,50,1,0.0662,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22551,53,1,0.0231,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22379,52,1,0.0857,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+21108,41,2,0.444,-3.3926,1.9459,kitchen_baking,-3.2489,1.824,own price changes + category,-2.2087
+22622,52,2,0.1108,-2.9605,4.6786,storage,-2.4055,2.4073,own price changes + category,-2.2056
+22662,52,1,0.0614,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+21232,53,1,0.086,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22605,48,1,0.0374,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22776,53,1,0.0043,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+84755,53,1,0.0762,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22086,34,1,0.0,,,christmas,-2.2056,2.8074,category only (item never changed price),-2.2056
+22847,43,1,0.0667,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22083,52,1,0.0544,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+48173C,45,2,0.0164,-60.5078,39.8169,home_decor,-2.216,0.5287,own price changes + category,-2.2057
+22625,46,1,0.006,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22502,33,1,0.4489,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+47590A,51,1,0.0506,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+21524,53,2,0.039,9.4782,4.1141,home_decor,-2.2057,0.5287,category only (item's own data contradictory),-2.2057
+21340,45,1,0.0384,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21080,53,1,0.0018,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21430,52,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22554,53,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22570,46,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+82600,47,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+20749,48,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22752,51,1,0.1036,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+21217,52,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22970,50,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22149,47,1,0.1713,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22988,42,1,0.105,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22569,46,1,0.0393,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22690,52,2,0.0366,-11.4065,26.5912,home_decor,-2.2094,0.5286,own price changes + category,-2.2057
+84997A,48,2,0.1076,-5.2355,6.7642,kitchen_baking,-3.3427,4.1403,own price changes + category,-2.2087
+23175,29,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21930,52,2,0.0298,-1.5336,9.2887,bags,-2.178,2.1568,own price changes + category,-2.2147
+22111,45,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22989,45,1,0.0122,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+20724,53,1,0.0481,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+23171,31,1,0.1234,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21559,53,1,0.1145,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22729,47,1,0.103,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21216,50,1,0.063,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23208,35,1,0.0,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+23134,14,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22568,52,1,0.1162,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22846,42,1,0.2467,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22692,52,2,0.0627,-6.2408,5.8679,home_decor,-2.2382,0.5266,own price changes + category,-2.2057
+22556,53,1,0.0231,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22555,50,1,0.0395,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+23170,31,1,0.0722,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22968,32,1,0.02,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22191,52,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+84406B,46,2,0.0875,-7.8744,3.2955,home_decor,-2.348,0.522,own price changes + category,-2.2057
+84991,53,1,0.0321,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21485,46,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+20711,51,2,0.0301,-43.5963,13.4711,bags,-3.3063,2.188,own price changes + category,-2.2147
+82583,39,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22652,50,1,0.0231,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+22424,51,1,0.0316,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+85014B,51,1,0.0942,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+20679,50,1,0.0691,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+84375,53,1,0.0778,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+23076,37,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22193,53,1,0.0223,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21218,50,1,0.0682,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+21955,46,2,0.0167,-81.0103,47.7405,home_decor,-2.2154,0.5287,own price changes + category,-2.2057
+21121,48,1,0.0,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+85150,39,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+48116,40,2,0.1098,-21.1324,12.9819,home_decor,-2.2371,0.5283,own price changes + category,-2.2057
+22766,53,1,0.0225,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22041,43,1,0.1082,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+20719,53,1,0.0373,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22740,30,1,0.0091,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+23297,15,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22910,29,1,0.0,,,christmas,-2.2056,2.8074,category only (item never changed price),-2.2056
+21891,51,2,0.0688,8.0631,7.1329,toys_gifts,-2.2056,2.8074,category only (item's own data contradictory),-2.2056
+21922,41,1,0.1131,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22730,52,1,0.023,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+84970S,53,1,0.148,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+20972,51,1,0.0447,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+23077,38,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21790,53,1,0.0216,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+21791,51,1,0.0319,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+22844,52,1,0.0664,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22771,53,1,0.0202,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22355,53,1,0.0676,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22804,51,1,0.1139,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+82582,51,1,0.086,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22966,46,1,0.0447,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22616,51,2,0.1878,0.3312,1.6434,stationery_paper,-2.2056,2.8074,category only (item's own data contradictory),-2.2056
+23300,31,1,0.0425,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21210,44,1,0.0405,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+23078,38,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+21533,51,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22561,53,1,0.0242,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22113,43,2,0.0607,14.8361,4.7625,kitchen_baking,-2.2087,5.2356,category only (item's own data contradictory),-2.2087
+22617,53,1,0.0731,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21122,47,1,0.0546,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+23108,31,1,0.0,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22667,46,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22192,52,1,0.0315,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22333,50,1,0.0683,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+62018,28,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21314,52,1,0.0633,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22560,53,1,0.0592,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+23008,35,1,0.0216,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+72741,50,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22957,17,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+84947,50,1,0.0888,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23301,31,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22487,51,1,0.0402,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22619,51,1,0.0641,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+22838,35,1,0.1289,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22413,49,1,0.1201,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21914,52,1,0.0669,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22840,50,1,0.0454,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22352,53,1,0.0923,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22834,31,1,0.0769,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22557,51,1,0.1009,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+21380,51,1,0.0856,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21213,53,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22169,50,1,0.0699,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22978,42,1,0.0507,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+71053,52,1,0.1108,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+75049L,31,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22741,49,1,0.0218,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+21136,53,1,0.0202,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21770,38,1,0.0474,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+23007,34,1,0.0,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+22791,43,1,0.0447,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22505,47,1,0.063,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21259,49,1,0.0249,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+84992,51,1,0.1236,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+84945,43,1,0.0606,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22088,27,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+22849,32,1,0.0035,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+84347,27,1,0.0898,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22243,34,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22621,52,2,0.0649,8.7349,2.043,other,-2.1934,1.4053,category only (item's own data contradictory),-2.1934
+22151,50,1,0.1515,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21908,50,1,0.11,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22294,51,1,0.0247,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22456,50,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+84378,51,2,0.1275,-1.193,2.4169,home_decor,-2.1595,0.5165,own price changes + category,-2.2057
+21231,53,1,0.1206,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+84380,52,2,0.1214,-2.8946,1.7523,other,-2.4678,1.0963,own price changes + category,-2.1934
+22749,50,1,0.0,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+21937,28,1,0.0,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+21094,52,1,0.0036,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+84836,53,1,0.0673,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+23256,36,1,0.0493,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22147,49,1,0.2439,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22173,46,2,0.119,0.7907,4.2224,home_decor,-2.2057,0.5287,category only (item's own data contradictory),-2.2057
+22779,40,1,0.0,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+21975,52,1,0.1043,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22349,41,1,0.0393,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22971,47,1,0.0577,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21668,53,2,0.0996,-6.1605,3.3926,other,-2.7744,1.2983,own price changes + category,-2.1934
+22992,39,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22837,16,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21165,51,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22585,52,1,0.0319,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22663,53,2,0.0687,-8.422,8.1272,bags,-2.6448,2.1392,own price changes + category,-2.2147
+22634,50,1,0.0,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+22895,51,2,0.0521,-13.0593,7.751,kitchen_baking,-5.6083,4.3385,own price changes + category,-2.2087
+21035,46,2,0.1616,-2.686,1.2961,kitchen_baking,-2.6584,1.2582,own price changes + category,-2.2087
+22795,39,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+23052,38,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21669,52,2,0.1428,-3.4863,2.1013,other,-2.593,1.1681,own price changes + category,-2.1934
+21535,52,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+84988,53,1,0.08,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+20971,52,1,0.0669,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+21155,53,2,0.1153,-3.9722,2.1383,bags,-3.1254,1.5392,own price changes + category,-2.2147
+22784,50,1,0.1247,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22303,50,1,0.0389,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21174,50,2,0.0229,38.8571,12.5376,home_decor,-2.2057,0.5287,category only (item's own data contradictory),-2.2057
+22170,50,1,0.0942,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22654,45,1,0.0788,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+21672,53,2,0.0649,-9.2731,4.8135,other,-2.7494,1.349,own price changes + category,-2.1934
+17003,44,3,0.2038,-1.2407,2.0453,other,-1.8879,1.1582,own price changes + category,-2.1934
+21481,36,2,0.106,10.4047,3.691,kitchen_baking,-2.2087,5.2356,category only (item's own data contradictory),-2.2087
+22668,49,1,0.0786,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+22273,51,1,0.0545,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+22631,53,1,0.0854,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+84970L,51,2,0.1807,-6.1641,1.5628,lighting_candles,-5.2277,1.3655,own price changes + category,-2.2056
+22381,52,1,0.1366,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+21164,44,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+20723,53,1,0.0708,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22296,51,1,0.0563,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21479,41,2,0.0557,24.8563,11.6206,kitchen_baking,-2.2087,5.2356,category only (item's own data contradictory),-2.2087
+23254,36,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+20676,51,1,0.0591,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+85014A,50,1,0.0807,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22759,51,1,0.0753,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+84029G,38,2,0.088,6.3644,2.7788,kitchen_baking,-2.2087,5.2356,category only (item's own data contradictory),-2.2087
+21169,48,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22356,53,1,0.0853,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22485,45,1,0.0228,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22780,43,1,0.0,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+47599A,44,1,0.0,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22848,34,1,0.1703,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22620,53,2,0.0773,-2.5792,5.0221,other,-2.2214,1.3533,own price changes + category,-2.1934
+22768,48,1,0.0402,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22750,51,1,0.0397,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+22606,37,1,0.0,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+84050,37,1,0.312,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22367,51,1,0.1045,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21907,51,1,0.0939,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22767,48,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21124,45,1,0.0,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+21933,47,3,0.2735,-8.024,1.6507,bags,-5.9526,1.3241,own price changes + category,-2.2147
+21756,51,2,0.0498,-26.6788,10.956,other,-2.5897,1.3939,own price changes + category,-2.1934
+23204,35,1,0.0,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22907,51,1,0.048,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21326,49,1,0.0,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22627,40,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21932,47,2,0.273,-6.504,1.2519,bags,-5.4673,1.0901,own price changes + category,-2.2147
+84949,49,1,0.0,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+84212,36,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21242,51,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+37449,41,1,0.009,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+20718,52,1,0.086,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+23236,27,1,0.0998,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22635,45,1,0.0,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+82001S,28,2,0.1566,-0.6833,2.5006,home_decor,-2.1406,0.5173,own price changes + category,-2.2057
+21749,38,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22429,47,1,0.0382,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22904,47,1,0.0884,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+22120,48,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21844,42,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22297,44,1,0.077,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22854,34,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+23238,27,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22553,49,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+23172,31,1,0.0783,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21673,52,2,0.0674,-5.6965,3.805,other,-2.6139,1.3183,own price changes + category,-2.1934
+21671,52,2,0.0675,-6.8733,4.1715,other,-2.6704,1.3317,own price changes + category,-2.1934
+22796,49,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22964,48,1,0.1034,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+21527,17,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22725,51,1,0.0555,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+47591D,46,1,0.0897,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22835,50,2,0.0274,80.3914,15.6601,kitchen_baking,-2.2087,5.2356,category only (item's own data contradictory),-2.2087
+22584,44,1,0.0845,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+23082,30,1,0.0,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+21746,44,2,0.0943,-12.4535,4.4804,other,-3.1123,1.3409,own price changes + category,-2.1934
+23010,27,1,0.0083,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+23283,25,2,0.0814,0.8376,3.7021,home_decor,-2.2057,0.5287,category only (item's own data contradictory),-2.2057
+48111,48,2,0.0165,69.4243,56.8995,home_decor,-2.2057,0.5287,category only (item's own data contradictory),-2.2057
+22466,43,1,0.0095,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+21871,46,2,0.1604,1.7357,2.3754,kitchen_baking,-2.2087,5.2356,category only (item's own data contradictory),-2.2087
+21539,45,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22979,41,1,0.1891,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22431,52,1,0.1461,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21244,40,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22991,36,1,0.1799,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22839,46,1,0.0925,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21558,46,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22488,51,1,0.0958,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22150,51,1,0.0617,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22723,43,1,0.1646,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22148,18,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22926,22,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21670,53,2,0.0656,-1.7278,4.4269,other,-2.1508,1.3394,own price changes + category,-2.1934
+22302,46,1,0.0772,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23307,28,1,0.0838,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21172,41,1,0.1268,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+23050,39,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21889,53,1,0.0458,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+23159,37,1,0.0803,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21156,51,1,0.1336,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22636,46,1,0.0085,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22845,52,1,0.059,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22418,50,1,0.0872,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+22772,50,1,0.0315,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+23299,28,1,0.058,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22967,19,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+21912,49,1,0.0928,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22350,40,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22938,47,1,0.0606,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+23049,36,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22295,49,1,0.1033,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+15056P,49,1,0.1493,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+72351B,40,1,0.0,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+82552,48,1,0.0845,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21390,45,1,0.0967,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21086,52,1,0.1178,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22626,49,1,0.0662,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+48129,49,2,0.1215,-1.8876,2.027,home_decor,-2.1855,0.5116,own price changes + category,-2.2057
+22417,51,1,0.1012,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22301,47,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23154,35,1,0.0803,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23158,36,1,0.1604,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22464,52,1,0.1202,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22661,52,1,0.0567,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22179,45,1,0.0319,,,lighting_candles,-2.2056,2.8074,category only (item never changed price),-2.2056
+22855,35,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22721,46,1,0.2469,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+84508A,18,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+84987,53,1,0.0571,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+20969,49,1,0.0642,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22896,45,1,0.1469,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22782,27,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22998,42,1,0.1396,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+20974,41,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+22980,39,1,0.2002,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21498,52,1,0.0057,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+22271,49,1,0.0225,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+22956,42,1,0.2097,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23306,27,1,0.0322,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22781,48,1,0.166,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+20677,52,1,0.1144,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22109,41,1,0.1282,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22637,50,1,0.0657,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21428,38,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+37370,30,2,0.1261,-25.9945,4.1436,kitchen_baking,-6.0,3.2492,own price changes + category,-2.2087
+22628,43,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+23296,22,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22665,44,1,0.1119,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22649,44,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+72760B,46,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21877,47,2,0.2349,0.0494,1.4161,kitchen_baking,-2.2087,5.2356,category only (item's own data contradictory),-2.2087
+16014,27,1,0.046,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21658,31,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22432,46,1,0.0439,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22841,52,1,0.1438,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22940,30,1,0.0949,,,christmas,-2.2056,2.8074,category only (item never changed price),-2.2056
+22646,49,1,0.2238,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22089,48,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+82551,48,2,0.114,-1.0241,3.2451,home_decor,-2.1752,0.5218,own price changes + category,-2.2057
+79000,30,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22898,52,1,0.0359,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23165,31,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+21888,50,1,0.0642,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+23322,27,1,0.0,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22174,42,1,0.1701,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+85132C,22,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22207,37,2,0.1869,2.0833,2.0697,other,-2.1934,1.4053,category only (item's own data contradictory),-2.1934
+22908,47,1,0.0747,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23091,27,1,0.0511,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22748,48,1,0.1079,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22798,52,1,0.1011,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22244,39,1,0.0212,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21716,43,1,0.1126,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22702,24,1,0.0108,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22842,46,1,0.014,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22158,34,1,0.0318,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22550,48,1,0.0718,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+21243,46,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22745,52,1,0.0318,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+21868,39,3,0.3657,-7.0013,1.897,kitchen_baking,-6.0,1.7835,own price changes + category,-2.2087
+22435,42,1,0.1262,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22777,11,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+23293,22,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+21260,39,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+23118,30,1,0.0,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+22700,17,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22751,40,1,0.1003,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056
+22236,34,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+20675,49,1,0.0388,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+20979,51,1,0.0,,,stationery_paper,-2.2056,2.8074,category only (item never changed price),-2.2056
+21715,46,1,0.0,,,storage,-2.2056,2.8074,category only (item never changed price),-2.2056
+22623,50,2,0.1242,3.3735,2.1445,storage,-2.2056,2.8074,category only (item's own data contradictory),-2.2056
+21385,47,1,0.1216,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+21704,44,1,0.0709,,,bags,-2.2147,2.2174,category only (item never changed price),-2.2147
+22366,49,2,0.0162,55.6532,34.6015,home_decor,-2.2057,0.5287,category only (item's own data contradictory),-2.2057
+22894,39,2,0.055,-2.3037,6.8059,other,-2.1979,1.3763,own price changes + category,-2.1934
+22489,53,1,0.097,,,other,-2.1934,1.4053,category only (item never changed price),-2.1934
+23321,27,1,0.0042,,,home_decor,-2.2057,0.5287,category only (item never changed price),-2.2057
+22760,20,1,0.0,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+22061,44,1,0.1546,,,kitchen_baking,-2.2087,5.2356,category only (item never changed price),-2.2087
+23126,41,1,0.0921,,,toys_gifts,-2.2056,2.8074,category only (item never changed price),-2.2056

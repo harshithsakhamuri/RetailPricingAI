@@ -67,7 +67,7 @@
     const flags = [];
     let cands;
     if (forcedPrice != null) cands = [forcedPrice];
-    else if (lo > hi) { flags.push("no feasible price (minimum-margin price is above the allowed range)"); cands = [p0]; }
+    else if (lo > hi) { flags.push("no feasible price (minimum-margin price is above the allowed range)"); cands = [hi]; }
     else {
       cands = priceGrid(lo, hi);
       if (p0 >= lo - 1e-9 && p0 <= hi + 1e-9 && !cands.includes(p0)) cands.push(p0);
@@ -98,17 +98,25 @@
           const kk = choose(P, feasible, pick);
           return mean(score.map(i => P[kk][i])) - mean(score.map(i => P[k0][i]));
         });
-        res.profit_change_crossfit = mean(gains);
+        res.profit_change_crossfit = k === k0 ? 0 : mean(gains);
       }
       out[scen] = res;
     }
     const best = out.comp_same.price, cmax = Math.max(...cands), cmin = Math.min(...cands);
     let driver, atBound = false;
-    if (cands.length <= 1) driver = forcedPrice == null ? "fixed (no price choice)" : "priced jointly with its variants";
+    if (cands.length <= 1) driver = forcedPrice != null ? "priced jointly with its variants"
+      : (lo > hi && best > p0 + 1e-9) ? `upper limit: ${hiRule} (still below the minimum margin)` : "fixed (no price choice)";
     else if (close(best, cmax) && best > p0 + 1e-9) { driver = `upper limit: ${hiRule}`; atBound = true; }
     else if (close(best, cmin) && best < p0 - 1e-9) { driver = `lower limit: ${loRule}`; atBound = true; }
     else driver = close(best, p0) ? "data: keep current price" : "data: interior optimum";
     Object.assign(out, {flags, bounds: [lo, hi], decision_driver: driver, at_bound: atBound, e_draws: eDraws});
+    // Only recommend a change whose gain survives the cross-check; otherwise keep today's price.
+    if (forcedPrice == null && cands.length > 1 && cands.some(c => close(c, p0)) && !close(best, p0)
+        && out.comp_same.profit_change_crossfit <= 0) {
+      const keep = optimise(r, z, stock, p0);
+      Object.assign(keep, {flags, bounds: [lo, hi], at_bound: false, decision_driver: "data: keep current price (gain too small to be sure)"});
+      return keep;
+    }
     return out;
   }
 

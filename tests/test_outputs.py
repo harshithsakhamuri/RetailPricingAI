@@ -129,3 +129,28 @@ def test_no_suggestion_expected_to_earn_less(rec):
 
 def test_elasticity_within_plausible_range(rec):
     assert (rec["elasticity"] >= core.ELASTICITY_FLOOR - 1e-9).all()
+
+
+def test_no_negative_extra_profit(rec):
+    assert (rec["profit_change_crossfit"] >= -1e-9).all()
+    kept = rec["recommended_price"] == rec["current_price"]
+    assert (rec.loc[kept, "profit_change_crossfit"].abs() < 1e-9).all()
+
+
+def test_daily_forecast_month_ahead(rec):
+    d = pd.read_csv(OUT / "daily_forecast.csv", dtype={"StockCode": str}, parse_dates=["Date"])
+    meta = json.loads((OUT / "app_meta.json").read_text(encoding="utf-8"))
+    assert d["Date"].nunique() == 30 and (d["baseline_units"] >= 0).all()
+    closed = {pd.Timestamp(c["date"]) for c in meta["calendar"] if not c["open"]}
+    assert (d.loc[d["Date"].isin(closed), "baseline_units"] == 0).all()
+    week = d[d["Date"] <= d["Date"].min() + pd.Timedelta(days=6)].groupby("StockCode")["baseline_units"].sum()
+    base = rec.set_index("StockCode")["baseline_units"]
+    assert (abs(week.reindex(base.index) - base) < 1e-2 * base.clip(lower=1)).all()
+    assert meta["holidays"]["calendar_wrong_open"] == [] and meta["holidays"]["calendar_wrong_closed"] == []
+
+
+def test_webpage_has_daily_data():
+    text = (ROOT / "docs" / "data.js").read_text(encoding="utf-8")
+    data = json.loads(text[text.index("{"): text.rstrip().rindex("}") + 1])
+    assert len(data["days"]) == len(data["calendar"]) == 30
+    assert all(len(i["daily"]) == 30 for i in data["items"])

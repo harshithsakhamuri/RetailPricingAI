@@ -76,7 +76,8 @@ VAL_DAYS = 61
 
 # Forecasting
 FORECAST_LEAD = 7
-HORIZON_DAYS = FORECAST_LEAD
+HORIZON_DAYS = FORECAST_LEAD   # the pricing decision covers the next 7 days
+DAILY_HORIZON_DAYS = 30        # single-day forecasts up to a month ahead (recursive beyond 7 days)
 TOP_N_MODEL = 500
 MIN_TRAIN_SALE_DAYS = 30
 TOP_N_REPORT = 50
@@ -237,16 +238,71 @@ def variant_key(desc: str) -> str:
 
 
 # =============================================================================
-# 3. CALENDAR
+# 3. CALENDAR: SHOP CLOSURES AND GIFTING EVENTS
 # =============================================================================
-UK_HOLIDAYS = sorted(pd.Timestamp(d) for d in
-                     holidays.country_holidays("GB", subdiv="ENG", years=[2010, 2011, 2012]))
+# Verified against the data (see summary.md, section 0): the shop never trades on
+# Saturdays and is closed on every England & Wales bank holiday (incl. substitute
+# days and the 2011 Royal Wedding), on Easter Sunday, and from 24 Dec to 2 Jan.
+# It DOES trade on 23 Dec and on ordinary Sundays.
+CAL_YEARS = [2010, 2011, 2012]
+UK_HOLIDAYS = sorted(pd.Timestamp(d) for d in holidays.country_holidays("GB", subdiv="ENG", years=CAL_YEARS))
+UK_HOLIDAY_NAMES = {pd.Timestamp(d): n for d, n in holidays.country_holidays("GB", subdiv="ENG", years=CAL_YEARS).items()}
+
+
+def easter_sunday(year: int) -> pd.Timestamp:
+    """Anonymous Gregorian algorithm (Meeus/Jones/Butcher)."""
+    a, b, c = year % 19, year // 100, year % 100
+    d, e = b // 4, b % 4
+    f = (b + 8) // 25
+    g = (b - f + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30
+    i, k = c // 4, c % 4
+    l_ = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 22 * l_) // 451
+    month = (h + l_ - 7 * m + 114) // 31
+    return pd.Timestamp(year, month, (h + l_ - 7 * m + 114) % 31 + 1)
+
+
+def gift_events(years=CAL_YEARS) -> dict:
+    """UK gifting occasions a gift wholesaler's customers stock up for."""
+    ev = {}
+    for y in years:
+        easter = easter_sunday(y)
+        june1 = pd.Timestamp(y, 6, 1)
+        ev[pd.Timestamp(y, 2, 14)] = "Valentine's Day"
+        ev[easter - pd.Timedelta(days=21)] = "Mothering Sunday (UK Mother's Day)"
+        ev[easter] = "Easter"
+        ev[june1 + pd.Timedelta(days=(6 - june1.day_of_week) % 7 + 14)] = "Father's Day"
+        ev[pd.Timestamp(y, 10, 31)] = "Halloween"
+        ev[pd.Timestamp(y, 11, 5)] = "Bonfire Night"
+        ev[pd.Timestamp(y, 12, 25)] = "Christmas"
+    return dict(sorted(ev.items()))
+
+
+GIFT_EVENTS = gift_events()
+GIFT_EVENT_CODES = {n: i for i, n in enumerate(sorted(set(GIFT_EVENTS.values())))}
 CAL_FEATS = ["dow", "month", "weekofyear", "doy_sin", "doy_cos", "is_holiday", "days_to_hol",
-             "days_since_hol", "days_to_xmas", "trend", "store_open"]
+             "days_since_hol", "days_to_xmas", "trend", "store_open", "days_to_event", "next_event",
+             "days_since_event", "closed_next_7", "closed_prev_7", "reopening_day"]
+
+
+def closure_reason(day: pd.Timestamp) -> str | None:
+    """Why the shop is closed on `day` (None if it trades)."""
+    day = pd.Timestamp(day).normalize()
+    if (day.month == 12 and day.day >= 24) or (day.month == 1 and day.day <= 2):
+        return "Christmas break"
+    if day in UK_HOLIDAY_NAMES:
+        return f"bank holiday ({UK_HOLIDAY_NAMES[day]})"
+    if day == easter_sunday(day.year):
+        return "Easter Sunday"
+    if day.day_of_week == 5:
+        return "the shop does not trade on Saturdays"
+    return None
 
 
 def calendar_features(dates: pd.DatetimeIndex) -> pd.DataFrame:
-    cal = pd.DataFrame({"Date": dates})
+    """Everything here is known in advance, so it is safe for future dates."""
+    cal = pd.DataFrame({"Date": pd.DatetimeIndex(dates)})
     d = cal["Date"]
     hol = np.array(UK_HOLIDAYS, dtype="datetime64[ns]")
     dv = d.values.astype("datetime64[ns]")
@@ -267,8 +323,26 @@ def calendar_features(dates: pd.DatetimeIndex) -> pd.DataFrame:
     xmas = xmas_this.where(d <= xmas_this, xmas_next)
     cal["days_to_xmas"] = np.clip((xmas - d).dt.days, 0, 90)
     cal["trend"] = (d - pd.Timestamp("2010-12-01")).dt.days
-    xmas_break = ((d.dt.month == 12) & (d.dt.day >= 23)) | ((d.dt.month == 1) & (d.dt.day <= 3))
-    cal["store_open"] = ((cal["dow"] != 5) & (cal["is_holiday"] == 0) & ~xmas_break).astype(int)
+    cal["store_open"] = [int(closure_reason(x) is None) for x in d]
+    # Gifting events: wholesale customers order weeks ahead of these
+    ev = np.array(list(GIFT_EVENTS), dtype="datetime64[ns]")
+    names = list(GIFT_EVENTS.values())
+    en = np.minimum(np.searchsorted(ev, dv, side="left"), len(ev) - 1)
+    ep = np.maximum(np.searchsorted(ev, dv, side="right") - 1, 0)
+    cal["days_to_event"] = np.clip((ev[en] - dv) / day, 0, 60)
+    cal["next_event"] = [GIFT_EVENT_CODES[names[i]] for i in en]
+    cal["days_since_event"] = np.clip((dv - ev[ep]) / day, 0, 30)
+    # Closures around the day (planned, so known in advance). The data shows the
+    # first day back after a closure is WEAKER than usual, not a catch-up day.
+    full = pd.date_range(d.min() - pd.Timedelta(days=7), d.max() + pd.Timedelta(days=7))
+    closed = pd.Series([int(closure_reason(x) is not None) for x in full], index=full)
+    nxt7 = closed[::-1].rolling(8, min_periods=1).sum()[::-1] - closed
+    prv7 = closed.rolling(8, min_periods=1).sum() - closed
+    cal["closed_next_7"] = nxt7.reindex(d).values
+    cal["closed_prev_7"] = prv7.reindex(d).values
+    prev_closed = closed.shift(1).fillna(0).reindex(d).values
+    prev2_closed = closed.shift(2).fillna(0).reindex(d).values
+    cal["reopening_day"] = ((cal["store_open"].values == 1) & (prev_closed == 1) & (prev2_closed == 1)).astype(int)
     return cal
 
 
@@ -281,11 +355,13 @@ LAG_FEATS = [f"lag_{L + k}" for k in (0, 7, 14, 21)] + \
 STATIC_FEATS = ["prod_mean", "price_band", "cat_code"]
 STORE_FEATS = ["store_r7", "store_r28", "store_mom"]
 FEATURES = CAL_FEATS + LAG_FEATS + STATIC_FEATS + STORE_FEATS   # NB: no price features
+BASE_COLS = ["StockCode", "Date", "units", "price", "is_future"] + CAL_FEATS
 
 
 def build_panel(df, products, cats, train_end, horizon_days=HORIZON_DAYS):
-    """Full daily calendar per product. Every lag/rolling feature at date t uses
-    units from t-L or earlier only (tests/test_leakage.py enforces this)."""
+    """Full daily calendar per product, from first sale to `horizon_days` after the
+    data ends. Every lag/rolling feature at date t uses units from t-L or earlier
+    only (tests/test_pipeline.py::test_features_have_no_leakage enforces this)."""
     sub = df[df["StockCode"].isin(products)]
     daily = (sub.groupby(["StockCode", "Date"])
                 .agg(units=("Quantity", "sum"), price=("UnitPrice", "median")).reset_index())
@@ -299,7 +375,18 @@ def build_panel(df, products, cats, train_end, horizon_days=HORIZON_DAYS):
     p["is_future"] = p["Date"] > data_end
     p["units"] = np.where(p["is_future"], np.nan, p["units"].fillna(0.0))
     p = p.merge(calendar_features(pd.date_range(p["Date"].min(), future_end)), on="Date", how="left")
+    p["our_price"] = p.groupby("StockCode", sort=False)["price"].transform(lambda x: x.ffill().bfill())
+    med_price = df[df["Date"] <= train_end].groupby("StockCode")["UnitPrice"].median()
+    ctx = {"train_end": train_end, "cats": cats,
+           "price_band": pd.qcut(med_price.reindex(products), 5, labels=False, duplicates="drop"),
+           "cat_codes": {c: i for i, c in enumerate(sorted(cats.unique()))}}
+    return add_features(p, ctx)
 
+
+def add_features(p, ctx):
+    """Compute all demand features from p["units"] (lags are at least L days old)."""
+    p = p[BASE_COLS + ["our_price"]].copy()
+    train_end = ctx["train_end"]
     tr_sales = p[(p["Date"] <= train_end) & (p["units"] > 0)]
     p["cap"] = p["StockCode"].map(tr_sales.groupby("StockCode")["units"].quantile(DEMAND_CAP_Q))
     p["u_cap"] = np.minimum(p["units"], p["cap"].fillna(np.inf))
@@ -324,26 +411,23 @@ def build_panel(df, products, cats, train_end, horizon_days=HORIZON_DAYS):
     p["rel_lag"] = p[f"lag_{L}"] / p["scale"]
     p["rel_rate_7"] = p["rate_7"] / p["scale"]
     p["rel_rate_14"] = p["rate_14"] / p["scale"]
+    first_sale = g["Date"].transform("min")
     last_sale = p["Date"].where(p["u_cap"] > 0).groupby(key).ffill()
-    p["age"] = (p["Date"] - key.map(first_sale)).dt.days
+    p["age"] = (p["Date"] - first_sale).dt.days
     p["days_since_sale"] = (p["Date"] - last_sale.groupby(key).shift(L)).dt.days
     p["days_since_sale"] = p["days_since_sale"].fillna(p["age"]).clip(upper=180)
 
     tr = p[(p["Date"] <= train_end) & (p["store_open"] == 1)]
     p["prod_mean"] = key.map(tr.groupby("StockCode")["u_cap"].mean())
-    med_price = df[df["Date"] <= train_end].groupby("StockCode")["UnitPrice"].median()
-    p["price_band"] = key.map(pd.qcut(med_price.reindex(products), 5, labels=False, duplicates="drop"))
-    cat_codes = {c: i for i, c in enumerate(sorted(cats.unique()))}
-    p["cat_code"] = key.map(cats).map(cat_codes)
+    p["price_band"] = key.map(ctx["price_band"])
+    p["cat_code"] = key.map(ctx["cats"]).map(ctx["cat_codes"])
 
     store = p.groupby("Date")["u_cap"].sum(min_count=1).shift(L)
     st = pd.DataFrame({"s": store})
     st["store_r7"] = st["s"].rolling(7, min_periods=1).mean()
     st["store_r28"] = st["s"].rolling(28, min_periods=1).mean()
     st["store_mom"] = st["store_r7"] / (st["store_r28"] + 1)
-    p = p.merge(st[["store_r7", "store_r28", "store_mom"]], left_on="Date", right_index=True, how="left")
-    p["our_price"] = g["price"].transform(lambda x: x.ffill().bfill())   # drives the competitor simulation only
-    return p
+    return p.merge(st[["store_r7", "store_r28", "store_mom"]], left_on="Date", right_index=True, how="left")
 
 
 # =============================================================================
@@ -437,6 +521,75 @@ def weekly_totals(frame, pred, start):
 
 def calib_factor(actual, pred):
     return float(np.clip(np.sum(actual) / max(np.sum(pred), 1e-9), *CALIB_CLIP))
+
+
+def holiday_check(raw, df, products):
+    """Compare the closure calendar with the days the shop actually traded, and
+    measure sales around gifting events (all from the data)."""
+    traded = set(pd.to_datetime(raw["InvoiceDate"]).dt.normalize().unique())
+    days = pd.date_range(min(traded), max(traded))
+    says_closed = {d for d in days if closure_reason(d) is not None}
+    wrong_open = sorted(d for d in says_closed if d in traded)            # calendar says closed, shop traded
+    wrong_closed = sorted(d for d in days if d not in traded and d not in says_closed)
+    s = df[df["StockCode"].isin(products)].groupby("Date")["Quantity"].sum()
+    rows = []
+    for d, name in GIFT_EVENTS.items():
+        if d - pd.Timedelta(days=84) < s.index.min() or d > s.index.max():
+            continue
+        before = s[(s.index > d - pd.Timedelta(days=28)) & (s.index < d)].mean()
+        prior = s[(s.index > d - pd.Timedelta(days=84)) & (s.index <= d - pd.Timedelta(days=28))].mean()
+        rows.append({"event": name, "date": str(d.date()), "sales 4 wks before vs 8 wks earlier": f"{before / prior - 1:+.0%}"})
+    reopen = [d for d in days if d in traded and closure_reason(d - pd.Timedelta(days=1)) is not None
+              and closure_reason(d - pd.Timedelta(days=2)) is not None]
+    reopen_eff = [s.get(d, 0) / s[s.index < d].tail(10).mean() - 1 for d in reopen if len(s[s.index < d]) >= 10]
+    return {"days_checked": len(days), "closed_days": len(says_closed), "calendar_wrong_open": [str(d.date()) for d in wrong_open],
+            "calendar_wrong_closed": [str(d.date()) for d in wrong_closed], "events": rows,
+            "reopening_days": len(reopen_eff), "reopening_effect": float(np.median(reopen_eff)) if reopen_eff else float("nan")}
+
+
+def day_calendar(dates):
+    """Plain-language notes for each forecast day (shop closed? event coming up?)."""
+    out = []
+    for d in sorted(pd.DatetimeIndex(dates)):
+        reason = closure_reason(d)
+        nxt = [(e, n) for e, n in GIFT_EVENTS.items() if 0 <= (e - d).days <= 21]
+        note = ""
+        if reason is None and closure_reason(d - pd.Timedelta(days=1)) and closure_reason(d - pd.Timedelta(days=2)):
+            note = "First day back after a closure: usually a slow day."
+        elif reason is None and any(closure_reason(d + pd.Timedelta(days=k)) == "Christmas break" for k in range(1, 8)):
+            note = "Last days before the Christmas break: sales usually slow down."
+        elif nxt and reason is None:
+            e, n = nxt[0]
+            k = (e - d).days
+            note = f"{n} is in {k} day{'s' if k != 1 else ''}." if k else f"Today is {n}."
+        out.append({"date": str(d.date()), "open": reason is None, "reason": reason or "", "note": note})
+    return out
+
+
+def last_year_profile(df, products, data_end, horizon=DAILY_HORIZON_DAYS, week=HORIZON_DAYS):
+    """Store-wide daily pattern for days week+1..horizon after data_end, relative
+    to the level of next week, taken from the same days one year earlier
+    (364 days back = same weekday; if that day was closed but the target day is
+    open, the nearest open day of last year is used). Days are smoothed with their
+    open neighbours (+/-1 day) because single days are very noisy."""
+    s = df[df["StockCode"].isin(products)].groupby("Date")["Quantity"].sum()
+    def ly(day):
+        for off in (364, 365, 363, 366, 362, 371, 357):
+            d = day - pd.Timedelta(days=off)
+            if closure_reason(d) is None and d >= s.index.min():
+                near = [d + pd.Timedelta(days=k) for k in (-1, 0, 1)]
+                vals = [s.get(x, 0.0) for x in near if closure_reason(x) is None]
+                return float(np.mean(vals))
+        return np.nan
+    wk = [data_end + pd.Timedelta(days=k) for k in range(1, week + 1)]
+    base = np.nanmean([ly(d) for d in wk if closure_reason(d) is None])
+    prof = {}
+    for k in range(week + 1, horizon + 1):
+        d = data_end + pd.Timedelta(days=k)
+        prof[d] = 0.0 if closure_reason(d) is not None else ly(d) / base
+    src = (f"last year's same days relative to last year's equivalent of next week "
+           f"(factors {min(prof.values()):.2f}–{max(prof.values()):.2f})")
+    return pd.Series(prof).fillna(1.0), src
 
 
 # =============================================================================
@@ -930,9 +1083,12 @@ def run(as_of: str | None = None):
     eligible = sale_days[sale_days >= MIN_TRAIN_SALE_DAYS].index
     products = tr_rev.reindex(eligible).sort_values(ascending=False).head(TOP_N_MODEL).index.tolist()
     log(f"Modelling {len(products)} products")
+    hol = holiday_check(raw, df, products)
+    log(f"Holiday calendar vs data: {hol['days_checked']} days, {len(hol['calendar_wrong_open'])} wrongly closed, "
+        f"{len(hol['calendar_wrong_closed'])} unexplained closures")
 
     # ---------------- STAGE 1a: baseline demand ----------------
-    panel = build_panel(df, products, cats, train_end)
+    panel = build_panel(df, products, cats, train_end, horizon_days=DAILY_HORIZON_DAYS)
     hist = panel[~panel["is_future"] & (panel["age"] >= L)]
     tr = hist[(hist["Date"] <= train_end) & (hist["store_open"] == 1)]
     va_cal = hist[(hist["Date"] > train_end) & (hist["Date"] <= val_cal_end)]
@@ -968,9 +1124,26 @@ def run(as_of: str | None = None):
     check = refit(models, best, hist[(hist["Date"] <= val_end) & (hist["store_open"] == 1)])
     calib_prod = calib_factor(te["u_cap"], predict(check, best, te))
     final = refit(models, best, hist[hist["store_open"] == 1])
-    fut = panel[panel["is_future"]]
-    baseline_units = pd.Series(predict(final, best, fut) * calib_prod, index=fut.index).groupby(fut["StockCode"]).sum()
-    log(f"Production calibration {calib_prod:.3f} (refit-to-test check); baseline {baseline_units.sum():,.0f} units")
+    # Daily forecasts. Days 1-7: the validated 7-day-ahead model. Days 8-30: next
+    # week's level x last year's pattern for the same days (store-wide, weekday-
+    # matched). The model has seen only one Christmas, and on its own it misses
+    # the pre-Christmas slowdown and the weak first days back in January.
+    fut_mask = panel["is_future"].to_numpy()
+    week_mask = fut_mask & (panel["Date"] <= data_end + pd.Timedelta(days=HORIZON_DAYS)).to_numpy()
+    fut = panel[week_mask]
+    week_pred = pd.Series(predict(final, best, fut) * calib_prod, index=fut.index)
+    baseline_units = week_pred.groupby(fut["StockCode"]).sum()
+    profile, profile_src = last_year_profile(df, products, data_end)
+    open_week = fut.groupby("StockCode")["store_open"].sum().clip(lower=1)
+    level = baseline_units / open_week                       # forecast units per open day, next week
+    later = panel.loc[fut_mask & ~week_mask, ["StockCode", "Date"]]
+    later_units = later["StockCode"].map(level).to_numpy() * later["Date"].map(profile).fillna(0).to_numpy()
+    daily_fc = pd.concat([fut[["StockCode", "Date"]].assign(baseline_units=week_pred.to_numpy()),
+                          later.assign(baseline_units=later_units)]).sort_values(["StockCode", "Date"])
+    daily_fc.assign(baseline_units=daily_fc["baseline_units"].round(4)).to_csv(OUTPUT_DIR / "daily_forecast.csv", index=False)
+    log(f"Day pattern beyond next week: {profile_src}")
+    log(f"Production calibration {calib_prod:.3f} (refit-to-test check); next-week baseline "
+        f"{baseline_units.sum():,.0f} units; daily forecasts to {daily_fc['Date'].max().date()}")
 
     # Forecast error distribution (actual / forecast, 7-day totals) by volume band
     tw = te_weeks[te_weeks["pred"] > 0.5]
@@ -1056,6 +1229,13 @@ def run(as_of: str | None = None):
             tot = tot + (cands - m["unit_cost"])[None, :] * core.demand_matrix(cands, p0, m["baseline_units"], e_d)
         score = tot.mean(0) if core.ROBUST_QUANTILE is None else np.quantile(tot, core.ROBUST_QUANTILE, axis=0)
         pj = float(cands[int(np.argmax(score))])
+        k0 = np.where(np.isclose(cands, p0))[0]
+        if len(k0) and not np.isclose(pj, p0):     # same cross-check as single items, on the group total
+            half = np.arange(len(z)) % 2 == 0
+            g = [tot[~pick][:, int(np.argmax(tot[pick].mean(0)))].mean() - tot[~pick][:, k0[0]].mean()
+                 for pick in (half, ~half)]
+            if np.mean(g) <= 0:
+                pj = p0
         for m in members:
             outs[m["StockCode"]] = {**core.optimise_product(m, z, stock=STOCK_CAP.get(m["StockCode"], math.inf),
                                                             forced_price=pj),
@@ -1158,6 +1338,21 @@ Objective: **profit = (price − unit cost) × expected units**.
   Recommendations therefore describe {'all' if clean_stats['guests_included'] else 'registered (mainly wholesale) customers'}.
 - One price definition everywhere: the **list price** = median unit price of regular-size lines (bulk tier discounts excluded).
 
+## 0b. Holidays and shop closures (checked against the data)
+- Closure calendar: no trading on Saturdays, England & Wales bank holidays (incl. substitute days and the 2011 Royal
+  Wedding), Easter Sunday, and 24 Dec – 2 Jan. Checked against all {hol['days_checked']} days in the data: the calendar marks
+  {hol['closed_days']} days closed; mismatches with the actual trading days: **{len(hol['calendar_wrong_open']) + len(hol['calendar_wrong_closed'])}**
+  {('(' + ', '.join(hol['calendar_wrong_open'] + hol['calendar_wrong_closed']) + ')') if hol['calendar_wrong_open'] or hol['calendar_wrong_closed'] else ''}.
+- The first trading day after a closure of 2+ days sells **{hol['reopening_effect']:+.0%}** vs the previous 10 trading days
+  (median of {hol['reopening_days']} reopenings): it is a slow day, not a catch-up day.
+- Gifting events (wholesale customers stock up ahead of them) are model features: days to the next event, which
+  event, days since the last one, closures in the next/previous 7 days and reopening days.
+
+{md_table(pd.DataFrame(hol['events']))}
+
+- Beyond next week, daily forecasts use next week's level × last year's pattern for the same days (store-wide,
+  weekday-matched), because the model has seen only one Christmas. This part is not validated: only one prior year exists.
+
 ## 1. Baseline demand model
 - Splits: train ≤ {train_end.date()}, calibration weeks ≤ {val_cal_end.date()}, selection weeks ≤ {val_end.date()}, test ≤ {data_end.date()}.
 - **All {len(res_tbl)} candidates, including the naive baselines, get the same level calibration** (fitted on the calibration
@@ -1242,7 +1437,7 @@ elasticity (the real-data elasticity already includes competitor responses), so 
             "best_naive_test_wape_7day": float(best_naive), "calibration_production": calib_prod,
             "calibration_source": "refit-to-test check", "z": z.round(6).tolist(),
             "forecast_band_edges": band_edges, "forecast_ratio_samples": [s.round(5).tolist() for s in ratio_samples],
-            "backtest": bt, "elasticity_level": level, "elasticity_level_scale": level_k, "clean_stats": clean_stats, "gains_top": g_top.to_dict(), "gains_all": g_all.to_dict()}
+            "backtest": bt, "holidays": hol, "calendar": day_calendar(daily_fc["Date"].unique()), "elasticity_level": level, "elasticity_level_scale": level_k, "clean_stats": clean_stats, "gains_top": g_top.to_dict(), "gains_all": g_all.to_dict()}
     (OUTPUT_DIR / "app_meta.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
     log("PIPELINE COMPLETE")
     return rec, meta

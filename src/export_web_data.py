@@ -22,7 +22,7 @@ OUT_DIR = ROOT / "outputs"
 ITEM_INPUTS = ["StockCode", "Description", "category", "current_price", "hist_min_price", "hist_max_price",
                "unit_cost", "baseline_units", "comp_price_SIMULATED", "e_raw", "elasticity", "elasticity_se",
                "elasticity_source", "n_weeks", "n_price_levels", "daily_log_sd", "variant_group", "joint_with"]
-ITEM_RESULTS = ["recommended_price", "price_change_%", "expected_profit", "profit_at_current", "profit_change_crossfit",
+ITEM_RESULTS = ["recommended_price", "expected_units", "units_at_current", "price_change_%", "expected_profit", "profit_at_current", "profit_change_crossfit",
                 "profit_p10", "profit_p90", "confidence", "confidence_reason", "decision_driver", "lerner_gap",
                 "test_price", "test_weeks_total", "test_weeks_pooled_category", "test_feasible"]
 
@@ -77,8 +77,15 @@ def main():
     edges = meta["forecast_band_edges"]
 
     items = records(p[ITEM_INPUTS + ITEM_RESULTS])
+    # Daily baseline units for each forecast day (order = data["days"])
+    dfc = pd.read_csv(OUT_DIR / "daily_forecast.csv", dtype={"StockCode": str}, parse_dates=["Date"])
+    days = sorted(dfc["Date"].unique())
+    wide = dfc.pivot(index="StockCode", columns="Date", values="baseline_units").reindex(columns=days).fillna(0)
+    for it in items:
+        it["daily"] = [round(float(v), 3) for v in wide.loc[it["StockCode"]].to_numpy()]
     data = {"week": f"{pd.Timestamp(meta['horizon_start']):%d %b %Y} – {pd.Timestamp(meta['horizon_end']):%d %b %Y}",
-            "model": meta["model"], "elasticity_level": meta.get("elasticity_level"), "wape": round(meta["test_wape_7day"], 1),
+            "model": meta["model"], "elasticity_level": meta.get("elasticity_level"),
+            "days": [str(pd.Timestamp(d).date()) for d in days], "calendar": meta["calendar"], "wape": round(meta["test_wape_7day"], 1),
             "naive_wape": round(meta["best_naive_test_wape_7day"], 1), "z": meta["z"],
             "ratio_samples": meta["forecast_ratio_samples"], "band_edges": edges, "backtest": meta["backtest"],
             "gains_top": meta["gains_top"], "gains_all": meta["gains_all"], "cost_ratio": 0.60,
