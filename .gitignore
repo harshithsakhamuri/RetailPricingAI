@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Large derived cache (rebuilt from data/Online Retail.xlsx automatically)
+outputs/_cache_online_retail.pkl
+
+# Editors / OS
+.vscode/
+.idea/
+.claude/
+Thumbs.db
+.DS_Store
+
+# Raw dataset (22 MB) - download from https://archive.ics.uci.edu/dataset/352/online+retail
+data/*.xlsx
+*.log
+.ipynb_checkpoints/

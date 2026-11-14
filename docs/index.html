@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retail Pricing AI</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1c2330;--mute:#5d6878;--line:#e1e5ea;--acc:#1f6feb;--good:#1a7f37;--warn:#9a6700;--bad:#cf222e;--band:rgba(31,111,235,.15)}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--card:#171c23;--ink:#e6e9ee;--mute:#9aa4b2;--line:#2a313b;--acc:#58a6ff;--good:#3fb950;--warn:#d29922;--bad:#f85149;--band:rgba(88,166,255,.18)}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 48px}
+h1{margin:0 0 4px;font-size:26px}.sub{color:var(--mute);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+.tabs{display:flex;gap:8px;margin-bottom:14px}.tabs button{flex:0 0 auto;border:1px solid var(--line);background:transparent;color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit}
+.tabs button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+label{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.btn{margin-top:14px;background:var(--acc);color:#fff;border:0;padding:10px 20px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
+.hint{font-size:12px;color:var(--mute);margin-top:3px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.m{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.m .k{font-size:13px;color:var(--mute)}.m .v{font-size:26px;font-weight:700;margin:2px 0}.m .d{font-size:13px;color:var(--mute)}
+.m.hero{border-color:var(--acc)}
+.warnbox{border-left:4px solid var(--warn);padding:10px 12px;background:var(--card);border-radius:6px;margin:12px 0;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:right;padding:7px 6px;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}
+.two{display:grid;grid-template-columns:3fr 2fr;gap:16px}@media(max-width:800px){.two{grid-template-columns:1fr}}
+svg{width:100%;height:auto;display:block}svg text{fill:var(--mute);font-size:11px}
+.hidden{display:none}footer{color:var(--mute);font-size:12px;margin-top:20px}
+</style>
+</head>
+<body>
+<main>
+  <h1>🏷️ Retail Pricing AI</h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="card">
+    <div class="tabs">
+      <button id="tKnown" class="on">Existing item</button>
+      <button id="tNew">Enter a new item</button>
+    </div>
+
+    <div id="known">
+      <label for="search">Search an item (name or stock code)</label>
+      <input id="search" list="itemlist" placeholder="e.g. lunch bag, 85123A, cake stand…" autocomplete="off">
+      <datalist id="itemlist"></datalist>
+    </div>
+
+    <div id="newf" class="hidden grid">
+      <div><label>Item name</label><input id="nName" value="My product"></div>
+      <div><label>Category</label><select id="nCat"></select><div class="hint">Sets how price-sensitive demand is assumed to be.</div></div>
+      <div><label>Current selling price £</label><input id="nPrice" type="number" step="0.01" min="0.01" value="4.95"></div>
+      <div><label>Units sold per week at current price</label><input id="nUnits" type="number" step="1" min="0" value="100"></div>
+      <div><label>Lowest price you'd consider £ (optional)</label><input id="nMin" type="number" step="0.01" min="0"></div>
+      <div><label>Highest price you'd consider £ (optional)</label><input id="nMax" type="number" step="0.01" min="0"></div>
+    </div>
+
+    <div class="grid" style="margin-top:12px">
+      <div><label>Unit cost £</label><input id="cost" type="number" step="0.01" min="0.01"><div class="hint" id="costHint"></div></div>
+      <div><label>Competitor price £</label><input id="comp" type="number" step="0.01" min="0.01"><div class="hint" id="compHint"></div></div>
+      <div><label>Stock available for the week (0 = unlimited)</label><input id="stock" type="number" step="1" min="0" value="0"></div>
+    </div>
+    <button class="btn" id="go">Get pricing recommendation</button>
+  </div>
+
+  <div id="result" class="hidden">
+    <h2 id="rTitle" style="margin:8px 0 12px"></h2>
+    <div class="metrics" id="metrics"></div>
+    <div id="why"></div>
+    <div class="two" style="margin-top:16px">
+      <div class="card"><b>Profit vs price</b> <span class="hint">(green = allowed range, band = uncertainty P10–P90)</span><div id="chart"></div></div>
+      <div class="card">
+        <b>What if I charge…</b>
+        <input id="tryP" type="range" style="margin:12px 0 4px;padding:0">
+        <div class="metrics" style="grid-template-columns:1fr 1fr">
+          <div class="m"><div class="k">Price</div><div class="v" id="tpP"></div></div>
+          <div class="m"><div class="k">Expected units</div><div class="v" id="tpU"></div></div>
+        </div>
+        <div class="m" style="margin-top:12px"><div class="k">Expected profit</div><div class="v" id="tpPr"></div></div>
+        <div class="metrics" style="grid-template-columns:1fr 1fr;margin-top:12px">
+          <div class="m"><div class="k">Profit at risk</div><div class="v" id="tpRisk"></div><div class="d" id="tpRiskL"></div></div>
+          <div class="m"><div class="k">Chance it beats current price</div><div class="v" id="tpBeat"></div><div class="d">across elasticity scenarios</div></div>
+        </div>
+        <div class="hint" style="margin-top:6px">Profit at risk = average profit you could lose at this price compared with keeping the current price, if customers react to price differently from our estimate.</div>
+        <div class="hint" id="tpWarn" style="margin-top:8px;color:var(--warn)"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="foot"></footer>
+</main>
+
+<script src="data.js"></script>
+<script>
+const D = window.PRICING_DATA, C = D.cfg, Z = D.z, $ = id => document.getElementById(id);
+const gbp = (x, d = 2) => "£" + x.toLocaleString("en-GB", {minimumFractionDigits: d, maximumFractionDigits: d});
+const num = x => Math.round(x).toLocaleString("en-GB");
+const title = s => s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
+$("sub").textContent = `Forecast demand, profit-maximising price and expected units for the decision week ${D.week}.`;
+$("foot").textContent = `Prototype. Demand and elasticity learned from UCI Online Retail sales (${D.model}, ${D.wape}% WAPE on weekly totals). ` +
+  `Unit costs default to ${C.COST_RATIO_DEFAULT * 100}% of median price and competitor prices are SIMULATED. Treat results as directional.`;
+
+const labels = D.items.map(i => `${i.StockCode} — ${title(i.Description)}`);
+$("itemlist").innerHTML = labels.map(l => `<option value="${l.replace(/"/g, "&quot;")}">`).join("");
+$("nCat").innerHTML = Object.keys(D.categories).sort().map(c => `<option value="${c}">${c.replace(/_/g, " ")}</option>`).join("");
+
+let mode = "known";
+$("tKnown").onclick = () => setMode("known"); $("tNew").onclick = () => setMode("new");
+function setMode(m) {
+  mode = m; $("tKnown").classList.toggle("on", m === "known"); $("tNew").classList.toggle("on", m === "new");
+  $("known").classList.toggle("hidden", m !== "known"); $("newf").classList.toggle("hidden", m !== "new");
+  prefill();
+}
+function knownItem() { const k = labels.indexOf($("search").value); return k < 0 ? null : D.items[k]; }
+function prefill() {
+  if (mode === "known") {
+    const it = knownItem(); if (!it) return;
+    $("cost").value = it.unit_cost.toFixed(2); $("comp").value = it.comp_price_SIMULATED.toFixed(2);
+    $("costHint").textContent = `Assumed: ${C.COST_RATIO_DEFAULT * 100}% of median price. Current price ${gbp(it.current_price)}.`;
+    $("compHint").textContent = "Default is SIMULATED.";
+  } else {
+    const p = +$("nPrice").value || 0;
+    if (!$("cost").dataset.touched) $("cost").value = (p * C.COST_RATIO_DEFAULT).toFixed(2);
+    if (!$("comp").dataset.touched) $("comp").value = p.toFixed(2);
+    $("costHint").textContent = "Your cost to buy or make one unit.";
+    $("compHint").textContent = "What a rival charges for a similar item.";
+  }
+}
+$("search").addEventListener("input", () => { if (knownItem()) { prefill(); run(); } });
+["cost", "comp"].forEach(id => $(id).addEventListener("input", () => $(id).dataset.touched = 1));
+$("nPrice").addEventListener("input", prefill);
+$("go").onclick = run;
+
+// ---- maths (port of pricing_profit_optimizer.py) ---------------------------
+function quantile(a, q) { const s = [...a].sort((x, y) => x - y), pos = (s.length - 1) * q, lo = Math.floor(pos);
+  return s[lo] + (s[Math.min(lo + 1, s.length - 1)] - s[lo]) * (pos - lo); }
+const mean = a => a.reduce((s, x) => s + x, 0) / a.length;
+function priceGrid(lo, hi) {
+  const c = new Set();
+  for (let x = 0.05; x < 1; x += 0.05) c.add(+x.toFixed(2));
+  for (let w = 1; w <= Math.floor(hi) + 1; w++) { c.add(w); C.PRICE_ENDINGS.forEach(e => c.add(+(w + e).toFixed(2))); }
+  return [...c].filter(x => x >= lo - 1e-9 && x <= hi + 1e-9).sort((a, b) => a - b);
+}
+// units for each draw at price p -> array(len Z)
+function units(p, r, eDraws, compMult, stock) {
+  const react = C.COMP_REACTION_SHARE * Math.max(0, C.HORIZON_DAYS - C.COMP_REACTION_LAG_DAYS) / C.HORIZON_DAYS;
+  const comp = r.comp * compMult * Math.pow(p / r.p0, react);
+  const ce = Math.pow((comp / p) / (r.comp / r.p0), C.CROSS_ELASTICITY);
+  return eDraws.map(e => Math.min(r.base * Math.pow(p / r.p0, e) * ce, stock));
+}
+function optimise(r) {
+  const eDraws = Z.map(z => Math.min(r.e + r.se * z, C.ELASTICITY_CEILING));
+  const floor = r.cost / (1 - C.MIN_MARGIN);
+  const lo = Math.max(r.p0 * (1 - C.MAX_PRICE_CHANGE), Math.min(r.minP, r.p0), floor);
+  const hi = Math.min(r.p0 * (1 + C.MAX_PRICE_CHANGE), Math.max(r.maxP * (r.custom ? 1 : 1 + C.PRICE_HEADROOM), r.p0));
+  const flags = []; let cands;
+  if (lo > hi) { flags.push("no feasible price (margin floor above allowed range)"); cands = [r.p0]; }
+  else { cands = priceGrid(lo, hi); if (r.p0 >= lo && r.p0 <= hi && !cands.some(x => Math.abs(x - r.p0) < 1e-9)) cands.push(r.p0);
+         cands.sort((a, b) => a - b); if (r.p0 < floor) flags.push("current price below margin floor"); }
+  const out = {flags, lo, hi, eDraws};
+  for (const [scen, mult] of Object.entries(C.COMP_SCENARIOS)) {
+    const u0 = units(r.p0, r, eDraws, mult, r.stock), pr0 = u0.map(u => (r.p0 - r.cost) * u);
+    let best = null; const bestDraw = Z.map(() => -Infinity);
+    for (const p of cands) {
+      const u = units(p, r, eDraws, mult, r.stock), pr = u.map(x => (p - r.cost) * x), rob = quantile(pr, C.ROBUST_QUANTILE);
+      pr.forEach((v, i) => { if (v > bestDraw[i]) bestDraw[i] = v; });
+      if (!best || rob > best.rob) best = {p, u, pr, rob};
+    }
+    if (!best) best = {p: r.p0, u: u0, pr: pr0, rob: 0};
+    const same = Math.abs(best.p - r.p0) < 1e-9;
+    const regret = cands.length ? mean(bestDraw.map((v, i) => v - best.pr[i])) / Math.max(mean(best.pr), 1e-9) : NaN;
+    const downside = mean(pr0.map((v, i) => Math.max(v - best.pr[i], 0))) / Math.max(mean(pr0), 1e-9);
+    if (mult === 1) { out.bestDraw = bestDraw; out.pr0 = pr0; }
+    out[scen] = {price: best.p, units: mean(best.u), profit: mean(best.pr), regret, downside,
+      p10: quantile(best.pr, .1), p90: quantile(best.pr, .9), profitCur: mean(pr0), unitsCur: mean(u0),
+      pImprove: same ? null : best.pr.filter((x, i) => x > pr0[i]).length / pr0.length,
+      atBound: cands.length > 1 && (Math.abs(best.p - cands[0]) < 1e-9 || Math.abs(best.p - cands[cands.length - 1]) < 1e-9)};
+  }
+  return out;
+}
+function confidence(r, b, flags) {
+  // Decision-based, same rules as pricing_profit_optimizer.confidence()
+  const hard = [];
+  if (r.base < 5) hard.push("very low forecast volume");
+  hard.push(...flags);
+  if (r.src === "product+pooled" && r.eRaw != null && r.eRaw > 0) hard.push("item's own data shows demand rising with price (likely confounded)");
+  if (hard.length) return ["low", hard.join("; ")];
+  const rk = b.downside, pi = b.pImprove;
+  const untested = !r.custom && b.price > Math.max(r.maxP, r.p0) + 1e-9;
+  if (rk <= 0.02 && (pi == null || pi >= 0.8) && !untested) return ["high", ""];
+  const notes = [];
+  if (untested) notes.push(`price is above the highest ever charged (${gbp(r.maxP)}), so test it before rolling out`);
+  if (r.src !== "product+pooled") notes.push(r.custom ? "price sensitivity taken from the category average (no sales history for this item)" : "price sensitivity taken from the category (item never changed price)");
+  if (rk > 0.02) notes.push(`${(rk * 100).toFixed(1)}% expected profit at risk vs current price`);
+  if (pi != null && pi < 0.8) notes.push(`price change beats current price in ${Math.round(pi * 100)}% of scenarios`);
+  return [rk <= 0.05 && (pi == null || pi >= 0.6) ? "medium" : "low", notes.join("; ")];
+}
+
+// ---- run + render ------------------------------------------------------------
+function buildRow() {
+  const stock = +$("stock").value > 0 ? +$("stock").value : Infinity, cost = +$("cost").value, comp = +$("comp").value;
+  if (mode === "known") {
+    const it = knownItem(); if (!it) { alert("Pick an item from the list first."); return null; }
+    return {name: title(it.Description), p0: it.current_price, minP: it.train_min_price, maxP: it.train_max_price,
+      base: it.baseline_units, e: it.elasticity, se: it.elasticity_se, eRaw: it.e_raw, src: it.elasticity_source,
+      cost, comp, stock, note: `${it.StockCode} · ${it.category.replace(/_/g, " ")} · ${it.n_weeks} weeks of history`};
+  }
+  const p0 = +$("nPrice").value, base = +$("nUnits").value, cat = D.categories[$("nCat").value];
+  if (!(p0 > 0) || !(base >= 0) || !(cost > 0) || !(comp > 0)) { alert("Please enter a price, weekly units, unit cost and competitor price."); return null; }
+  return {name: $("nName").value || "New item", p0, base, cost, comp, stock, custom: true,
+    minP: +$("nMin").value > 0 ? +$("nMin").value : p0 * (1 - C.MAX_PRICE_CHANGE),
+    maxP: +$("nMax").value > 0 ? +$("nMax").value : p0 * (1 + C.MAX_PRICE_CHANGE),
+    e: cat.elasticity, se: cat.elasticity_se, eRaw: null, src: "category prior only",
+    note: `New item · ${$("nCat").value.replace(/_/g, " ")} · price sensitivity ${cat.elasticity.toFixed(2)} ± ${cat.elasticity_se.toFixed(2)}`};
+}
+
+let cur = null;
+function run() {
+  const r = buildRow(); if (!r) return;
+  const o = optimise(r), b = o.comp_same, [conf, why] = confidence(r, b, o.flags);
+  cur = {r, o};
+  const chg = 100 * (b.price / r.p0 - 1);
+  $("rTitle").innerHTML = `${r.name} <span class="hint" style="font-size:13px;font-weight:400">${r.note}</span>`;
+  const badge = {high: ["🟢 High", "var(--good)"], medium: ["🟡 Medium", "var(--warn)"], low: ["🔴 Low", "var(--bad)"]}[conf];
+  const M = (k, v, d, hero) => `<div class="m${hero ? " hero" : ""}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d || "&nbsp;"}</div></div>`;
+  $("metrics").innerHTML =
+    M("Forecast demand (at current price)", `${num(b.unitsCur)} units`, `next week at ${gbp(r.p0)}`) +
+    M("Optimal price", gbp(b.price), Math.abs(chg) > 0.05 ? `${chg > 0 ? "+" : ""}${chg.toFixed(1)}% vs current ${gbp(r.p0)}` : "keep current price", true) +
+    M("Units you can sell at optimal price", `${num(b.units)} units`, `${b.units - b.unitsCur >= 0 ? "+" : ""}${num(b.units - b.unitsCur)} vs current`, true) +
+    M("Expected profit at optimal price", gbp(b.profit, 0), `${b.profit - b.profitCur >= 0 ? "+" : ""}${gbp(b.profit - b.profitCur, 0)} vs current price`) +
+    M("Expected revenue", gbp(b.price * b.units, 0), `margin ${(100 * (b.price - r.cost) / b.price).toFixed(0)}%`) +
+    M("Likely profit range (P10–P90)", `${gbp(b.p10, 0)} – ${gbp(b.p90, 0)}`, "") +
+    `<div class="m"><div class="k">Confidence</div><div class="v" style="color:${badge[1]}">${badge[0]}</div><div class="d">profit at risk ${(100 * b.downside).toFixed(1)}% ·allowed ${gbp(o.lo)} – ${gbp(o.hi)}</div></div>`;
+  $("why").innerHTML = why ? `<div class="warnbox"><b>Why confidence is ${conf}:</b> ${why}</div>` : "";
+  const s = $("tryP"); s.min = (r.p0 * 0.7).toFixed(2); s.max = (r.p0 * 1.3).toFixed(2); s.step = 0.01; s.value = b.price;
+  tryPrice(); drawChart();
+  $("result").classList.remove("hidden"); $("result").scrollIntoView({behavior: "smooth", block: "start"});
+}
+$("tryP").addEventListener("input", tryPrice);
+function tryPrice() {
+  const {r, o} = cur, p = +$("tryP").value, u = units(p, r, o.eDraws, 1, r.stock);
+  $("tpP").textContent = gbp(p); $("tpU").textContent = num(mean(u)); $("tpPr").textContent = gbp(mean(u) * (p - r.cost), 0);
+  const pr = u.map(x => (p - r.cost) * x), mp = mean(pr);
+  const risk = mp > 0 ? mean(o.pr0.map((v, i) => Math.max(v - pr[i], 0))) / Math.max(mean(o.pr0), 1e-9) : Infinity;
+  const lvl = risk <= 0.02 ? ["Low", "var(--good)"] : risk <= 0.05 ? ["Moderate", "var(--warn)"] : ["High", "var(--bad)"];
+  $("tpRisk").textContent = isFinite(risk) ? `${(100 * risk).toFixed(1)}%` : "loss";
+  $("tpRisk").style.color = lvl[1]; $("tpRiskL").textContent = isFinite(risk) ? `${lvl[0]} risk` : "price below cost";
+  $("tpBeat").textContent = Math.abs(p - r.p0) < 0.005 ? "—" : `${Math.round(100 * pr.filter((v, i) => v > o.pr0[i]).length / pr.length)}%`;
+  const out = p > o.hi + 1e-9 || p < o.lo - 1e-9;
+  if (out && isFinite(risk)) { $("tpRisk").style.color = "var(--bad)"; $("tpRiskL").textContent = "Untested price: risk unknown, likely higher"; }
+  $("tpWarn").innerHTML = out ? `⚠️ Outside the allowed range (${gbp(o.lo)} – ${gbp(o.hi)}). ` +
+    (p > o.hi + 1e-9 && p > Math.max(r.maxP, r.p0) + 1e-9 ? `This item has never sold above ${gbp(Math.max(r.maxP, r.p0))}, so this number is an untested extrapolation, not a recommendation.`
+     : p < r.cost / (1 - C.MIN_MARGIN) ? `Below the ${C.MIN_MARGIN * 100}% minimum margin.` : `More than ±${C.MAX_PRICE_CHANGE * 100}% from the current price.`) : "";
+}
+function drawChart() {
+  const {r, o} = cur, W = 600, H = 300, P = {l: 56, r: 12, t: 12, b: 34}, pts = [];
+  for (let i = 0; i < 100; i++) { const p = r.p0 * (0.7 + 0.6 * i / 99), pr = units(p, r, o.eDraws, 1, r.stock).map(u => (p - r.cost) * u);
+    pts.push({p, m: mean(pr), a: quantile(pr, .1), b: quantile(pr, .9)}); }
+  const x0 = pts[0].p, x1 = pts[99].p, yMin = Math.min(0, ...pts.map(d => d.a)), yMax = Math.max(...pts.map(d => d.b)) * 1.05 || 1;
+  const X = p => P.l + (p - x0) / (x1 - x0) * (W - P.l - P.r), Y = v => H - P.b - (v - yMin) / (yMax - yMin) * (H - P.t - P.b);
+  const line = pts.map((d, i) => `${i ? "L" : "M"}${X(d.p).toFixed(1)},${Y(d.m).toFixed(1)}`).join("");
+  const band = pts.map((d, i) => `${i ? "L" : "M"}${X(d.p).toFixed(1)},${Y(d.b).toFixed(1)}`).join("") +
+    [...pts].reverse().map(d => `L${X(d.p).toFixed(1)},${Y(d.a).toFixed(1)}`).join("") + "Z";
+  let ticks = "";
+  for (let i = 0; i <= 4; i++) { const v = yMin + (yMax - yMin) * i / 4, p = x0 + (x1 - x0) * i / 4;
+    ticks += `<line x1="${P.l}" x2="${W - P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${P.l - 6}" y="${Y(v) + 4}" text-anchor="end">£${num(v)}</text>` +
+             `<text x="${X(p)}" y="${H - 12}" text-anchor="middle">£${p.toFixed(2)}</text>`; }
+  const vl = (p, col, lab) => `<line x1="${X(p)}" x2="${X(p)}" y1="${P.t}" y2="${H - P.b}" stroke="${col}" stroke-width="2" stroke-dasharray="4 3"/><text x="${X(p) + 4}" y="${P.t + 12}" style="fill:${col}">${lab}</text>`;
+  const lo = Math.max(o.lo, x0), hi = Math.min(o.hi, x1);
+  $("chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}">${ticks}
+    ${hi > lo ? `<rect x="${X(lo)}" y="${P.t}" width="${X(hi) - X(lo)}" height="${H - P.t - P.b}" fill="var(--good)" opacity=".08"/>` : ""}
+    <path d="${band}" fill="var(--band)"/><path d="${line}" fill="none" stroke="var(--acc)" stroke-width="3"/>
+    ${vl(r.p0, "var(--mute)", "current")}${vl(o.comp_same.price, "var(--good)", "optimal")}</svg>`;
+}
+setMode("known");
+</script>
+</body>
+</html>
