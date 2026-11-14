@@ -19,3 +19,8 @@ Thumbs.db
 data/*.xlsx
 *.log
 .ipynb_checkpoints/
+
+# Old pickle artifact format (replaced by app_products.parquet + app_meta.json)
+outputs/app_artifacts.pkl
+outputs/asof_*/
+.pytest_cache/

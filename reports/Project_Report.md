@@ -1,6 +1,6 @@
 # Retail Pricing AI: Profit-Maximising Price Recommendations from Transactional Sales Data
 
-**Project Report**  
+**Project Report (revised after independent review)**  
 **Date:** 14 November 2026  
 **Repository:** https://github.com/harshithsakhamuri/RetailPricingAI  
 **Live application:** https://harshithsakhamuri.github.io/RetailPricingAI/
@@ -9,273 +9,290 @@
 
 ## Abstract
 
-This project builds an end-to-end decision system that recommends profit-maximising retail prices. It uses the
-UCI Online Retail dataset (about 540,000 transactions, December 2010 to December 2011). The system has three stages:
-(1) a machine-learning forecast of baseline demand for the top 500 products, (2) estimates of each product's
-own-price elasticity from a two-way fixed-effects panel regression, partially pooled with empirical Bayes, and
-(3) a robust optimiser that picks the price maximising the 25th-percentile profit over 500 elasticity draws,
-within business constraints. Across the 50 highest-revenue products, the recommended prices raise expected
-profit over the 7-day decision horizon from £22,071 to £23,165 (+£1,094, +5.0%). 31 of the 50
-recommendations are rated high confidence. Unit costs are assumed and competitor prices are simulated, so the
-absolute profit figures are illustrative. The results are delivered through a static web application hosted on
-GitHub Pages and an optional Streamlit app.
+This project builds an end-to-end decision system that recommends profit-maximising retail prices from the UCI
+Online Retail dataset (541,909 transaction lines, December 2010 to December 2011). It has three stages:
+(1) a 7-day-ahead forecast of baseline demand for the top 500 products, chosen among machine-learning models and
+naive baselines; (2) own-price elasticities from a Poisson (PPML) panel with item and date fixed effects,
+partially pooled by category and checked with a placebo test and an out-of-sample backtest; and (3) a robust
+optimiser that maximises the 25th-percentile profit over 500 elasticity draws within business limits.
+
+This revision follows an independent review and reports the results more conservatively. Most recommended
+prices are set by a business limit rather than by the data, because the estimated price sensitivity (median −0.82)
+implies implausibly high optimal prices. A backtest on later real price changes suggests customers are more
+price-sensitive than estimated (implied median −2.13, from only 10 events). Across all 500 products the
+cross-fitted expected gain from high- and medium-confidence recommendations is £5,892 for the decision week. Only
+17 products reach high confidence. The system's main value is therefore a transparent decision framework and a
+price-testing plan, not the headline profit figure.
 
 ---
 
 ## 1. Introduction
 
-### 1.1 Background
-Pricing is one of the strongest levers on retail profit. A small price change can move margin a lot, but only if
-customers' price sensitivity is understood. Many retailers set prices with cost-plus rules or by intuition, which
-ignores how demand responds to price.
-
-### 1.2 Problem statement
-For each product, given its sales history, recommend the price for the coming week that maximises
+### 1.1 Problem statement
+For each product, recommend the price for the coming week that maximises
 
 > **profit = (price − unit cost) × expected units sold**
 
-The recommendation must stay within realistic business rules and come with an honest measure of confidence.
+within realistic business rules, and state honestly how far the data supports the recommendation.
 
-### 1.3 Objectives
-1. Forecast baseline weekly demand for each product at its current price.
-2. Estimate how demand responds to price (own-price elasticity) from real data.
-3. Find the profit-maximising price under uncertainty and business constraints.
-4. Report the confidence of each recommendation and the profit at risk.
-5. Deliver the results through an easy, no-install web interface.
+### 1.2 Objectives
+1. Forecast baseline weekly demand at the current price.
+2. Estimate how demand responds to price from real data, and test those estimates.
+3. Choose the profit-maximising price under uncertainty and business limits.
+4. Report confidence, what set each price, and how to test it.
+5. Deliver results through a no-install web interface, with batch and portfolio views.
 
 ---
 
 ## 2. Data
 
 ### 2.1 Source
-**UCI Online Retail** dataset (CC BY 4.0): all transactions of a UK-based online gift retailer from
-1 December 2010 to 9 December 2011. Fields include invoice number, stock code, description, quantity, invoice
-date, unit price, customer ID and country. The raw file (22 MB) is not stored in the repository; see
-`data/README.md` for download instructions.
+**UCI Online Retail** (CC BY 4.0): all transactions of a UK online gift wholesaler, 1 December 2010 to
+9 December 2011. The raw file (22 MB) is not stored in the repository (see `data/README.md`).
 
 ### 2.2 Cleaning
-- Removed cancellations (invoices starting with "C"), non-positive quantities and prices, and non-product codes
-  (postage, fees, adjustments).
-- Limited the analysis to the **500 products with the highest training-period revenue**.
-- Reindexed each product to a full daily calendar so that days with no sales count as zero demand.
-- Capped extreme demand at each product's 99.5% quantile, computed on training data only.
+- **Cancellations are netted** against the same customer's earlier orders of the same item, most recent first.
+  This removed 250,838 units, and 2,863 order lines were fully cancelled. A further 23,970 cancelled units had no
+  earlier order in the data and were ignored.
+- **Lines without a CustomerID are excluded** by default (25% of lines, 15% of revenue, mostly guest or retail
+  buyers). Recommendations therefore describe registered, mainly wholesale, customers. This is a setting
+  (`INCLUDE_GUEST_LINES`).
+- Non-product codes (postage, fees, adjustments) and price typos (more than 5× or less than 0.2× the item's
+  median) are removed. 393,090 lines remain.
+- **One price definition throughout:** the *list price*, the median unit price of regular-size lines (quantity no
+  larger than the item's median line). Bulk lines carry tier discounts and would otherwise create artificial price cuts.
 
-### 2.3 Product categories
-Products were grouped into categories (bags, kitchen/baking, home décor, lighting/candles, Christmas, storage,
-stationery/paper, toys/gifts, other) with keyword rules on the description. Categories are used to pool
-elasticity estimates.
+### 2.3 Categories and variants
+Products are grouped into nine categories by **whole-word** keyword rules on the description, so "TIN" no longer
+matches "BUNTING". Colour and design variants (for example the Regency teacups in rose, green and pink) are
+identified by removing colour and design words from the name.
 
 ### 2.4 Data splits (strictly by date)
 
-| Split | Period |
-|---|---|
-| Train | up to 2011-08-31 |
-| Validation | 2011-09-01 to 2011-10-31 |
-| Test | 2011-11-01 to 2011-12-09 |
-| Decision horizon | 2011-12-10 to 2011-12-16 (7 days after the data ends) |
+| Split | Period | Use |
+|---|---|---|
+| Train | to 2011-08-31 | fit models |
+| Calibration | 2011-09-01 to 2011-09-30 | early stopping, level calibration |
+| Selection | 2011-10-01 to 2011-10-31 | choose the forecast model |
+| Test | 2011-11-01 to 2011-12-09 | report accuracy; production calibration |
+| Decision horizon | 2011-12-10 to 2011-12-16 | recommendations |
+
+The splits are defined relative to the last data day. `--as-of` re-runs the whole system for any earlier week.
 
 ---
 
 ## 3. Methodology
 
-The pipeline is implemented in `src/pricing_profit_optimizer.py`.
-
-### 3.1 Baseline demand forecasting
-- **Models:** LightGBM, XGBoost and Random Forest (Tweedie loss where supported), plus a simple ensemble, compared
-  against two naive baselines (same day last week; 28-day mean rate).
-- **Features:** calendar features known in advance, and lag/rolling demand features that are at least 7 days old,
-  so the 7-day-ahead forecast never uses future information. **No price features are used**, so all price effects
-  come from the elasticity stage and are not double-counted.
-- **Scaling:** targets are scaled by each product's recent selling rate. A level-calibration factor fitted on
-  validation (1.252 for XGBoost) corrects the Q4 seasonal growth that tree models cannot extrapolate.
-- **Selection:** the model with the lowest validation 7-day WAPE (weighted absolute percentage error on weekly
-  product totals) is chosen and refitted on all data.
+### 3.1 Baseline demand forecast
+- **Candidates:** LightGBM, XGBoost and Random Forest (Tweedie loss), their ensemble, and two naive baselines
+  (same day last week; 28-day mean rate).
+- **Features:** calendar features and demand lags or rolling windows at least 7 days old; an automated test
+  confirms that no feature uses later data. No price features are used, so price effects come only from stage 2.
+- **Fair selection:** every candidate, including the naive ones, gets a level-calibration factor fitted on the
+  calibration month, and the winner is chosen on the selection month.
+- **Production calibration:** the chosen model is refitted on data up to 2011-10-31, and its level error on the
+  test weeks (factor 1.20) is applied to the final full-history refit. The factor therefore belongs to the refit
+  model rather than the train-only model.
 
 ### 3.2 Own-price elasticity
-- For each category, a **daily two-way fixed-effects log-log panel regression** of units on price, with item
-  effects and date effects. Elasticity is identified only from within-item price changes, compared with other
-  items on the same day, which removes product-level and seasonal confounding.
-- Item-level slopes use Newey-West (HAC) standard errors; category slopes use item-clustered errors.
-- **Empirical-Bayes partial pooling** (DerSimonian-Laird) shrinks noisy estimates in three levels:
-  global → category → item. Products with too little price variation use their category prior.
+- **Model:** for each category, a Poisson pseudo-maximum-likelihood regression of daily units on log list price
+  with item and date fixed effects, on **every trading day**. Zero-sale days are included, and on days without a
+  sale the last list price applies.
+- **Item slopes:** each item's slope uses the category's date effects, with Newey-West standard errors. An item
+  qualifies only with at least 8 weeks of sales and at least 2 weekly list prices, each held for at least 3 **weeks**.
+- **Pooling:** empirical Bayes, global → category → item. A category slope is trusted only if at least 10 of its
+  items changed price; otherwise the global prior is used. Items whose own slope shows demand *not* falling with
+  price (32 items) contribute no evidence: they take the category value and are flagged low confidence. No pooled
+  elasticity can be positive.
+- **Placebo test:** each item's price path is shifted in time 20 times and the category slope re-estimated. Real
+  slopes far from the placebo distribution indicate a genuine price effect rather than an artefact.
+- **Out-of-sample backtest:** elasticities re-estimated on data up to 2011-08-31 predict the demand change after
+  later real list-price changes, measured against the rest of the item's category.
 
 ### 3.3 Competitor effect (simulated)
-No competitor data exists in the dataset. A seeded synthetic competitor price is generated, with demand
-multiplied by `((comp/p)/(comp0/p0))^0.5` (cross-elasticity 0.5). Three scenarios are evaluated: competitor
-10% cheaper, the same, and 10% dearer. A real competitor file can be supplied through `COMPETITOR_PATH`.
+A seeded synthetic competitor price is generated. Because the real-data elasticity already contains any competitor
+reaction, the competitor enters **only** as a demand shift when its price level differs from the reference
+(demand × level^0.5). It does not add to the own-price slope.
 
 ### 3.4 Unit costs (assumed)
-No cost data exists. Unit cost is assumed to be **60% of each product's median training price**. It can be
-overridden by category (`COST_RATIO_BY_CATEGORY`) or by product (`COST_OVERRIDES_PRODUCT`).
+60% of each item's median list price, adjustable by category or product.
 
-### 3.5 Robust price optimisation
-For each product, candidate prices are evaluated over **500 draws** from the elasticity's posterior
-distribution. The chosen price maximises the **P25 profit** (the 25th percentile), which protects against
-elasticity uncertainty. Constraints:
+### 3.5 Robust price decision
+For each product, candidate prices with realistic endings are evaluated over 500 elasticity draws. The chosen price
+maximises the **25th-percentile profit**, within these limits:
 
 - at most ±20% from the current price;
-- at most 10% above the highest price ever charged (flagged as untested);
-- a minimum margin of 20%, i.e. (price − cost) / price ≥ 0.20;
-- realistic price endings (for example .25, .45, .95);
+- at most 10% above the highest weekly list price ever charged (flagged as untested);
+- a minimum margin of 20%;
 - an optional stock cap.
 
-### 3.6 Confidence rating
-Confidence is based on the decision, not just the statistics:
+Each recommendation also reports:
+- **What set the price:** the data (an interior optimum or keeping the price), a named limit, or joint pricing with variants.
+- **Lerner check:** the unconstrained optimal price implied by the elasticity, as a plausibility test.
+- **Cross-fitted gain:** the price is chosen on half the draws and its gain scored on the other half.
+- **Joint pricing:** variants that currently share a price keep one common price.
+- **P10–P90 profit range:** includes both elasticity uncertainty and baseline-forecast error (empirical
+  actual/forecast ratios from the test weeks, by volume band).
 
+### 3.6 Confidence
 | Rating | Rule |
 |---|---|
-| High | downside risk (expected profit lost vs keeping the current price) ≤ 2% **and** the change beats the current price in ≥ 80% of draws |
-| Medium | downside risk ≤ 5% |
-| Low | otherwise |
+| High | profit at risk vs the current price ≤ 2%, the change beats the current price in ≥ 80% of draws, the price has been charged before, **and the item has its own price-change evidence** |
+| Medium | profit at risk ≤ 5% and the change wins in ≥ 60% of draws |
+| Low | otherwise, or very low volume, an infeasible price range, or contradictory own data |
 
-Prices above the highest ever charged are capped at medium.
+### 3.7 Price-test planner
+For every item below high confidence, the system designs a switchback test (alternate weeks at the current and test
+price) and computes the trading days needed to distinguish elasticity −1 from −2 at 5% significance and 80% power.
+It also estimates the duration when the same percentage change is tested across the item's category.
 
 ---
 
 ## 4. Results
 
-### 4.1 Forecast accuracy
+### 4.1 Forecast accuracy (7-day product totals, WAPE %)
 
-| Model | Val WAPE % (7-day) | Test WAPE % (7-day) | Test MAE | Test RMSE | Test Bias % |
-|---|---|---|---|---|---|
-| LightGBM | 58.28 | 54.24 | 16.52 | 46.63 | −0.38 |
-| **XGBoost (selected)** | **58.19** | **52.87** | 16.06 | 46.62 | −6.11 |
-| Random Forest | 62.65 | 60.76 | 17.55 | 47.77 | 2.20 |
-| Ensemble | 59.23 | 55.58 | 16.64 | 46.84 | −1.31 |
-| Naive: same day last week | 70.88 | 61.61 | 20.18 | 66.36 | −0.82 |
-| Naive: 28-day mean rate | 59.93 | 51.72 | 16.00 | 46.78 | −8.20 |
+| Model | Calibration | Selection month | Test | Test bias % |
+|---|---|---|---|---|
+| **LightGBM (selected)** | 1.31 | **63.0** | 53.5 | −0.5 |
+| XGBoost | 1.24 | 63.6 | 52.5 | −2.1 |
+| Random Forest | 1.16 | 67.2 | 59.3 | 0.8 |
+| Ensemble | 1.24 | 64.1 | 54.6 | −0.6 |
+| Naive: same day last week | 1.12 | 75.4 | 66.5 | 7.9 |
+| Naive: 28-day mean rate | 1.11 | 65.8 | 52.9 | −1.4 |
 
-XGBoost won on validation. On the test period, however, it is **slightly worse than the 28-day mean-rate
-baseline** (52.9% vs 51.7% WAPE, a 2.2% relative gap). Weekly item-level retail demand is very noisy, and the
-machine-learning models add little over a well-chosen naive forecast here. This matters less for pricing than it
-might seem: a baseline forecast error scales profit equally at every candidate price, so it changes the size of
-the expected profit but not which price is optimal.
+LightGBM wins the selection month fairly, but on the test weeks it is slightly worse than XGBoost and the calibrated
+28-day average. **Machine learning adds no reliable accuracy over a calibrated simple average for this data.** The
+baseline scales profit equally at every price, so this affects the £ figures but not which price is chosen.
 
 ![Forecast accuracy](../outputs/forecast_accuracy.png)
 
-### 4.2 Elasticity estimates
-- 131 of the 500 products had enough real price variation for a product-level estimate; the rest use their
-  category prior.
-- Global prior: −1.05 (between-product standard deviation 1.19).
-- Pooled elasticities: median −1.08, interquartile range [−1.14, −1.02]; **89% of products are elastic**
-  (elasticity < −1).
-- 27% of raw product-level estimates had the wrong sign (> 0), a sign of price endogeneity and noise; pooling
-  pulls these toward the category prior.
+### 4.2 Elasticity
 
-| Category | Panel slope | Prior mean | Products with own estimate |
+| Category | Category slope | Items with price changes | Prior used |
 |---|---|---|---|
-| Bags | −1.47 | −1.28 | 24 |
-| Other | −1.25 | −1.14 | 25 |
-| Storage | −1.22 | −1.12 | 9 |
-| Lighting & candles | −1.24 | −1.11 | 7 |
-| Stationery & paper | −1.17 | −1.08 | 4 |
-| Kitchen & baking | −1.02 | −1.03 | 32 |
-| Home décor | −0.99 | −1.02 | 27 |
-| Toys & gifts | −0.77 | −1.00 | 2 |
-| Christmas | −0.62 | −0.68 | 1 |
+| Bags | −1.21 | 18 | category slope, pooled to −0.84 |
+| Kitchen & baking | −0.87 | 19 | category slope, pooled to −0.83 |
+| Home décor | −0.82 | 27 | category slope, −0.82 |
+| Other | −0.52 | 22 | category slope, pooled to −0.79 |
+| Lighting, stationery, storage, Christmas, toys | — | 0–4 each | global prior −0.82 |
 
-![Elasticity distribution](../outputs/elasticity_distribution.png)
+- 63 items have usable price changes of their own, 405 never changed price, and 32 have contradictory data.
+- **Placebo test:** the real slopes for bags (z = −3.5), kitchen & baking (−4.9) and home décor (−2.3) lie well
+  outside their placebo distributions, so these are genuine price effects. "Other" (z = −1.6) is not clearly
+  distinguishable from noise.
+- **Backtest:** on 10 later real price changes, the model's predicted demand change has mean absolute error 1.09,
+  against 1.41 for assuming price has no effect (correlation 0.73, direction correct in 60%). The demand changes
+  imply a median elasticity of **−2.13**, much stronger than the model's −0.82. With only 10 events this is
+  indicative, but it points the same way as the Lerner check below.
 
-### 4.3 Pricing recommendations
-For the 50 highest-revenue products over the 7-day horizon (competitor price unchanged):
+![Elasticity, placebo test and backtest](../outputs/elasticity_distribution.png)
+
+### 4.3 Recommendations
 
 | Metric | Value |
 |---|---|
-| Expected profit at current prices | £22,071 |
-| Expected profit at recommended prices | £23,165 |
-| Expected gain | **£1,094 (+5.0%)** |
-| Mean price change | +6.2% |
-| Confidence: high / medium / low | 31 / 14 / 5 |
+| Prices set by a business limit | 372 of 500 (upper limits 371, lower limit 1) |
+| Jointly priced variants | 82 items |
+| Prices set by the data | 19 (10 interior optimum, 9 keep current price) |
+| Items whose elasticity implies an optimal price > 1.5× current (Lerner check) | 98% |
+| Confidence (all 500): high / medium / low | 17 / 421 / 62 |
+| Confidence (top 50): high / medium / low | 0 / 46 / 4 |
+| Cross-fitted weekly gain, all 500, high + medium | **£5,892** (low confidence: £628) |
+| Cross-fitted weekly gain, top 50, high + medium | £2,160 on a baseline of £19,684 |
 
-Largest expected gains:
+The Lerner check shows that with elasticity around −0.82 and 40% margins, the unconstrained optimum would be far
+above current prices. That is implausible for a business that has priced this way for a year, so the elasticities
+are very likely biased toward zero by non-experimental price variation, as the backtest also suggests. Recommended
+increases at the upper limit should therefore be treated as hypotheses to test, not as instructions. The
+cross-fitted gain turned out equal to the in-sample gain because the chosen price is stable across draw subsets;
+the larger source of optimism is the elasticity bias, not draw-selection noise.
 
-| Stock code | Product | Current £ | Recommended £ | Profit change £ | Confidence |
-|---|---|---|---|---|---|
-| 23284 | Doormat Keep Calm and Come In | 8.25 | 9.85 | +162.42 | low |
-| 22423 | Regency Cakestand 3 Tier | 12.75 | 14.65 | +135.10 | high |
-| 47566 | Party Bunting | 4.95 | 5.85 | +112.27 | low |
-| 20685 | Doormat Red Retrospot | 8.25 | 9.85 | +66.18 | low |
-| 22086 | Paper Chain Kit 50's Christmas | 2.95 | 3.10 | +65.67 | medium |
-| 22178 | Victorian Glass Hanging T-Light | 1.95 | 2.25 | +65.19 | high |
-| 22960 | Jam Making Set with Jars | 4.25 | 5.10 | +57.44 | high |
+Largest expected gains among the top 50 products by revenue:
 
-Three of the four largest gains are rated **low** confidence, because their estimated elasticities are positive
-or very uncertain. These should be price-tested before rollout. The high-confidence recommendations (for example
-the Regency Cakestand and the Jam Making Set) are the safest to act on.
+| Code | Product | Current £ | Recommended £ | Gain £ | Evidence | Price set by |
+|---|---|---|---|---|---|---|
+| 23084 | Rabbit Night Light | 2.08 | 2.49 | 361 | category only | +20% cap |
+| 22423 | Regency Cakestand 3 Tier | 12.75 | 14.00 | 126 | category only | highest price charged |
+| 85099B | Jumbo Bag Red Retrospot | 2.08 | 2.25 | 101 | own + category | joint with variants |
+| 84879 | Assorted Colour Bird Ornament | 1.69 | 1.85 | 98 | category only | highest price charged |
+| 22086 | Paper Chain Kit 50's Christmas | 2.95 | 3.10 | 90 | category only | highest price charged |
+| 23284 | Doormat Keep Calm and Come In | 8.25 | 9.05 | 86 | own + category | highest price charged |
 
-![Profit vs price curves](../outputs/profit_vs_price_curves.png)
+![Profit vs price](../outputs/profit_vs_price_curves.png)
 
-### 4.4 Competitor scenarios (simulated)
+### 4.4 Price-test plan
+Only 10 of 483 items below high confidence could be tested individually within 12 weeks, because single-item
+daily sales are very noisy. Testing the same percentage change across an item's category makes 229 of them
+practical. The plan is in `outputs/price_test_plan.csv` and on each item's page.
 
-| Scenario | Profit at current prices £ | Profit at optimised prices £ | Mean price change % |
-|---|---|---|---|
-| Competitor −10% | 20,938 | 21,977 | 6.18 |
-| Competitor unchanged | 22,071 | 23,165 | 6.18 |
-| Competitor +10% | 23,148 | 24,296 | 6.18 |
+### 4.5 Competitor scenarios (simulated)
 
-With a constant-elasticity demand curve, a competitor price-level shift multiplies demand equally at every price.
-It therefore changes profit but **not the optimal price**. This is a property of the model, not an error.
+| Scenario | Profit at current prices £ | Profit at recommended prices £ |
+|---|---|---|
+| Competitor −10% | 18,673 | 20,836 |
+| Competitor unchanged | 19,684 | 21,964 |
+| Competitor +10% | 20,644 | 23,036 |
 
 ![Competitor scenarios](../outputs/competitor_scenarios.png)
 
 ---
 
-## 5. Deployment
+## 5. Deployment and engineering
 
 | Component | Description |
 |---|---|
-| Static web app (`docs/`) | Runs fully in the browser, with no server or login. Users pick a product or enter a new one and see the demand forecast, optimal price, expected units, profit, revenue, confidence and profit at risk, plus a what-if price slider. Hosted on GitHub Pages. |
-| Streamlit app (`app/`) | Optional local interactive version that reads `outputs/app_artifacts.pkl`. |
-| Export script (`src/export_web_data.py`) | Writes model results to `docs/data.js` for the web app. |
-| Windows helpers (`scripts/`) | One-click retraining, app launch and webpage opening. |
-
-To reproduce: install `requirements.txt`, place the dataset in `data/`, run
-`python src/pricing_profit_optimizer.py` (about 1–2 minutes), then `python src/export_web_data.py`.
+| Web app (`docs/`) | Runs in the browser with no server. Existing-item, new-item, batch CSV and all-recommendations views; CSV downloads. |
+| `src/pricing_core.py` + `docs/pricing.js` | One decision engine with an exact JS port; a test checks they agree on 41 cases. |
+| Streamlit app (`app/`) | Optional local app; reads portable Parquet/JSON artifacts and keeps no shared state between users. |
+| Tests and CI | 54 tests on every push: decision rules, each review finding, feature leakage, recovery of a known elasticity, JS parity, the Streamlit app, and invariants on the committed outputs. A manual CI run re-trains from the public dataset. |
+| Reproducibility | Pinned dependency versions; `.sh` and `.bat` scripts; `--as-of` for other decision weeks. |
 
 ---
 
 ## 6. Limitations
 
-1. **Price endogeneity.** Historical price changes are not experiments. Wholesale tier pricing, seasonal list-price
-   changes and customer mix can bias elasticities. Fixed effects reduce but do not remove this bias.
-2. **Limited price variation.** Most products never changed price, so their elasticity comes from the category prior.
-3. **Assumed costs.** Unit costs are 60% of the median price, so absolute profit figures are illustrative.
-4. **Simulated competitor.** All competitor results are synthetic and should not be acted on.
-5. **Forecast accuracy.** The selected model does not beat the best naive baseline on the test period.
-6. **Constant-elasticity demand.** This is a local approximation, used only within ±20% of the current price.
-7. **Unusual horizon.** The forecast week (10–16 December 2011) is the pre-Christmas peak; results do not carry
-   over to ordinary weeks without retraining on fresh data.
+1. **Price endogeneity remains.** The placebo test and backtest bound the problem but cannot remove it; the
+   evidence suggests estimated sensitivity is too weak, so increases are overstated.
+2. **Little price variation:** 405 of 500 items never changed price and rely on a category or global prior.
+3. **Assumed costs and simulated competitor.** Absolute £ figures are illustrative.
+4. **Forecast:** machine learning does not beat a calibrated simple average on the test weeks.
+5. **Constant elasticity**, applied only within ±20% of current prices.
+6. **Unusual horizon:** the default week is the pre-Christmas peak. In an `--as-of 2011-09-30` run, the backtest
+   found the elasticities no better than assuming no price effect, so results vary by period.
+7. **Small backtest:** 10 events for the default run.
 
 ---
 
-## 7. Future work
+## 7. Recommended next steps
 
-- Run **A/B price tests** to obtain causal elasticity estimates, starting with low-confidence products.
-- Replace the assumed costs with **real landed costs** and the simulated competitor with **real competitor prices**.
-- Add **cross-price effects** between substitute and complementary products.
-- Improve the demand forecast with promotions, stock-outs and external signals, and consider simpler models
-  given the strength of the naive baseline.
-- Retrain automatically on new sales data and monitor realised profit against predictions.
+1. Run the category-level price tests in `price_test_plan.csv`, starting with the categories that have the largest
+   recommended changes, and feed the results back as elasticity evidence.
+2. Replace the assumed costs with real landed costs, and the simulated competitor with real competitor prices.
+3. Consider replacing the ML forecast with the calibrated 28-day average unless new data shows a consistent ML gain.
+4. Re-run with `--as-of` across several weeks to see how stable the recommendations are.
 
 ---
 
 ## 8. Conclusion
 
-The project delivers a complete, reproducible pipeline from raw transactions to price recommendations with
-calibrated confidence, served through a zero-install web application. On the top 50 products it identifies an
-expected profit gain of about 5% over one week, mostly from modest price increases on products whose demand is
-less price-sensitive than their margin implies. The main value of the system is its decision framework: robust
-optimisation under uncertainty, explicit business constraints and an honest confidence rating. Its numerical
-outputs should be validated with real costs, real competitor data and controlled price tests before being used
-in production.
+The project delivers a complete, tested and reproducible pipeline from raw transactions to price recommendations,
+served through a zero-install web application with batch and portfolio views. After the review its outputs are
+deliberately conservative. Every recommendation states what set the price, how strong its evidence is, and how to
+test it, and the headline gain counts only high- and medium-confidence items. The data supports modest price
+increases on many items, but it cannot pin down by how much: the placebo test confirms real price effects in
+three categories, while the backtest and Lerner check show the estimated sensitivity is probably too weak.
+Controlled price tests, which the system now plans, are the necessary next step before acting at scale.
 
 ---
 
 ## References
 
 1. Chen, D. (2015). *Online Retail* [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5BW33
-2. Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system. *Proceedings of KDD 2016*.
-3. Ke, G., et al. (2017). LightGBM: A highly efficient gradient boosting decision tree. *NeurIPS 2017*.
-4. Newey, W. K., & West, K. D. (1987). A simple, positive semi-definite, heteroskedasticity and autocorrelation
+2. Santos Silva, J. M. C., & Tenreyro, S. (2006). The log of gravity. *Review of Economics and Statistics*, 88(4), 641–658.
+3. Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system. *Proceedings of KDD 2016*.
+4. Ke, G., et al. (2017). LightGBM: A highly efficient gradient boosting decision tree. *NeurIPS 2017*.
+5. Newey, W. K., & West, K. D. (1987). A simple, positive semi-definite, heteroskedasticity and autocorrelation
    consistent covariance matrix. *Econometrica*, 55(3), 703–708.
-5. DerSimonian, R., & Laird, N. (1986). Meta-analysis in clinical trials. *Controlled Clinical Trials*, 7(3), 177–188.
+6. DerSimonian, R., & Laird, N. (1986). Meta-analysis in clinical trials. *Controlled Clinical Trials*, 7(3), 177–188.
+7. Smith, J. E., & Winkler, R. L. (2006). The optimizer's curse. *Management Science*, 52(3), 311–322.
