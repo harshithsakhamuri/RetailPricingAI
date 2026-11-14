@@ -128,3 +128,16 @@ def test_no_global_state_in_core_or_app():
     assert "stock" in inspect.signature(core.optimise_product).parameters
     app = (ROOT / "app" / "streamlit_app.py").read_text(encoding="utf-8")
     assert not re.search(r"^\s*(core|pp)\.[A-Z_]+\s*=", app, re.M), "the app must not assign module settings"
+
+
+def test_expected_profit_never_below_current_price():
+    rng = np.random.default_rng(5)
+    for _ in range(200):
+        r = item(elasticity=float(rng.uniform(-4, -0.3)), elasticity_se=float(rng.uniform(0.05, 1.5)))
+        b = core.optimise_product(r, Z)["comp_same"]
+        assert b["profit"] >= b["profit_current"] - 1e-9
+
+
+def test_draws_are_clipped_to_plausible_range():
+    d = core.elasticity_draws(-5.5, 3.0, Z)
+    assert d.min() >= core.ELASTICITY_FLOOR and d.max() <= core.ELASTICITY_CEILING

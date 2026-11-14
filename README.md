@@ -55,26 +55,32 @@ Or use `scripts/retrain.(bat|sh)`, which runs all three steps and fails if any c
    by default (`INCLUDE_GUEST_LINES`). One price definition throughout: the list price from regular-size lines.
 2. **Demand forecast:** LightGBM, XGBoost, Random Forest, an ensemble **and two naive baselines** all get the same
    level calibration and compete on held-out validation weeks. The production calibration is measured on a refit model.
-3. **Price sensitivity:** Poisson (PPML) panel with item and date fixed effects on every trading day, zero-sale days
-   included. Item slopes are pooled with their category; wrong-signed items fall back to the category and are flagged.
-   Checked with a **placebo test** and an **out-of-sample backtest** on later real price changes.
-4. **Decision** (`src/pricing_core.py`): robust (P25) profit maximisation within ±20% of the current price, ≤ 10%
+3. **Price sensitivity:** the overall level comes from an event study of the shop's 51 real list-price changes
+   (sales before vs after, net of similar products): elasticity −2.2. A Poisson (PPML) panel with item and date
+   fixed effects on every trading day decides how categories and items differ; its slopes are rescaled to the event
+   level because noisy daily prices pull them toward zero. Wrong-signed items fall back to the category and are
+   flagged. Checked with a **placebo test** and an **out-of-sample backtest**.
+4. **Decision** (`src/pricing_core.py`): the price with the highest expected profit over the elasticity uncertainty, within ±20% of the current price, ≤ 10%
    above the highest price charged and a 20% minimum margin. Colour/design variants that share a price are priced
    jointly. Each item reports what set its price, a Lerner sanity check, a cross-fitted gain and a test plan.
 5. **Confidence:** "high" needs low profit-at-risk **and** the item's own price history; category-only items are
    capped at medium.
 
 ## What the results say (honestly)
-- Most recommended prices are set by a **business limit**, not by the data: the estimated price sensitivity
-  (median −0.82) implies far higher optimal prices than any business would charge. The backtest on later real
-  price changes suggests customers are more price-sensitive than estimated, so increases are probably overstated.
-- Only 17 of 500 items reach high confidence. Single-item price tests mostly need far more than 12 weeks; testing the
+- Real price changes show a 10% rise cuts sales by about 22%. At that sensitivity and the assumed 40% margin,
+  today's prices are close to the best price: 315 items get a small rise, 124 stay the same and 61 get a small cut.
+  Calibrating to real price changes cut the backtest error from 1.09 to 0.91 (1.41 when assuming price has no effect).
+- Gains are small: about £344 a week across all 500 items from high- and medium-confidence suggestions.
+- Many items show the same % change because we know the same things about them: most never changed price and all
+  use the same assumed cost ratio, so items at the same price point (e.g. £2.95) get the same answer. Entering real
+  costs makes each suggestion specific. The simulated competitor deliberately does not drive prices.
+- Only 6 items reach high confidence. Single-item price tests mostly need far more than 12 weeks; testing the
   same change across a category is practical. See `outputs/price_test_plan.csv`.
 - The ML forecast is no better than a calibrated 28-day average on the test weeks.
 
 ## Tests and CI
 `pytest -q` runs on every push (GitHub Actions). The tests cover the decision maths, every review finding as a
-regression test, feature-leakage, recovery of a known elasticity, Python/JS parity on 41 cases, the Streamlit app,
+regression test, feature-leakage, recovery of a known elasticity, Python/JS parity on 41 cases, a guarantee that no suggestion earns less than today's price, the Streamlit app,
 and invariants on the committed outputs. A manual workflow run with *full_pipeline* downloads the dataset,
 re-trains and re-checks everything.
 

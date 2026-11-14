@@ -335,7 +335,7 @@ function run() {
   if (ev.joint && Math.abs(ev.indiv.comp_same.price - b.price) > 1e-9) whyList.push(`<li>On its own, this product would get ${gbp(ev.indiv.comp_same.price)}, but we matched it to its ${x.item.joint_with} other colour/design version(s).</li>`);
   const L = PC.lerner(Math.min(r.elasticity, C.ELASTICITY_CEILING), r.unit_cost, r.current_price);
   if (chg > 0.05 && (!isFinite(L.unconstrained_price) || L.unconstrained_price > 1.5 * r.current_price))
-    whyList.push(`<li><b>A word of caution:</b> the past sales suggest customers hardly notice price changes, so the numbers alone would push the price much higher. That seems too good to be true, and when this shop really did change prices, customers reacted more strongly. So we kept the increase small, and you should test it before applying it widely.</li>`);
+    whyList.push(`<li><b>A word of caution:</b> our estimate says customers react only mildly to price for this product, so the numbers alone would push the price much higher. That seems too good to be true, so we kept the increase within the safety limits. Test it before applying it widely.</li>`);
   const reasons = reasonsPlain(why, r);
   $("why").innerHTML = `<div class="box"><ul>${whyList.join("")}</ul></div>` +
     (reasons.length ? `<div class="box warn"><b>What makes us less certain:</b><ul>${reasons.map(s => `<li>${esc(s)}</li>`).join("")}</ul></div>` : "");
@@ -477,10 +477,14 @@ function renderPortfolio() {
     M("Products to raise in price", `${ups} of ${n}`, "most by a small step") +
     M("Stopped by a safety limit", `${limited} of ${n}`, "past sales would have pushed these further") +
     M("Very sure / fairly sure / not sure", `${D.items.filter(i => i.confidence === "high").length} / ${D.items.filter(i => i.confidence === "medium").length} / ${D.items.filter(i => i.confidence === "low").length}`, "most products never changed price, so certainty is limited");
-  $("pfExplain").innerHTML = `<b>What this list tells you:</b> past sales suggest most prices could go up a little. But this shop rarely changed its prices, ` +
-    `and when it did${bt.n_events ? ` (${bt.n_events} times we could check)` : ""}, customers reacted more strongly than our estimates. So treat the increases ` +
-    `as ideas to test, not certainties. <b>Tip:</b> sort by "extra weekly profit", start with the products we're most sure about, ` +
-    `and click a product name for the full explanation.`;
+  const lvl = D.elasticity_level, downs = D.items.filter(i => i.recommended_price < i.current_price - 1e-9).length;
+  $("pfExplain").innerHTML = `<b>What this list tells you:</b> ` +
+    (lvl ? `we measured how shoppers really reacted the ${lvl.n_events} times this shop changed a price: on average, a 10% price rise cut sales by about ${Math.round(-lvl.elasticity * 10)}%. ` : "") +
+    `At that level, today's prices are close to the best price, and a small rise of 5–10% may earn a little more on ${ups} products (a small cut may help on ${downs}). ` +
+    `The gains are small and uncertain, so treat them as ideas to test. <br><b>Why do many products show the same change?</b> Most products have never changed price, ` +
+    `so we know the same things about them (how shoppers react on average, and an estimated cost of 60% of the price). Products that also sell at the same price ` +
+    `(for example £2.95) therefore get the same suggestion (£3.10). Entering a product's real cost makes its suggestion specific to it. ` +
+    `<br><b>Tip:</b> sort by "extra weekly profit", start with the products we're most sure about, and click a product name for the full explanation.`;
   const rows = pfRows();
   $("pfCount").textContent = `Showing ${rows.length} of ${n} products. Click a column heading to sort.`;
   const fmt = (k, v) => v == null ? "" : k === "confidence" ? `<span class="pill c-${v}">${CONF_WORD[v]}</span>` : PF_PLAIN[k] ? esc(PF_PLAIN[k](v)) :

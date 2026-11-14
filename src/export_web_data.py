@@ -78,7 +78,7 @@ def main():
 
     items = records(p[ITEM_INPUTS + ITEM_RESULTS])
     data = {"week": f"{pd.Timestamp(meta['horizon_start']):%d %b %Y} – {pd.Timestamp(meta['horizon_end']):%d %b %Y}",
-            "model": meta["model"], "wape": round(meta["test_wape_7day"], 1),
+            "model": meta["model"], "elasticity_level": meta.get("elasticity_level"), "wape": round(meta["test_wape_7day"], 1),
             "naive_wape": round(meta["best_naive_test_wape_7day"], 1), "z": meta["z"],
             "ratio_samples": meta["forecast_ratio_samples"], "band_edges": edges, "backtest": meta["backtest"],
             "gains_top": meta["gains_top"], "gains_all": meta["gains_all"], "cost_ratio": 0.60,

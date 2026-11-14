@@ -7,11 +7,11 @@
 (function (root) {
   "use strict";
   const CFG = {
-    ELASTICITY_CEILING: -0.10, CROSS_ELASTICITY: 0.5,
+    ELASTICITY_CEILING: -0.10, ELASTICITY_FLOOR: -6.0, CROSS_ELASTICITY: 0.5,
     COMP_SCENARIOS: {comp_minus10: 0.90, comp_same: 1.00, comp_plus10: 1.10},
     MAX_PRICE_CHANGE: 0.20, MIN_MARGIN: 0.20, PRICE_HEADROOM: 0.10,
     PRICE_ENDINGS: [0.05, 0.10, 0.25, 0.45, 0.49, 0.55, 0.65, 0.75, 0.79, 0.85, 0.95, 0.99],
-    ROBUST_QUANTILE: 0.25, RISK_HIGH: 0.02, RISK_MEDIUM: 0.05, P_IMPROVE_HIGH: 0.80, P_IMPROVE_MEDIUM: 0.60,
+    ROBUST_QUANTILE: null, RISK_HIGH: 0.02, RISK_MEDIUM: 0.05, P_IMPROVE_HIGH: 0.80, P_IMPROVE_MEDIUM: 0.60,
     MIN_FORECAST_UNITS: 5.0,
     SRC_OWN: "own price changes + category",
     SRC_PRIOR: "category only (item never changed price)",
@@ -34,7 +34,7 @@
     for (let w = 1; w <= Math.floor(hi) + 1; w++) { pence.add(100 * w); endings.forEach(e => pence.add(100 * w + e)); }
     return [...pence].map(c => c / 100).filter(x => x >= lo - 1e-9 && x <= hi + 1e-9).sort((a, b) => a - b);
   }
-  const elasticityDraws = (e, se, z) => z.map(v => Math.min(e + se * v, CFG.ELASTICITY_CEILING));
+  const elasticityDraws = (e, se, z) => z.map(v => Math.max(Math.min(e + se * v, CFG.ELASTICITY_CEILING), CFG.ELASTICITY_FLOOR));
   const unitsAt = (p, p0, base, eDraws, compMult, stock) =>
     eDraws.map(e => Math.min(base * Math.pow(p / p0, e) * Math.pow(compMult, CFG.CROSS_ELASTICITY), stock));
 
@@ -53,7 +53,8 @@
   function choose(profitCols, feasible, rows) {   // profitCols[j] = draws at price j
     let k = 0, best = -Infinity;
     profitCols.forEach((col, j) => {
-      const v = feasible[j] ? quantile(rows ? rows.map(i => col[i]) : col, CFG.ROBUST_QUANTILE) : -Infinity;
+      const vals = rows ? rows.map(i => col[i]) : col;
+      const v = feasible[j] ? (CFG.ROBUST_QUANTILE == null ? mean(vals) : quantile(vals, CFG.ROBUST_QUANTILE)) : -Infinity;
       if (v > best) { best = v; k = j; }
     });
     return k;

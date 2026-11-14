@@ -23,13 +23,15 @@ import numpy as np
 
 # --- Decision settings --------------------------------------------------------
 ELASTICITY_CEILING = -0.10   # draws capped here: demand must fall when price rises
+ELASTICITY_FLOOR = -6.0      # and here: retail elasticities beyond -6 are implausible (usually 2-point noise)
 CROSS_ELASTICITY = 0.5       # demand response to the competitor's price level
 COMP_SCENARIOS = {"comp_minus10": 0.90, "comp_same": 1.00, "comp_plus10": 1.10}
 MAX_PRICE_CHANGE = 0.20      # at most +/-20% vs current price
 MIN_MARGIN = 0.20            # (price - cost) / price must be >= this
 PRICE_HEADROOM = 0.10        # may go up to 10% above the highest price ever charged (flagged)
 PRICE_ENDINGS = (0.05, 0.10, 0.25, 0.45, 0.49, 0.55, 0.65, 0.75, 0.79, 0.85, 0.95, 0.99)
-ROBUST_QUANTILE = 0.25       # choose the price maximising the 25th-percentile profit
+ROBUST_QUANTILE = None       # None: choose the price with the highest EXPECTED profit (the number users see);
+                             # a value like 0.25 maximises that profit percentile instead (more cautious)
 
 # --- Confidence rules ---------------------------------------------------------
 RISK_HIGH = 0.02             # expected profit lost vs current price <= 2% -> may be high
@@ -71,7 +73,7 @@ def demand_matrix(prices, p0, base_units, e_draws, comp_mult=1.0):
 
 
 def elasticity_draws(e, se, z):
-    return np.minimum(e + se * np.asarray(z, float), ELASTICITY_CEILING)
+    return np.clip(e + se * np.asarray(z, float), ELASTICITY_FLOOR, ELASTICITY_CEILING)
 
 
 def price_bounds(r: dict):
@@ -90,7 +92,8 @@ def price_bounds(r: dict):
 
 
 def _choose(profit, feasible):
-    robust = np.where(feasible, np.quantile(profit, ROBUST_QUANTILE, axis=0), -np.inf)
+    score = profit.mean(axis=0) if ROBUST_QUANTILE is None else np.quantile(profit, ROBUST_QUANTILE, axis=0)
+    robust = np.where(feasible, score, -np.inf)
     return int(np.argmax(robust))
 
 

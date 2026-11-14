@@ -153,3 +153,24 @@ def test_weekly_totals_drop_partial_weeks():
     f = pd.DataFrame({"StockCode": "A", "Date": pd.date_range("2011-11-01", periods=10), "u_cap": 1.0})
     w = pp.weekly_totals(f, np.ones(10), pd.Timestamp("2011-11-01"))
     assert len(w) == 1 and w["u_cap"].iloc[0] == 7
+
+
+# Repeated-%/limit-driven finding: the level of sensitivity comes from real price-change events
+def test_event_elasticity_recovers_slope():
+    rng = np.random.default_rng(0)
+    x = rng.choice([-0.1, 0.1, 0.15], 60)
+    ev = pd.DataFrame({"StockCode": [f"P{i}" for i in range(60)], "dlogp": x, "actual_dlogq": -2.0 * x + rng.normal(0, 0.05, 60)})
+    out = pp.event_elasticity(ev)
+    assert abs(out["elasticity"] + 2.0) < 3 * out["se"] + 0.05
+    assert pp.event_elasticity(ev.head(5)) is None          # too few events: no calibration
+
+
+def test_level_calibration_rescales_panel():
+    el = pd.DataFrame({"e_raw": [-0.5, np.nan], "se_raw": [0.2, np.nan]}, index=["A", "B"])
+    cat_fit = {"c1": (-0.8, 0.1, 12), "c2": (-0.8, 0.1, 12)}
+    out, cf, k = pp.calibrate_level(el, cat_fit, {"elasticity": -2.0, "se": 0.4})
+    assert k == pytest.approx(2.5) and cf["c1"][0] == pytest.approx(-2.0) and out.loc["A", "e_raw"] == pytest.approx(-1.25)
+    _, _, k_none = pp.calibrate_level(el, cat_fit, None)
+    assert k_none == 1.0
+    _, _, k_clip = pp.calibrate_level(el, cat_fit, {"elasticity": -20.0, "se": 1})
+    assert k_clip == pp.LEVEL_SCALE_CLIP[1]

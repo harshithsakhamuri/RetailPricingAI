@@ -8,7 +8,8 @@ RETAIL PROFIT-MAXIMISING PRICING  —  UCI Online Retail
                      ensemble AND two naive baselines, all given the same level
                      calibration; selected on held-out validation weeks. No price
                      features, so price effects come only from the elasticity.
-        Elasticity   Poisson (PPML) two-way fixed-effects panel per category on the
+        Elasticity   Level set by an event study of the shop's real list-price changes;
+                     relative differences from a Poisson (PPML) two-way fixed-effects panel per category on the
                      full trading calendar (zero-sale days included), item + date
                      effects, list price from regular-size lines. Item slopes are
                      partially pooled (empirical Bayes); wrong-signed items fall
@@ -17,7 +18,7 @@ RETAIL PROFIT-MAXIMISING PRICING  —  UCI Online Retail
         Competitor   SIMULATED competitor (seeded). Enters only as a demand shift
                      for a competitor price level away from the reference.
   STAGE 2  DECISION  (src/pricing_core.py, shared with the apps)
-      Robust (P25) profit maximisation over elasticity draws inside business
+      Price maximising EXPECTED profit over elasticity draws inside business
       limits; cross-fitted gains; Lerner diagnostics; decision driver; jointly
       priced colour/design variants; price-test plans.
 
@@ -93,6 +94,8 @@ TAU_MIN = 0.10
 MIN_CLUSTERS_CATEGORY = 10     # items with own price variation needed to trust a category slope
 MIN_PRODUCTS_TAU = 4
 N_PLACEBO = 20
+LEVEL_SCALE_CLIP = (1.0, 4.0)  # allowed correction of the panel's attenuation (event level / panel level)
+EVENT_WINDOW_WEEKS = 2         # weeks either side of a real list-price change in the event study
 
 # Competitor simulation (SIMULATED unless COMPETITOR_PATH is given)
 COMP_OFFSET_RANGE = (-0.15, 0.15)
@@ -606,15 +609,50 @@ def dersimonian_laird(e, se):
     return np.sum(w2 * e) / np.sum(w2), tau2, np.sqrt(1 / np.sum(w2))
 
 
-def pool_elasticities(el, cats, cat_fit):
+def event_elasticity(events):
+    """Pooled elasticity from real list-price changes: slope through the origin of
+    the item's log change in units (net of its category) on its log price change,
+    with heteroskedasticity-robust s.e. These clean before/after comparisons are
+    the least noisy evidence on the LEVEL of price sensitivity."""
+    if len(events) < 10:
+        return None
+    x, y = events["dlogp"].to_numpy(float), events["actual_dlogq"].to_numpy(float)
+    b = float(x @ y / (x @ x))
+    se = float(np.sqrt(np.sum((x * (y - b * x)) ** 2)) / (x @ x))
+    return {"elasticity": b, "se": se, "n_events": int(len(events)), "n_items": int(events["StockCode"].nunique())}
+
+
+def _panel_level(cat_fit):
+    good = {c: v for c, v in cat_fit.items() if v[2] >= MIN_CLUSTERS_CATEGORY}
+    src = good if len(good) >= 2 else cat_fit
+    return dersimonian_laird(np.array([v[0] for v in src.values()]), np.array([v[1] for v in src.values()]))[0]
+
+
+def calibrate_level(el, cat_fit, level):
+    """Measurement error in daily prices pulls panel slopes toward zero by a common
+    factor. Rescale every panel slope (and its s.e.) so the overall level matches
+    the event-study level; the panel still decides how categories and items DIFFER."""
+    g = _panel_level(cat_fit)
+    if level is None or g >= 0 or level["elasticity"] >= 0:
+        return el, cat_fit, 1.0
+    k = float(np.clip(level["elasticity"] / g, *LEVEL_SCALE_CLIP))
+    el = el.copy()
+    el["e_raw"], el["se_raw"] = el["e_raw"] * k, el["se_raw"] * k
+    return el, {c: (b * k, se * k, n) for c, (b, se, n) in cat_fit.items()}, k
+
+
+def pool_elasticities(el, cats, cat_fit, level=None):
     """Global -> category -> item empirical Bayes.
+    * If `level` (event-study estimate) is given, panel slopes are first rescaled
+      to that level, and its uncertainty is added to every prior.
     * A category slope is used only if >= MIN_CLUSTERS_CATEGORY items in it have
       their own price variation (clustered s.e. need clusters); others use the global prior.
     * Items whose own slope is above the ceiling (demand not falling with price)
       contribute no evidence: they get the category prior and are flagged.
     * Every prior mean is capped at the ceiling, so no posterior can be positive."""
-    el = el.copy()
+    el, cat_fit, k = calibrate_level(el, cat_fit, level)
     el["category"] = cats.reindex(el.index)
+    level_var = (level["se"] ** 2) if (level is not None and k != 1.0) else 0.0
     good = {c: v for c, v in cat_fit.items() if v[2] >= MIN_CLUSTERS_CATEGORY}
     src = good if len(good) >= 2 else cat_fit
     cb = np.array([v[0] for v in src.values()])
@@ -637,7 +675,7 @@ def pool_elasticities(el, cats, cat_fit):
         grp = el[usable & (el["category"] == cat)]
         tau2 = (dersimonian_laird(grp["e_raw"].values, grp["se_raw"].values)[1]
                 if len(grp) >= MIN_PRODUCTS_TAU else g_tau2)
-        priors[cat] = (mu, tau2, se_mu, basis)
+        priors[cat] = (mu, tau2, float(np.sqrt(se_mu ** 2 + level_var)), basis)
     post_e, post_se, source = [], [], []
     for _, r in el.iterrows():
         mu, tau2, se_mu, _ = priors[r["category"]]
@@ -651,13 +689,14 @@ def pool_elasticities(el, cats, cat_fit):
             post_e.append(mu)
             post_se.append(np.sqrt(v_prior))
             source.append(core.SRC_CONTRA if pd.notna(r["e_raw"]) else core.SRC_PRIOR)
-    el["elasticity"], el["elasticity_se"], el["elasticity_source"] = post_e, post_se, source
+    el["elasticity"] = np.clip(post_e, core.ELASTICITY_FLOOR, core.ELASTICITY_CEILING)
+    el["elasticity_se"], el["elasticity_source"] = post_se, source
     el["prior_mean"] = el["category"].map(lambda c: priors[c][0])
     prior_tbl = pd.DataFrame({c: {"category_slope": cat_fit.get(c, (np.nan,))[0],
                                   "items_with_price_changes": int(cat_fit.get(c, (0, 0, 0))[2]),
                                   "prior_mean": v[0], "prior_se": v[2], "tau": np.sqrt(v[1]), "prior_basis": v[3]}
                               for c, v in priors.items()}).T
-    return el, prior_tbl, (g_mu, np.sqrt(g_tau2))
+    return el, prior_tbl, (g_mu, np.sqrt(g_tau2), k)
 
 
 # =============================================================================
@@ -699,9 +738,13 @@ def price_change_events(df, products, cats, start, end, min_change=0.02, window=
 
 
 def backtest(df, products, cats, train_end, data_end):
+    """Re-estimate everything with data up to train_end (including the event-study
+    level, from price changes BEFORE train_end only) and predict later changes."""
     el_bt, cf_bt, _ = product_elasticities(df, products, cats, train_end)
-    el_bt, _, _ = pool_elasticities(el_bt, cats, cf_bt)
-    ev = price_change_events(df, products, cats, train_end, data_end)
+    level_bt = event_elasticity(price_change_events(df, products, cats, df["Date"].min(), train_end,
+                                                    window=EVENT_WINDOW_WEEKS))
+    el_bt, _, _ = pool_elasticities(el_bt, cats, cf_bt, level=level_bt)
+    ev = price_change_events(df, products, cats, train_end, data_end, window=EVENT_WINDOW_WEEKS)
     if ev.empty:
         return ev, {"n_events": 0}
     ev["elasticity_at_cutoff"] = ev["StockCode"].map(el_bt["elasticity"])
@@ -820,7 +863,7 @@ def plot_profit_curves(rec, z, n=6):
         ax.fill_between(grid, np.quantile(prof, 0.1, 0), np.quantile(prof, 0.9, 0), alpha=0.2, color="#4C72B0",
                         label="P10–P90 (elasticity)")
         ax.plot(grid, prof.mean(0), color="#4C72B0", lw=2, label="expected profit")
-        ax.plot(grid, np.quantile(prof, core.ROBUST_QUANTILE, 0), color="#4C72B0", ls="--", lw=1, label="P25 (objective)")
+        ax.plot(grid, np.quantile(prof, 0.25, 0), color="#4C72B0", ls="--", lw=1, label="P25")
         ax.axvspan(r["bound_lo"], r["bound_hi"], color="green", alpha=0.06, label="allowed range")
         ax.axvline(p0, color="gray", ls="--", label=f"current £{p0:.2f}")
         ax.axvline(r["recommended_price"], color="red", lw=2, label=f"recommended £{r['recommended_price']:.2f}")
@@ -943,7 +986,10 @@ def run(as_of: str | None = None):
 
     # ---------------- STAGE 1b: elasticity ----------------
     el, cat_fit, placebo = product_elasticities(df, products, cats, data_end, n_placebo=N_PLACEBO)
-    el, prior_tbl, (g_mu, g_tau) = pool_elasticities(el, cats, cat_fit)
+    level = event_elasticity(price_change_events(df, products, cats, df["Date"].min(), data_end,
+                                                 window=EVENT_WINDOW_WEEKS))
+    el, prior_tbl, (g_mu, g_tau, level_k) = pool_elasticities(el, cats, cat_fit, level=level)
+    log(f"Event-study level: {level}; panel slopes scaled by {level_k:.2f}")
     placebo.round(4).to_csv(OUTPUT_DIR / "elasticity_placebo.csv", index=False)
     pl = placebo.groupby("category").agg(real=("real_slope", "first"), placebo_mean=("placebo_slope", "mean"),
                                          placebo_sd=("placebo_slope", "std"))
@@ -1008,7 +1054,8 @@ def run(as_of: str | None = None):
         for m in members:
             e_d = core.elasticity_draws(m["elasticity"], m["elasticity_se"], z)
             tot = tot + (cands - m["unit_cost"])[None, :] * core.demand_matrix(cands, p0, m["baseline_units"], e_d)
-        pj = float(cands[int(np.argmax(np.quantile(tot, core.ROBUST_QUANTILE, axis=0)))])
+        score = tot.mean(0) if core.ROBUST_QUANTILE is None else np.quantile(tot, core.ROBUST_QUANTILE, axis=0)
+        pj = float(cands[int(np.argmax(score))])
         for m in members:
             outs[m["StockCode"]] = {**core.optimise_product(m, z, stock=STOCK_CAP.get(m["StockCode"], math.inf),
                                                             forced_price=pj),
@@ -1127,6 +1174,10 @@ Objective: **profit = (price − unit cost) × expected units**.
 - Item-level estimate needs ≥ {ELAST_MIN_WEEKS} weeks with sales and ≥ {ELAST_MIN_PRICE_LEVELS} weekly list prices each held ≥ {ELAST_MIN_WEEKS_PER_LEVEL} **weeks**.
 - Evidence: {srcs.get(core.SRC_OWN, 0)} items "{core.SRC_OWN}", {srcs.get(core.SRC_PRIOR, 0)} "{core.SRC_PRIOR}",
   {srcs.get(core.SRC_CONTRA, 0)} "{core.SRC_CONTRA}" (own slope above {core.ELASTICITY_CEILING}; not used, item flagged low confidence).
+- **Level calibration:** daily prices are measured with noise, which pulls panel slopes toward zero. The shop's
+  {level['n_events'] if level else 0} real list-price changes (sales {EVENT_WINDOW_WEEKS} weeks before vs after, net of the item's category) give a pooled
+  elasticity of **{level['elasticity'] if level else float('nan'):.2f}** (s.e. {level['se'] if level else float('nan'):.2f}). All panel slopes are rescaled by
+  **{level_k:.2f}** to match that level; the panel still decides how categories and items differ.
 - A category slope is used only with ≥ {MIN_CLUSTERS_CATEGORY} items that changed price; otherwise the global prior
   ({g_mu:.2f}, between-item sd {g_tau:.2f}) is used. No posterior elasticity is above {core.ELASTICITY_CEILING}.
 - Pooled elasticity: median {el['elasticity'].median():.2f}, IQR [{el['elasticity'].quantile(.25):.2f}, {el['elasticity'].quantile(.75):.2f}].
@@ -1191,7 +1242,7 @@ elasticity (the real-data elasticity already includes competitor responses), so 
             "best_naive_test_wape_7day": float(best_naive), "calibration_production": calib_prod,
             "calibration_source": "refit-to-test check", "z": z.round(6).tolist(),
             "forecast_band_edges": band_edges, "forecast_ratio_samples": [s.round(5).tolist() for s in ratio_samples],
-            "backtest": bt, "clean_stats": clean_stats, "gains_top": g_top.to_dict(), "gains_all": g_all.to_dict()}
+            "backtest": bt, "elasticity_level": level, "elasticity_level_scale": level_k, "clean_stats": clean_stats, "gains_top": g_top.to_dict(), "gains_all": g_all.to_dict()}
     (OUTPUT_DIR / "app_meta.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
     log("PIPELINE COMPLETE")
     return rec, meta

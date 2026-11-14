@@ -108,3 +108,24 @@ def test_portable_artifacts_and_pinned_requirements():                # finding 
 def test_no_blanket_warning_suppression():                            # finding 19
     for f in (ROOT / "src").glob("*.py"):
         assert 'filterwarnings("ignore")' not in f.read_text(encoding="utf-8"), f
+
+
+def test_elasticity_level_is_calibrated_to_real_price_changes(summary):
+    meta = json.loads((OUT / "app_meta.json").read_text(encoding="utf-8"))
+    lvl = meta["elasticity_level"]
+    assert lvl and lvl["n_events"] >= 10 and meta["elasticity_level_scale"] >= 1.0
+    assert "Level calibration" in summary
+    rec = pd.read_csv(OUT / "pricing_recommendations_all_products.csv")
+    assert abs(rec["elasticity"].median() - lvl["elasticity"]) < 2 * lvl["se"]
+
+
+def test_no_suggestion_expected_to_earn_less(rec):
+    """A suggested price must never have lower expected profit than today's price
+    (it confused users when a 'raise' came with a profit fall)."""
+    single = rec["joint_with"] == 0          # joint prices optimise the group total, not each item
+    r = rec[single & rec["flags"].isna()]
+    assert (r["expected_profit"] >= r["profit_at_current"] - 1e-6).all()
+
+
+def test_elasticity_within_plausible_range(rec):
+    assert (rec["elasticity"] >= core.ELASTICITY_FLOOR - 1e-9).all()
