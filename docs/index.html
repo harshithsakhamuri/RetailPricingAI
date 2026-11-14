@@ -5,90 +5,121 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Retail Pricing AI</title>
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--ink:#1c2330;--mute:#5d6878;--line:#e1e5ea;--acc:#1f6feb;--good:#1a7f37;--warn:#9a6700;--bad:#cf222e;--band:rgba(31,111,235,.15)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1318;--card:#171c23;--ink:#e6e9ee;--mute:#9aa4b2;--line:#2a313b;--acc:#58a6ff;--good:#3fb950;--warn:#d29922;--bad:#f85149;--band:rgba(88,166,255,.18)}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-main{max-width:1180px;margin:0 auto;padding:24px 16px 48px}
-h1{margin:0 0 4px;font-size:26px}.sub{color:var(--mute);margin:0 0 20px}
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1c2330;--mute:#5d6878;--line:#e1e5ea;--acc:#1f6feb;--good:#1a7f37;--warn:#9a6700;--bad:#cf222e;--band:rgba(31,111,235,.15);--soft:#eef4ff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1318;--card:#171c23;--ink:#e6e9ee;--mute:#9aa4b2;--line:#2a313b;--acc:#58a6ff;--good:#3fb950;--warn:#d29922;--bad:#f85149;--band:rgba(88,166,255,.18);--soft:#162235}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 48px}
+h1{margin:0 0 4px;font-size:28px}h2{font-size:22px}h3{margin:0 0 8px;font-size:18px}.sub{color:var(--mute);margin:0 0 16px;font-size:17px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
-.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.tabs button{border:1px solid var(--line);background:transparent;color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit}
+details.card summary{cursor:pointer;font-weight:600}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.step{background:var(--soft);border-radius:10px;padding:12px}.step b{display:block;margin-bottom:4px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.tabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 16px;border-radius:999px;cursor:pointer;font:inherit}
 .tabs button.on{background:var(--acc);border-color:var(--acc);color:#fff}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
-label{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
-input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
-.btn{margin-top:14px;background:var(--acc);color:#fff;border:0;padding:10px 20px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+label{display:block;font-size:14px;font-weight:600;margin-bottom:4px}
+input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.btn{margin-top:14px;background:var(--acc);color:#fff;border:0;padding:11px 22px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
 .btn.ghost{background:transparent;color:var(--acc);border:1px solid var(--acc)}
-.hint{font-size:12px;color:var(--mute);margin-top:3px}
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.hint{font-size:13px;color:var(--mute);margin-top:3px}
+.verdict{background:var(--soft);border:1px solid var(--acc);border-radius:12px;padding:16px 18px;margin-bottom:16px;font-size:17px}
+.verdict .big{font-size:24px;font-weight:700;margin-bottom:6px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .m{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
-.m .k{font-size:13px;color:var(--mute)}.m .v{font-size:24px;font-weight:700;margin:2px 0}.m .d{font-size:13px;color:var(--mute)}
+.m .k{font-size:14px;color:var(--mute)}.m .v{font-size:24px;font-weight:700;margin:2px 0}.m .d{font-size:13px;color:var(--mute)}
 .m.hero{border-color:var(--acc)}
-.warnbox{border-left:4px solid var(--warn);padding:10px 12px;background:var(--card);border-radius:6px;margin:12px 0;font-size:14px}
-.infobox{border-left:4px solid var(--acc);padding:10px 12px;background:var(--card);border-radius:6px;margin:12px 0;font-size:14px}
+.box{border-left:4px solid var(--acc);padding:12px 14px;background:var(--card);border-radius:6px;margin:12px 0}
+.box.warn{border-color:var(--warn)}.box ul{margin:6px 0 0;padding-left:20px}.box li{margin:4px 0}
 .tablewrap{overflow-x:auto;max-height:640px;overflow-y:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:right;padding:6px;border-bottom:1px solid var(--line);white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:right;padding:7px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
 th{position:sticky;top:0;background:var(--card);cursor:pointer;user-select:none}th:nth-child(-n+2),td:nth-child(-n+2){text-align:left}
-td.wrap{white-space:normal;min-width:180px;text-align:left}
+td.wrap{white-space:normal;min-width:220px;text-align:left}
 .two{display:grid;grid-template-columns:3fr 2fr;gap:16px}@media(max-width:800px){.two{grid-template-columns:1fr}}
 svg{width:100%;height:auto;display:block}svg text{fill:var(--mute);font-size:11px}
-.hidden{display:none}footer{color:var(--mute);font-size:12px;margin-top:20px}
-.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;border:1px solid currentColor}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--mute);margin:6px 0}
+.legend span::before{content:"";display:inline-block;width:14px;height:10px;margin-right:5px;vertical-align:middle;border-radius:2px;background:var(--c)}
+.hidden{display:none}footer{color:var(--mute);font-size:13px;margin-top:20px}
+.pill{display:inline-block;padding:1px 9px;border-radius:999px;font-size:13px;border:1px solid currentColor}
 .c-high{color:var(--good)}.c-medium{color:var(--warn)}.c-low{color:var(--bad)}
 </style>
 </head>
 <body>
 <main>
   <h1>🏷️ Retail Pricing AI</h1>
-  <p class="sub" id="sub"></p>
+  <p class="sub">Pick a product and we'll suggest the price that should earn you the most profit. We also tell you how sure we are and why.</p>
+
+  <details class="card" id="howto">
+    <summary>New here? How this works (1 minute read)</summary>
+    <div class="steps">
+      <div class="step"><b>1. We learn from past sales</b>We studied a year of real sales from an online gift shop: how much of each product sold, and what happened when prices changed.</div>
+      <div class="step"><b>2. We predict next week</b>We estimate how many units each product will sell next week, and how that number would change if you raised or lowered the price.</div>
+      <div class="step"><b>3. We find the best price</b>A higher price earns more per sale but usually means fewer sales. We look for the price where the two balance out and you keep the most profit.</div>
+      <div class="step"><b>4. We play it safe</b>We never suggest changing a price by more than 20%, never go far above a price you've charged before, and always keep at least a 20% profit margin.</div>
+    </div>
+    <p class="hint" style="margin-top:12px"><b>Profit</b> = what you keep after paying for the product = (selling price − your cost) × number sold.
+      The suggestions are for the week of <span id="weekTxt"></span>, right after the sales records end.</p>
+  </details>
 
   <div class="tabs" role="tablist">
-    <button data-tab="item" class="on">Existing item</button>
-    <button data-tab="new">New item</button>
-    <button data-tab="batch">Batch upload (CSV)</button>
-    <button data-tab="all">All recommendations</button>
+    <button data-tab="item" class="on">🔎 Look up a product</button>
+    <button data-tab="new">✏️ My own product</button>
+    <button data-tab="batch">📄 Many products at once</button>
+    <button data-tab="all">📋 All suggestions</button>
   </div>
 
   <!-- ===== single item (existing or new) ===== -->
   <section id="single">
     <div class="card">
       <div id="known">
-        <label for="search">Search an item (name or stock code)</label>
-        <input id="search" list="itemlist" placeholder="e.g. lunch bag, 85123A, cake stand…" autocomplete="off">
+        <label for="search">Which product?</label>
+        <input id="search" list="itemlist" placeholder="Start typing, e.g. lunch bag, cake stand, 85123A…" autocomplete="off">
         <datalist id="itemlist"></datalist>
+        <div class="hint">Choose from the list that appears while you type.</div>
       </div>
       <div id="newf" class="hidden grid">
-        <div><label for="nName">Item name</label><input id="nName" value="My product"></div>
-        <div><label for="nCat">Category</label><select id="nCat"></select><div class="hint">Sets the assumed price sensitivity.</div></div>
-        <div><label for="nPrice">Current selling price £</label><input id="nPrice" type="number" step="0.01" min="0.01" value="4.95"></div>
-        <div><label for="nUnits">Units sold per week at current price</label><input id="nUnits" type="number" step="1" min="0" value="100"></div>
-        <div><label for="nMin">Lowest price you'd consider £ (optional)</label><input id="nMin" type="number" step="0.01" min="0"></div>
-        <div><label for="nMax">Highest price you'd consider £ (optional)</label><input id="nMax" type="number" step="0.01" min="0"></div>
+        <div><label for="nName">Product name</label><input id="nName" value="My product"></div>
+        <div><label for="nCat">What kind of product is it?</label><select id="nCat"></select><div class="hint">We use similar products to guess how shoppers react to price.</div></div>
+        <div><label for="nPrice">Price you charge now (£)</label><input id="nPrice" type="number" step="0.01" min="0.01" value="4.95"></div>
+        <div><label for="nUnits">How many you sell in a normal week</label><input id="nUnits" type="number" step="1" min="0" value="100"></div>
+        <div><label for="nMin">Lowest price you'd accept (£) <span class="hint">optional</span></label><input id="nMin" type="number" step="0.01" min="0"></div>
+        <div><label for="nMax">Highest price you'd charge (£) <span class="hint">optional</span></label><input id="nMax" type="number" step="0.01" min="0"></div>
       </div>
-      <div class="grid" style="margin-top:12px">
-        <div><label for="cost">Unit cost £</label><input id="cost" type="number" step="0.01" min="0.01"><div class="hint" id="costHint"></div></div>
-        <div><label for="comp">Competitor price £</label><input id="comp" type="number" step="0.01" min="0.01"><div class="hint" id="compHint"></div></div>
-        <div><label for="stock">Stock available for the week (0 = unlimited)</label><input id="stock" type="number" step="1" min="0" value="0"></div>
+      <div class="grid" style="margin-top:14px">
+        <div><label for="cost">What one unit costs you (£)</label><input id="cost" type="number" step="0.01" min="0.01"><div class="hint" id="costHint"></div></div>
+        <div><label for="comp">What a competitor charges (£)</label><input id="comp" type="number" step="0.01" min="0.01"><div class="hint" id="compHint"></div></div>
+        <div><label for="stock">Units you have in stock <span class="hint">0 = no limit</span></label><input id="stock" type="number" step="1" min="0" value="0"><div class="hint">We won't plan to sell more than you have.</div></div>
       </div>
-      <button class="btn" id="go">Get pricing recommendation</button>
+      <button class="btn" id="go">Suggest a price</button>
     </div>
 
     <div id="result" class="hidden">
       <h2 id="rTitle" style="margin:8px 0 12px"></h2>
+      <div class="verdict" id="verdict"></div>
       <div class="metrics" id="metrics"></div>
       <div id="why"></div>
       <div class="two" style="margin-top:16px">
-        <div class="card"><b>Profit vs price</b> <span class="hint">(green = allowed range, band = P10–P90 from price-sensitivity uncertainty)</span><div id="chart"></div></div>
         <div class="card">
-          <b>What if I charge…</b>
+          <h3>How profit changes with price</h3>
+          <div class="legend">
+            <span style="--c:var(--acc)">most likely profit</span>
+            <span style="--c:var(--band)">realistic range</span>
+            <span style="--c:rgba(26,127,55,.25)">prices we allow</span>
+          </div>
+          <div id="chart"></div>
+          <div class="hint">Read it left to right: each point shows the profit you'd expect at that price. The highest point inside the green area is our suggestion.</div>
+        </div>
+        <div class="card">
+          <h3>Try your own price</h3>
+          <div class="hint">Drag the slider to see what would happen at a different price.</div>
           <input id="tryP" type="range" style="margin:12px 0 4px;padding:0" aria-label="Try a price">
           <div class="metrics" style="grid-template-columns:1fr 1fr">
             <div class="m"><div class="k">Price</div><div class="v" id="tpP"></div></div>
-            <div class="m"><div class="k">Expected units</div><div class="v" id="tpU"></div></div>
+            <div class="m"><div class="k">Units you'd sell</div><div class="v" id="tpU"></div></div>
           </div>
-          <div class="m" style="margin-top:12px"><div class="k">Expected profit</div><div class="v" id="tpPr"></div></div>
+          <div class="m" style="margin-top:12px"><div class="k">Profit for the week</div><div class="v" id="tpPr"></div></div>
           <div class="metrics" style="grid-template-columns:1fr 1fr;margin-top:12px">
-            <div class="m"><div class="k">Profit at risk</div><div class="v" id="tpRisk"></div><div class="d" id="tpRiskL"></div></div>
-            <div class="m"><div class="k">Chance it beats current price</div><div class="v" id="tpBeat"></div><div class="d">across price-sensitivity scenarios</div></div>
+            <div class="m"><div class="k">Chance it beats today's price</div><div class="v" id="tpBeat"></div></div>
+            <div class="m"><div class="k">Risk of earning less</div><div class="v" id="tpRisk"></div><div class="d" id="tpRiskL"></div></div>
           </div>
           <div class="hint" id="tpWarn" style="margin-top:8px;color:var(--warn)"></div>
         </div>
@@ -100,33 +131,44 @@ svg{width:100%;height:auto;display:block}svg text{fill:var(--mute);font-size:11p
   <!-- ===== batch ===== -->
   <section id="batch" class="hidden">
     <div class="card">
-      <p style="margin-top:0">Upload a CSV with one row per item. Columns: <code>name, category, price, units_per_week, unit_cost</code>
-        and optionally <code>competitor_price, stock, min_price, max_price</code>. Categories: <span id="catList"></span>.</p>
-      <input id="csvFile" type="file" accept=".csv,text/csv" aria-label="CSV file">
-      <button class="btn ghost" id="tmpl">Download template</button>
+      <h3>Get suggestions for many products in one go</h3>
+      <ol style="margin:6px 0 12px;padding-left:22px">
+        <li>Download the example spreadsheet below and open it in Excel or Google Sheets.</li>
+        <li>Fill in one row per product: its name, what kind of product it is, today's price, normal weekly sales and what it costs you.
+          The competitor price and stock columns are optional.</li>
+        <li>Save it as a <b>CSV</b> file and upload it here. Your file stays on your computer; nothing is sent anywhere.</li>
+      </ol>
+      <div class="hint">Product kinds you can use: <span id="catList"></span>.</div>
+      <button class="btn ghost" id="tmpl">Download example spreadsheet</button>
+      <div style="margin-top:14px"><label for="csvFile">Upload your file</label><input id="csvFile" type="file" accept=".csv,text/csv"></div>
       <div id="batchMsg" class="hint"></div>
     </div>
-    <div class="card hidden" id="batchOut"><div class="tablewrap" id="batchTable"></div><button class="btn" id="batchDl">Download results CSV</button></div>
+    <div class="card hidden" id="batchOut"><div class="tablewrap" id="batchTable"></div><button class="btn" id="batchDl">Download results</button></div>
   </section>
 
   <!-- ===== portfolio ===== -->
   <section id="all" class="hidden">
-    <div class="metrics" id="pfStats" style="margin-bottom:16px"></div>
+    <div class="metrics" id="pfStats" style="margin-bottom:12px"></div>
+    <div class="box" id="pfExplain"></div>
     <div class="card">
       <div class="grid">
-        <div><label for="fText">Search</label><input id="fText" placeholder="name or code"></div>
-        <div><label for="fConf">Confidence</label><select id="fConf"><option value="">all</option><option>high</option><option>medium</option><option>low</option></select></div>
-        <div><label for="fCat">Category</label><select id="fCat"><option value="">all</option></select></div>
-        <div><label for="fEv">Evidence</label><select id="fEv"><option value="">all</option></select></div>
-        <div><label for="fDrv">Price set by</label><select id="fDrv"><option value="">all</option><option value="data">data</option><option value="limit">a limit</option><option value="jointly">joint variant pricing</option><option value="fixed">no choice</option></select></div>
+        <div><label for="fText">Search</label><input id="fText" placeholder="product name or code"></div>
+        <div><label for="fConf">How sure we are</label><select id="fConf"><option value="">any</option><option value="high">very sure</option><option value="medium">fairly sure</option><option value="low">not sure</option></select></div>
+        <div><label for="fCat">Kind of product</label><select id="fCat"><option value="">any</option></select></div>
+        <div><label for="fEv">Based on</label><select id="fEv"><option value="">anything</option></select></div>
+        <div><label for="fDrv">What decided the price</label><select id="fDrv"><option value="">anything</option><option value="data">past sales</option><option value="limit">a safety limit</option><option value="jointly">matched to other colours</option><option value="fixed">price couldn't change</option></select></div>
       </div>
       <div class="hint" id="pfCount" style="margin-top:8px"></div>
       <div class="tablewrap" id="pfTable" style="margin-top:8px"></div>
-      <button class="btn" id="pfDl">Download filtered CSV</button>
+      <button class="btn" id="pfDl">Download this list</button>
     </div>
   </section>
 
-  <footer id="foot"></footer>
+  <footer>
+    This is a prototype built on one shop's public sales records from 2010–2011. Product costs are estimated (60% of the
+    usual price) and competitor prices are made-up examples, so replace them with your real figures where you can.
+    Treat every suggestion as a starting point: try it on a few products first and check the results.
+  </footer>
 </main>
 
 <script src="pricing.js"></script>
@@ -137,12 +179,44 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;",
 const gbp = (x, d = 2) => "£" + Number(x).toLocaleString("en-GB", {minimumFractionDigits: d, maximumFractionDigits: d});
 const num = x => Math.round(x).toLocaleString("en-GB");
 const title = s => s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-const pct = x => `${x > 0 ? "+" : ""}${x.toFixed(1)}%`;
+const KINDS = {bags: "bags", christmas: "Christmas items", home_decor: "home décor", kitchen_baking: "kitchen & baking",
+  lighting_candles: "lighting & candles", stationery_paper: "stationery & paper", storage: "storage", toys_gifts: "toys & gifts", other: "other"};
+const kind = c => KINDS[c] || String(c).replace(/_/g, " ");
 
-$("sub").textContent = `Forecast demand, profit-maximising price and expected units for the decision week ${D.week}.`;
-$("foot").textContent = `Prototype. Demand and price sensitivity are learned from UCI Online Retail sales. Forecast: ${D.model}, ${D.wape}% error on weekly ` +
-  `totals (best simple baseline ${D.naive_wape}%). Unit costs default to ${D.cost_ratio * 100}% of the median price and competitor prices are SIMULATED. ` +
-  `Treat results as directional and test before acting.`;
+// ---------- plain-language translations of the model's labels ----------
+const CONF = {high: ["🟢 Very sure", "var(--good)"], medium: ["🟡 Fairly sure", "var(--warn)"], low: ["🔴 Not sure", "var(--bad)"]};
+const CONF_WORD = {high: "very sure", medium: "fairly sure", low: "not sure"};
+const EVIDENCE = {[C.SRC_OWN]: "its own price history", [C.SRC_PRIOR]: "similar products", [C.SRC_CONTRA]: "similar products (own history unreliable)"};
+function driverText(d, p0) {
+  if (d.includes("highest price charged")) return "We stopped at the highest price this product has sold for before (plus a little). Going higher would be untested.";
+  if (d.includes("+20% cap")) return "We stopped at a 20% increase, our maximum step at one time. Bigger jumps can surprise customers.";
+  if (d.includes("-20% cap")) return "We stopped at a 20% cut, our maximum step at one time.";
+  if (d.includes("lowest price charged")) return "We stopped at the lowest price this product has sold for before.";
+  if (d.includes("minimum margin")) return "We stopped at the lowest price that still keeps a 20% profit margin.";
+  if (d.includes("jointly")) return "This product comes in several colours or designs that cost the same. We kept them at one shared price so the range stays consistent.";
+  if (d.includes("keep current")) return "Past sales say today's price is already about right.";
+  if (d.includes("interior")) return "This is the price where past sales say profit peaks.";
+  return "The price could not be changed within the safety rules.";
+}
+function reasonsPlain(raw, r) {
+  if (!raw) return [];
+  return raw.split("; ").filter(s => s !== "test before rolling out").map(s => {
+    if (s.startsWith("price is above the highest")) return `The suggested price is higher than this product has ever sold for (${gbp(Math.max(r.hist_max_price, r.current_price))}), so we can't be sure how customers will react.`;
+    if (s.startsWith("no price changes of its own")) return "This product's price has never changed, so we judged customer reaction from similar products.";
+    if (s.startsWith("custom item")) return "We have no sales history for your product, so we judged customer reaction from similar products.";
+    if (s.includes("expected profit at risk")) return `There's a real chance (${s.split("%")[0]}% of profit on average) you could earn a bit less than at today's price.`;
+    if (s.startsWith("new price beats current")) return `The new price comes out ahead in ${s.match(/(\d+)%/)[1]}% of the situations we tested, not all of them.`;
+    if (s.startsWith("very low forecast volume")) return "This product sells very few units, so there's too little information to go on.";
+    if (s.includes("demand not falling")) return "In the past this product sold MORE when its price went up, which usually means something else was going on (a season or promotion). We don't trust that history.";
+    if (s.startsWith("no feasible price")) return "Your cost is so high that no price within our safety rules keeps a 20% margin.";
+    if (s.startsWith("current price is below the minimum")) return "Today's price leaves less than a 20% profit margin.";
+    if (s.startsWith("no allowed price on the price grid")) return "No sensible shop price (like £x.95) fits inside the allowed range, so we kept today's price.";
+    return s;
+  });
+}
+
+$("weekTxt").textContent = D.week;
+try { if (!localStorage.getItem("rpa_seen")) { $("howto").open = true; localStorage.setItem("rpa_seen", "1"); } } catch (e) { $("howto").open = true; }
 
 // ---------- tabs ----------
 let tab = "item";
@@ -162,7 +236,7 @@ function setTab(t) {
 const labels = D.items.map(i => `${i.StockCode} — ${title(i.Description)}`);
 $("itemlist").innerHTML = labels.map(l => `<option value="${esc(l)}">`).join("");
 const catNames = Object.keys(D.categories).sort();
-$("nCat").innerHTML = catNames.map(c => `<option value="${c}">${c.replace(/_/g, " ")}</option>`).join("");
+$("nCat").innerHTML = catNames.map(c => `<option value="${c}">${kind(c)}</option>`).join("");
 $("catList").textContent = catNames.join(", ");
 
 function knownItem() {
@@ -175,14 +249,14 @@ function prefill() {
   if (tab === "item") {
     const it = knownItem(); if (!it) return;
     $("cost").value = it.unit_cost.toFixed(2); $("comp").value = it.comp_price_SIMULATED.toFixed(2);
-    $("costHint").textContent = `Assumed: ${D.cost_ratio * 100}% of median price. Current price ${gbp(it.current_price)}.`;
-    $("compHint").textContent = "Default is SIMULATED; change it to a real rival price.";
+    $("costHint").textContent = `We don't know the real cost, so we guessed 60% of the usual price. Type yours if you know it. Today's price: ${gbp(it.current_price)}.`;
+    $("compHint").textContent = "This is a made-up example. Type a real competitor price if you have one.";
   } else {
     const p = +$("nPrice").value || 0;
     if (!$("cost").dataset.touched) $("cost").value = (p * D.cost_ratio).toFixed(2);
     if (!$("comp").dataset.touched) $("comp").value = p.toFixed(2);
-    $("costHint").textContent = "Your cost to buy or make one unit.";
-    $("compHint").textContent = "What a rival charges for a similar item.";
+    $("costHint").textContent = "What you pay to buy or make one unit.";
+    $("compHint").textContent = "What a rival charges for something similar. If you don't know, leave it equal to your price.";
   }
 }
 $("search").addEventListener("change", () => { if (knownItem()) { prefill(); run(); } });
@@ -199,21 +273,20 @@ function newItemRow(o) {
 }
 function buildRow() {
   const stock = +$("stock").value > 0 ? +$("stock").value : Infinity, cost = +$("cost").value, comp = +$("comp").value;
-  if (!(cost > 0) || !(comp > 0)) { alert("Please enter a unit cost and competitor price above zero."); return null; }
+  if (!(cost > 0) || !(comp > 0)) { alert("Please enter your cost and a competitor price (both above zero)."); return null; }
   if (tab === "item") {
-    const it = knownItem(); if (!it) { alert("Pick an item from the list first."); return null; }
+    const it = knownItem(); if (!it) { alert("Please choose a product from the list first."); return null; }
     // Untouched (rounded) defaults mean "use the model's own values", so the page matches the CSV exactly.
     const c = Math.abs(cost - it.unit_cost) < 0.005 ? it.unit_cost : cost;
     const cm = Math.abs(comp - it.comp_price_SIMULATED) < 0.005 ? 1 : comp / it.comp_price_SIMULATED;
     return {row: {...it, unit_cost: c, comp_mult: cm}, stock, item: it,
-      name: title(it.Description), note: `${it.StockCode} · ${it.category.replace(/_/g, " ")} · ${it.n_weeks} weeks with sales`};
+      name: title(it.Description), note: `${kind(it.category)} · sold in ${it.n_weeks} weeks of the past year`};
   }
   const price = +$("nPrice").value, units = +$("nUnits").value;
-  if (!(price > 0) || !(units >= 0)) { alert("Please enter a price and weekly units."); return null; }
-  const row = newItemRow({name: $("nName").value || "New item", category: $("nCat").value, price, units, cost, comp,
+  if (!(price > 0) || !(units >= 0)) { alert("Please enter today's price and your normal weekly sales."); return null; }
+  const row = newItemRow({name: $("nName").value || "My product", category: $("nCat").value, price, units, cost, comp,
                           min: +$("nMin").value, max: +$("nMax").value});
-  return {row, stock, item: null, name: row.Description,
-    note: `New item · ${row.category.replace(/_/g, " ")} · price sensitivity ${row.elasticity.toFixed(2)} ± ${row.elasticity_se.toFixed(2)} (category average)`};
+  return {row, stock, item: null, name: row.Description, note: `${kind(row.category)} · your own product`};
 }
 
 function evaluate(row, stock, item) {
@@ -234,32 +307,57 @@ function run() {
   const x = buildRow(); if (!x) return;
   const r = x.row, ev = evaluate(r, x.stock, x.item), {o, b, conf, why} = ev;
   cur = {r, o, stock: x.stock};
-  const chg = 100 * (b.price / r.current_price - 1);
-  $("rTitle").innerHTML = `${esc(x.name)} <span class="hint" style="font-size:13px;font-weight:400">${esc(x.note)}</span>`;
-  const badge = {high: ["🟢 High", "var(--good)"], medium: ["🟡 Medium", "var(--warn)"], low: ["🔴 Low", "var(--bad)"]}[conf];
+  const chg = 100 * (b.price / r.current_price - 1), gain = b.profit - b.profit_current, same = Math.abs(chg) < 0.05;
+  $("rTitle").innerHTML = `${esc(x.name)} <span class="hint" style="font-size:14px;font-weight:400">${esc(x.note)}</span>`;
+
+  // The one-paragraph answer
+  const unitsDiff = b.units - b.units_current;
+  $("verdict").innerHTML = same
+    ? `<div class="big">Keep the price at ${gbp(r.current_price)}</div>Changing it is unlikely to earn you more. Expect to sell about <b>${num(b.units)}</b> units next week for about <b>${gbp(b.profit, 0)}</b> profit.`
+    : `<div class="big">${chg > 0 ? "Raise" : "Lower"} the price from ${gbp(r.current_price)} to ${gbp(b.price)} (${chg > 0 ? "+" : ""}${chg.toFixed(0)}%)</div>` +
+      `You'd sell about <b>${num(b.units)}</b> units next week instead of ${num(b.units_current)} (${num(Math.abs(unitsDiff))} ${unitsDiff >= 0 ? "more" : "fewer"}), ` +
+      (chg > 0 ? "but each sale earns more, " : "but the extra sales make up for the lower price, ") +
+      `so profit should ${gain >= 0 ? "rise" : "fall"} by about <b>${gbp(Math.abs(gain), 0)}</b> to ${gbp(b.profit, 0)} for the week. ` +
+      `We are <b style="color:${CONF[conf][1]}">${CONF_WORD[conf]}</b> about this.`;
+
   const M = (k, v, d, hero) => `<div class="m${hero ? " hero" : ""}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d || "&nbsp;"}</div></div>`;
   $("metrics").innerHTML =
-    M("Forecast demand (at current price)", `${num(b.units_current)} units`, `next week at ${gbp(r.current_price)}`) +
-    M("Recommended price", gbp(b.price), Math.abs(chg) > 0.05 ? `${pct(chg)} vs current ${gbp(r.current_price)}` : "keep current price", true) +
-    M("Units at recommended price", `${num(b.units)} units`, `${b.units - b.units_current >= 0 ? "+" : ""}${num(b.units - b.units_current)} vs current`, true) +
-    M("Expected profit", gbp(b.profit, 0), `${b.profit - b.profit_current >= 0 ? "+" : ""}${gbp(b.profit - b.profit_current, 0)} vs current price`) +
-    M("Expected revenue", gbp(b.price * b.units, 0), `margin ${(100 * (b.price - r.unit_cost) / b.price).toFixed(0)}%`) +
-    M("Likely profit range (P10–P90)", `${gbp(ev.p10, 0)} – ${gbp(ev.p90, 0)}`, "includes forecast error and price-sensitivity uncertainty") +
-    `<div class="m"><div class="k">Confidence</div><div class="v" style="color:${badge[1]}">${badge[0]}</div><div class="d">profit at risk ${(100 * b.downside).toFixed(1)}% · allowed ${gbp(o.bounds[0])} – ${gbp(o.bounds[1])}</div></div>`;
+    M("Sales next week at today's price", `${num(b.units_current)} units`, `at ${gbp(r.current_price)} each`) +
+    M("Suggested price", gbp(b.price), same ? "same as today" : `${chg > 0 ? "+" : ""}${chg.toFixed(1)}% vs today's ${gbp(r.current_price)}`, true) +
+    M("Sales at the suggested price", `${num(b.units)} units`, Math.round(unitsDiff) === 0 ? "same as today" : `${num(Math.abs(unitsDiff))} ${unitsDiff > 0 ? "more" : "fewer"} than today`, true) +
+    M("Profit for the week", gbp(b.profit, 0), `${gain >= 0 ? "+" : "−"}${gbp(Math.abs(gain), 0)} vs keeping today's price`) +
+    M("Money coming in (sales)", gbp(b.price * b.units, 0), `you keep ${(100 * (b.price - r.unit_cost) / b.price).toFixed(0)}p of every £1 as profit`) +
+    M("Realistic profit range", `${gbp(ev.p10, 0)} – ${gbp(ev.p90, 0)}`, "most weeks should land in this range; sales go up and down") +
+    `<div class="m"><div class="k">How sure are we?</div><div class="v" style="color:${CONF[conf][1]}">${CONF[conf][0]}</div><div class="d">based on ${EVIDENCE[r.elasticity_source] || "similar products"}</div></div>`;
+
+  // Why: plain bullet points
+  const whyList = [`<li><b>Why this price:</b> ${driverText(o.decision_driver)}</li>`];
+  if (ev.joint && Math.abs(ev.indiv.comp_same.price - b.price) > 1e-9) whyList.push(`<li>On its own, this product would get ${gbp(ev.indiv.comp_same.price)}, but we matched it to its ${x.item.joint_with} other colour/design version(s).</li>`);
   const L = PC.lerner(Math.min(r.elasticity, C.ELASTICITY_CEILING), r.unit_cost, r.current_price);
-  const notes = [];
-  notes.push(`<b>What sets this price:</b> ${esc(o.decision_driver)}.` +
-    (o.at_bound ? " The model would move further without this limit, so the limit, not the data, decides the size of the change." : ""));
-  if (ev.joint) notes.push(`<b>Priced jointly</b> with ${x.item.joint_with} colour/design variant(s) that share its price, so they stay consistent. On its own the model would pick ${gbp(ev.indiv.comp_same.price)}.`);
-  if (!isFinite(L.unconstrained_price) || L.unconstrained_price > 1.5 * r.current_price)
-    notes.push(`<b>Sanity check:</b> with price sensitivity ${r.elasticity.toFixed(2)} the unconstrained profit-maximising price would be ${isFinite(L.unconstrained_price) ? gbp(L.unconstrained_price) : "unlimited"}, far above today's. That is implausible for a business that has priced this way for a year, so the true sensitivity is probably stronger than estimated. Treat increases with caution.`);
-  $("why").innerHTML = (why ? `<div class="warnbox"><b>Why confidence is ${conf}:</b> ${esc(why)}</div>` : "") +
-    `<div class="infobox">${notes.join("<br>")}</div>`;
-  const pl = ev.plan;
-  $("testCard").innerHTML = `<b>Price test plan</b><div class="hint">Switchback test: alternate weeks at ${gbp(r.current_price)} and ${gbp(pl.test_price)}.</div>` +
-    `<p style="margin:8px 0 0">To tell price sensitivity −1 from −2 with 80% power you need about <b>${pl.test_days_per_arm} trading days per price</b> (≈ ${pl.test_weeks_total} weeks). ` +
-    (pl.test_feasible ? "That is practical for this item." : `That is too long for one item: test the same % change on several similar items at once` +
-      (x.item ? ` (≈ ${x.item.test_weeks_pooled_category} weeks across its category).` : "."))+ "</p>";
+  if (chg > 0.05 && (!isFinite(L.unconstrained_price) || L.unconstrained_price > 1.5 * r.current_price))
+    whyList.push(`<li><b>A word of caution:</b> the past sales suggest customers hardly notice price changes, so the numbers alone would push the price much higher. That seems too good to be true, and when this shop really did change prices, customers reacted more strongly. So we kept the increase small, and you should test it before applying it widely.</li>`);
+  const reasons = reasonsPlain(why, r);
+  $("why").innerHTML = `<div class="box"><ul>${whyList.join("")}</ul></div>` +
+    (reasons.length ? `<div class="box warn"><b>What makes us less certain:</b><ul>${reasons.map(s => `<li>${esc(s)}</li>`).join("")}</ul></div>` : "");
+
+  const pl = ev.plan, items = x.item ? D.categories[x.item.category].n_items : 0;
+  const dur = w => w <= 12 ? `about <b>${w} week${w === 1 ? "" : "s"}</b>` : w <= 52 ? `about ${w} weeks (${Math.round(w / 4.3)} months)` : w <= 104 ? `about ${w} weeks (over a year)` : "several years";
+  const step = Math.abs(Math.round(100 * (pl.test_price / r.current_price - 1)));
+  let advice;
+  if (pl.test_feasible) advice = `For this product a clear answer would take ${dur(pl.test_weeks_total)}.`;
+  else {
+    advice = `This product's sales go up and down a lot from week to week, so testing it on its own would take ${dur(pl.test_weeks_total)}, which isn't practical. `;
+    if (x.item) {
+      const pw = x.item.test_weeks_pooled_category;
+      advice += pw <= 12
+        ? `Instead, make the same ${step}% change on all ${items} ${kind(x.item.category)} products at once: that would give a clear answer in ${dur(pw)}.`
+        : `Even testing all ${items} ${kind(x.item.category)} products together would take ${dur(pw)}. In practice, test a bigger group of products together, or simply watch your profit closely for a few weeks after the change and switch back if it drops.`;
+    } else advice += "Instead, make the same change on several similar products at once, or watch your profit closely for a few weeks and switch back if it drops.";
+  }
+  $("testCard").innerHTML = `<h3>How to check this suggestion safely</h3>` +
+    (same ? `<p style="margin:6px 0">We suggest keeping today's price. If you'd still like to see whether a higher price could work, try <b>${gbp(pl.test_price)}</b> every other week and compare.</p>`
+          : `<p style="margin:6px 0">Before changing the price for good, try it out: sell at <b>${gbp(r.current_price)}</b> one week and <b>${gbp(pl.test_price)}</b> the next, and keep switching. Comparing the weeks shows whether the new price really earns more.</p>`) +
+    `<p style="margin:6px 0">${advice}</p>`;
   const s = $("tryP"); s.min = (r.current_price * 0.7).toFixed(2); s.max = (r.current_price * 1.3).toFixed(2); s.step = 0.01; s.value = b.price;
   tryPrice(); drawChart();
   $("result").classList.remove("hidden"); $("result").scrollIntoView({behavior: "smooth", block: "start"});
@@ -271,15 +369,16 @@ function tryPrice() {
   const pr0 = o.comp_same.profit_current_draws, mp = PC.mean(pr);
   $("tpP").textContent = gbp(p); $("tpU").textContent = num(PC.mean(u)); $("tpPr").textContent = gbp(mp, 0);
   const risk = mp > 0 ? PC.mean(pr0.map((v, i) => Math.max(v - pr[i], 0))) / Math.max(PC.mean(pr0), 1e-9) : Infinity;
-  const lvl = risk <= 0.02 ? ["Low", "var(--good)"] : risk <= 0.05 ? ["Moderate", "var(--warn)"] : ["High", "var(--bad)"];
-  $("tpRisk").textContent = isFinite(risk) ? `${(100 * risk).toFixed(1)}%` : "loss";
-  $("tpRisk").style.color = lvl[1]; $("tpRiskL").textContent = isFinite(risk) ? `${lvl[0]} risk` : "price below cost";
+  const lvl = risk <= 0.02 ? ["Low", "var(--good)"] : risk <= 0.05 ? ["Medium", "var(--warn)"] : ["High", "var(--bad)"];
+  $("tpRisk").textContent = isFinite(risk) ? lvl[0] : "Loss";
+  $("tpRisk").style.color = isFinite(risk) ? lvl[1] : "var(--bad)";
+  $("tpRiskL").textContent = isFinite(risk) ? `on average ${(100 * risk).toFixed(1)}% less profit in the bad cases` : "this price is below your cost";
   $("tpBeat").textContent = Math.abs(p - r.current_price) < 0.005 ? "—" : `${Math.round(100 * pr.filter((v, i) => v > pr0[i]).length / pr.length)}%`;
   const [lo, hi] = o.bounds, out = p > hi + 1e-9 || p < lo - 1e-9;
-  if (out && isFinite(risk)) { $("tpRisk").style.color = "var(--bad)"; $("tpRiskL").textContent = "Outside allowed range"; }
-  $("tpWarn").textContent = out ? `⚠️ Outside the allowed range (${gbp(lo)} – ${gbp(hi)}). ` +
-    (p > Math.max(r.hist_max_price, r.current_price) + 1e-9 ? `Never sold above ${gbp(Math.max(r.hist_max_price, r.current_price))}: this is an untested extrapolation.`
-     : p < r.unit_cost / (1 - C.MIN_MARGIN) ? `Below the ${C.MIN_MARGIN * 100}% minimum margin.` : `More than ±${C.MAX_PRICE_CHANGE * 100}% from the current price.`) : "";
+  if (out && isFinite(risk)) { $("tpRisk").style.color = "var(--bad)"; $("tpRisk").textContent = "Unknown"; $("tpRiskL").textContent = "outside the safe range"; }
+  $("tpWarn").textContent = out ? `⚠️ Outside the safe range (${gbp(lo)} – ${gbp(hi)}). ` +
+    (p > Math.max(r.hist_max_price, r.current_price) + 1e-9 ? `This product has never sold above ${gbp(Math.max(r.hist_max_price, r.current_price))}, so these numbers are a guess.`
+     : p < r.unit_cost / (1 - C.MIN_MARGIN) ? `You'd keep less than 20p of every £1 as profit.` : `That's a bigger change than 20% in one go.`) : "";
 }
 function drawChart() {
   const {r, o, stock} = cur, W = 600, H = 300, P = {l: 56, r: 12, t: 12, b: 34}, pts = [], cm = r.comp_mult == null ? 1 : r.comp_mult;
@@ -297,10 +396,10 @@ function drawChart() {
              `<text x="${X(p)}" y="${H - 12}" text-anchor="middle">£${p.toFixed(2)}</text>`; }
   const vl = (p, col, lab) => `<line x1="${X(p)}" x2="${X(p)}" y1="${P.t}" y2="${H - P.b}" stroke="${col}" stroke-width="2" stroke-dasharray="4 3"/><text x="${X(p) + 4}" y="${P.t + 12}" style="fill:${col}">${lab}</text>`;
   const lo = Math.max(o.bounds[0], x0), hi = Math.min(o.bounds[1], x1);
-  $("chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Profit versus price">${ticks}
+  $("chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Profit for the week at each price">${ticks}
     ${hi > lo ? `<rect x="${X(lo)}" y="${P.t}" width="${X(hi) - X(lo)}" height="${H - P.t - P.b}" fill="var(--good)" opacity=".08"/>` : ""}
     <path d="${band}" fill="var(--band)"/><path d="${line}" fill="none" stroke="var(--acc)" stroke-width="3"/>
-    ${vl(r.current_price, "var(--mute)", "current")}${vl(o.comp_same.price, "var(--good)", "recommended")}</svg>`;
+    ${vl(r.current_price, "var(--mute)", "today")}${vl(o.comp_same.price, "var(--good)", "suggested")}</svg>`;
 }
 
 // ---------- CSV helpers ----------
@@ -325,40 +424,43 @@ function tableHTML(header, rows, wrapCols = []) {
 }
 
 // ---------- batch ----------
-$("tmpl").onclick = () => download("pricing_template.csv", ["name", "category", "price", "units_per_week", "unit_cost", "competitor_price", "stock", "min_price", "max_price"],
-  [["Example mug", "kitchen_baking", "4.95", "120", "2.80", "5.20", "", "", ""]]);
+$("tmpl").onclick = () => download("pricing_example.csv", ["name", "category", "price", "units_per_week", "unit_cost", "competitor_price", "stock", "min_price", "max_price"],
+  [["Large mug", "kitchen_baking", "4.95", "120", "2.80", "5.20", "", "", ""], ["Table lamp", "lighting_candles", "24.00", "15", "12.50", "", "40", "", "29.99"]]);
 let batchRows = [];
+const BATCH_H = ["product", "kind", "price now", "suggested price", "change", "units next week", "weekly profit", "extra profit", "how sure", "why this price", "weeks to test", "notes"];
 $("csvFile").onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
-  const rows = parseCSV(await f.text()); if (rows.length < 2) { $("batchMsg").textContent = "The file has no data rows."; return; }
+  const rows = parseCSV(await f.text()); if (rows.length < 2) { $("batchMsg").textContent = "The file has no product rows."; return; }
   const h = rows[0].map(x => x.toLowerCase()), col = n => h.indexOf(n);
   const need = ["name", "category", "price", "units_per_week", "unit_cost"].filter(n => col(n) < 0);
-  if (need.length) { $("batchMsg").textContent = `Missing column(s): ${need.join(", ")}`; return; }
+  if (need.length) { $("batchMsg").textContent = `The file is missing these column(s): ${need.join(", ")}. Please start from the example spreadsheet.`; return; }
   const errors = []; batchRows = [];
   rows.slice(1).forEach((r, i) => {
     const g = n => col(n) >= 0 ? r[col(n)] : "", o = {name: g("name"), category: g("category"), price: +g("price"), units: +g("units_per_week"),
       cost: +g("unit_cost"), comp: +g("competitor_price"), min: +g("min_price"), max: +g("max_price")};
-    if (!(o.price > 0 && o.units >= 0 && o.cost > 0)) { errors.push(`row ${i + 2}`); return; }
+    if (!(o.price > 0 && o.units >= 0 && o.cost > 0)) { errors.push(i + 2); return; }
     if (!D.categories[o.category]) o.category = "other";
     const row = newItemRow(o), stock = +g("stock") > 0 ? +g("stock") : Infinity, ev = evaluate(row, stock, null), b = ev.b;
-    batchRows.push([o.name, o.category, o.price.toFixed(2), b.price.toFixed(2), (100 * (b.price / o.price - 1)).toFixed(1), Math.round(b.units),
-      b.profit.toFixed(0), (b.profit - b.profit_current).toFixed(0), ev.conf, ev.o.decision_driver, ev.plan.test_weeks_total, ev.why]);
+    batchRows.push([o.name, kind(o.category), o.price.toFixed(2), b.price.toFixed(2), `${(100 * (b.price / o.price - 1)).toFixed(0)}%`, Math.round(b.units),
+      b.profit.toFixed(0), (b.profit - b.profit_current).toFixed(0), CONF_WORD[ev.conf], driverText(ev.o.decision_driver), ev.plan.test_weeks_total,
+      reasonsPlain(ev.why, row).join(" ")]);
   });
-  $("batchMsg").textContent = `${batchRows.length} item(s) priced` + (errors.length ? `; skipped invalid ${errors.join(", ")}` : "") + ".";
-  $("batchTable").innerHTML = tableHTML(BATCH_H, batchRows.map(r => r.map((v, j) => j === 8 ? `<span class="pill c-${v}">${v}</span>` : esc(v))), [11]);
+  $("batchMsg").textContent = `Done: ${batchRows.length} product(s) priced.` + (errors.length ? ` Skipped row(s) ${errors.join(", ")} because the price, sales or cost was missing or zero.` : "");
+  $("batchTable").innerHTML = tableHTML(BATCH_H, batchRows.map(r => r.map((v, j) => j === 8 ? `<span class="pill c-${Object.keys(CONF_WORD).find(k => CONF_WORD[k] === v)}">${v}</span>` : esc(v))), [9, 11]);
   $("batchOut").classList.remove("hidden");
 };
-const BATCH_H = ["name", "category", "price", "recommended", "change %", "units", "profit £", "gain £", "confidence", "price set by", "test weeks", "notes"];
 $("batchDl").onclick = () => download("pricing_results.csv", BATCH_H, batchRows);
 
 // ---------- portfolio ----------
-const PF = [["StockCode", "code"], ["Description", "item"], ["category", "category"], ["current_price", "current £"],
-  ["recommended_price", "recommended £"], ["price_change_%", "change %"], ["profit_change_crossfit", "gain £ (cross-fit)"],
-  ["confidence", "confidence"], ["elasticity", "sensitivity"], ["elasticity_source", "evidence"], ["decision_driver", "price set by"],
-  ["test_weeks_total", "test weeks"], ["test_weeks_pooled_category", "test weeks (pooled)"]];
+const PF = [["StockCode", "code"], ["Description", "product"], ["category", "kind"], ["current_price", "price now"],
+  ["recommended_price", "suggested"], ["price_change_%", "change"], ["profit_change_crossfit", "extra weekly profit"],
+  ["confidence", "how sure"], ["elasticity_source", "based on"], ["decision_driver", "what decided it"],
+  ["test_weeks_pooled_category", "weeks to test"]];
+const PF_PLAIN = {category: kind, elasticity_source: v => EVIDENCE[v] || v, confidence: v => CONF_WORD[v],
+  decision_driver: v => v.includes("limit") ? "a safety limit" : v.includes("jointly") ? "matched to other colours" : v.includes("data") ? "past sales" : "no change possible"};
 let pfSort = {k: "profit_change_crossfit", dir: -1};
-const opts = (id, vals) => $(id).insertAdjacentHTML("beforeend", vals.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join(""));
-opts("fCat", catNames); opts("fEv", [...new Set(D.items.map(i => i.elasticity_source))]);
+const opts = (id, vals) => $(id).insertAdjacentHTML("beforeend", vals.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join(""));
+opts("fCat", catNames.map(c => [c, kind(c)])); opts("fEv", [...new Set(D.items.map(i => i.elasticity_source))].map(v => [v, EVIDENCE[v] || v]));
 ["fText", "fConf", "fCat", "fEv", "fDrv"].forEach(id => $(id).addEventListener("input", renderPortfolio));
 function pfRows() {
   const t = $("fText").value.trim().toLowerCase(), c = $("fConf").value, cat = $("fCat").value, ev = $("fEv").value, dv = $("fDrv").value;
@@ -368,16 +470,21 @@ function pfRows() {
     .sort((a, b) => { const x = a[pfSort.k], y = b[pfSort.k]; return (x > y ? 1 : x < y ? -1 : 0) * pfSort.dir; });
 }
 function renderPortfolio() {
-  const g = D.gains_all, bt = D.backtest, M = (k, v, d) => `<div class="m"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
+  const g = D.gains_all, bt = D.backtest, n = D.items.length, M = (k, v, d) => `<div class="m"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
+  const ups = D.items.filter(i => i.recommended_price > i.current_price + 1e-9).length, limited = D.items.filter(i => i.decision_driver.includes("limit")).length;
   $("pfStats").innerHTML =
-    M("Gain, high + medium confidence", gbp((g.high || 0) + (g.medium || 0), 0), `all ${D.items.length} items, 1 week, cross-fitted`) +
-    M("Gain, low confidence", gbp(g.low || 0, 0), "not counted in the headline") +
-    M("Prices set by a limit", `${D.items.filter(i => i.decision_driver.includes("limit")).length} / ${D.items.length}`, "the data alone would move these further") +
-    (bt.n_events ? M("Backtest on later real price changes", `${bt.n_events} events`, `model error ${bt.mae_model.toFixed(2)} vs ${bt.mae_no_effect.toFixed(2)} with no price effect; implied sensitivity ${bt.implied_elasticity_median.toFixed(2)}`) : "");
+    M("Extra profit per week (all products)", gbp((g.high || 0) + (g.medium || 0), 0), "counting only suggestions we're fairly or very sure about") +
+    M("Products to raise in price", `${ups} of ${n}`, "most by a small step") +
+    M("Stopped by a safety limit", `${limited} of ${n}`, "past sales would have pushed these further") +
+    M("Very sure / fairly sure / not sure", `${D.items.filter(i => i.confidence === "high").length} / ${D.items.filter(i => i.confidence === "medium").length} / ${D.items.filter(i => i.confidence === "low").length}`, "most products never changed price, so certainty is limited");
+  $("pfExplain").innerHTML = `<b>What this list tells you:</b> past sales suggest most prices could go up a little. But this shop rarely changed its prices, ` +
+    `and when it did${bt.n_events ? ` (${bt.n_events} times we could check)` : ""}, customers reacted more strongly than our estimates. So treat the increases ` +
+    `as ideas to test, not certainties. <b>Tip:</b> sort by "extra weekly profit", start with the products we're most sure about, ` +
+    `and click a product name for the full explanation.`;
   const rows = pfRows();
-  $("pfCount").textContent = `${rows.length} of ${D.items.length} items. Click a column to sort; click an item to open it.`;
-  const fmt = (k, v) => v == null ? "" : k === "confidence" ? `<span class="pill c-${v}">${v}</span>` :
-    typeof v === "number" ? (k.includes("price") ? v.toFixed(2) : k === "elasticity" ? v.toFixed(2) : k.includes("%") ? v.toFixed(1) : num(v)) : esc(v);
+  $("pfCount").textContent = `Showing ${rows.length} of ${n} products. Click a column heading to sort.`;
+  const fmt = (k, v) => v == null ? "" : k === "confidence" ? `<span class="pill c-${v}">${CONF_WORD[v]}</span>` : PF_PLAIN[k] ? esc(PF_PLAIN[k](v)) :
+    k === "price_change_%" ? `${v > 0 ? "+" : ""}${v.toFixed(0)}%` : k.includes("price") ? gbp(v) : k === "profit_change_crossfit" ? gbp(v, 0) : esc(v);
   $("pfTable").innerHTML = tableHTML(PF.map(([k, l]) => l + (pfSort.k === k ? (pfSort.dir > 0 ? " ▲" : " ▼") : "")),
     rows.map(i => PF.map(([k]) => k === "Description" ? `<a href="#" data-code="${esc(i.StockCode)}">${esc(title(i.Description))}</a>` : fmt(k, i[k]))));
   $("pfTable").querySelectorAll("th").forEach((th, j) => th.onclick = () => {
@@ -386,8 +493,8 @@ function renderPortfolio() {
     e.preventDefault(); const it = D.items.find(i => i.StockCode === a.dataset.code);
     setTab("item"); $("search").value = labels[D.items.indexOf(it)]; delete $("cost").dataset.touched; prefill(); run(); });
 }
-$("pfDl").onclick = () => download("pricing_recommendations.csv", PF.map(x => x[1]).concat(["reason"]),
-  pfRows().map(i => PF.map(([k]) => i[k]).concat([i.confidence_reason])));
+$("pfDl").onclick = () => download("price_suggestions.csv", PF.map(x => x[1]).concat(["why we're unsure"]),
+  pfRows().map(i => PF.map(([k]) => PF_PLAIN[k] ? PF_PLAIN[k](i[k]) : i[k]).concat([reasonsPlain(i.confidence_reason, i).join(" ")])));
 
 setTab("item");
 </script>
